@@ -26,23 +26,4 @@ public class BaseController {
         }
     }
 
-    protected Object classCast(Class<?> clazz, String str) {
-        if (clazz.equals(Byte.class)) {
-            return Byte.parseByte(str);
-        } else if (clazz.equals(Short.class)) {
-            return Short.parseShort(str);
-        } else if (clazz.equals(Integer.class)) {
-            return Integer.parseInt(str);
-        } else if (clazz.equals(Long.class)) {
-            return Long.parseLong(str);
-        } else if (clazz.equals(Float.class)) {
-            return Float.parseFloat(str);
-        } else if (clazz.equals(Double.class)) {
-            return Double.parseDouble(str);
-        } else if (clazz.equals(Boolean.class)) {
-            return Boolean.parseBoolean(str);
-        }
-        return clazz.cast(str);
-    }
-
 }
