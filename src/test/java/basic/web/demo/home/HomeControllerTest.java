@@ -1,4 +1,4 @@
-package basic.web.module.home;
+package basic.web.demo.home;
 
 public class HomeControllerTest {
 }

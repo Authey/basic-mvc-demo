@@ -1,4 +1,4 @@
-package basic.web.module.user;
+package basic.web.demo.user;
 
 public class UserServiceTest {
 }
