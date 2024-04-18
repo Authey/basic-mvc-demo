@@ -1,4 +1,4 @@
-package basic.web.demo;
+package basic.web.utility;
 
 import org.apache.log4j.Logger;
 

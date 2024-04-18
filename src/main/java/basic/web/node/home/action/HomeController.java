@@ -1,6 +1,6 @@
-package basic.web.demo.home.action;
+package basic.web.node.home.action;
 
-import basic.web.demo.BaseController;
+import basic.web.utility.BaseController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,11 +14,13 @@ public class HomeController extends BaseController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(HttpServletRequest request, HttpServletResponse response) {
+        logger.debug("Base URL Request");
         return "redirect:/home";
     }
 
     @RequestMapping(value = "/home", method = RequestMethod.GET)
     public String home(HttpServletRequest request, HttpServletResponse response) {
+        logger.debug("Home URL Request");
         return "home";
     }
 
