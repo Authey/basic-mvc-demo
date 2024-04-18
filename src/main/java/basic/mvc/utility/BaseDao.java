@@ -1,4 +1,4 @@
 package basic.mvc.utility;
 
-public class BaseDao {
+public abstract class BaseDao<T> {
 }
