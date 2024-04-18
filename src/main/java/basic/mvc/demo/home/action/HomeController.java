@@ -14,13 +14,13 @@ public class HomeController extends BaseController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(HttpServletRequest request, HttpServletResponse response) {
-        logger.debug("Base URL Request");
+        logger.info("Base URL Request");
         return "redirect:/home";
     }
 
     @RequestMapping(value = "/home", method = RequestMethod.GET)
     public String home(HttpServletRequest request, HttpServletResponse response) {
-        logger.debug("Home URL Request");
+        logger.info("Home URL Request");
         return "home";
     }
 
