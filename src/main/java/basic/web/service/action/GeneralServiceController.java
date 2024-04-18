@@ -1,4 +1,4 @@
-package basic.web.tests;
+package basic.web.service.action;
 
 import basic.web.utility.BaseController;
 import basic.web.service.DataService;
@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping(value = "/general_test")
-public class GeneralTestController extends BaseController {
+@RequestMapping(value = "/general_service")
+public class GeneralServiceController extends BaseController {
 
     @Resource
     private DataService dataService;

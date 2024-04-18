@@ -1,4 +1,4 @@
-package basic.web.node.home.action;
+package basic.web.module.home.action;
 
 import basic.web.utility.BaseController;
 import org.springframework.stereotype.Controller;
