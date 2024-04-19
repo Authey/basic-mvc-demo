@@ -1,4 +1,4 @@
 package basic.mvc.demo.home.service;
 
-public class HomeService {
+public interface HomeService {
 }
