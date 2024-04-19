@@ -1,4 +1,6 @@
 package basic.mvc.demo.home.dao;
 
-public class HomeDao {
+import basic.mvc.utility.BaseDao;
+
+public class HomeDao extends BaseDao<Object> {
 }
