@@ -1,6 +1,8 @@
 package basic.mvc.utility;
 
 import org.apache.log4j.Logger;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +13,8 @@ public class BaseController {
 
     @Resource
     protected HttpServletRequest request;
+
+    protected SqlSessionFactoryBean sqlSessionFactoryBean;
 
     protected final Logger logger = Logger.getLogger(this.getClass());
 

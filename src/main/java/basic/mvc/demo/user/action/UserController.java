@@ -1,4 +1,6 @@
 package basic.mvc.demo.user.action;
 
-public class UserController {
+import basic.mvc.utility.BaseController;
+
+public class UserController extends BaseController {
 }
