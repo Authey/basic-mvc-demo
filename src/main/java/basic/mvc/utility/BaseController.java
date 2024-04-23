@@ -21,6 +21,10 @@ public abstract class BaseController {
 
     public final Logger logger = Logger.getLogger(this.getClass());
 
+    public String getRootPath() {
+        return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/";
+    }
+
     public String getPara(String name) {
         return this.getPara(name, "");
     }

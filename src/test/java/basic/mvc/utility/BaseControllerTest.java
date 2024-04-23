@@ -21,9 +21,19 @@ public class BaseControllerTest extends BaseController {
         super.request = request;
         response = new MockHttpServletResponse(); // No need to .reset() after committing the response in content acquiring
         super.response = response;
+        request.setContextPath("/context");
+        request.setScheme("https");
+        request.setServerName("localhost");
+        request.setServerPort(9134);
         request.setParameter("Key0", "Value");
         request.setParameter("Key1", "");
         request.setParameter("Key2", "     ");
+    }
+
+    @Test
+    public void getContextPath() {
+        String root = this.getRootPath();
+        assertEquals("https://localhost:9134/context/", root);
     }
 
     @Test
