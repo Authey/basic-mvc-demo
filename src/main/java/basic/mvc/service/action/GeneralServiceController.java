@@ -56,13 +56,13 @@ public class GeneralServiceController extends BaseController {
                 int index = Integer.parseInt(argName.substring(3));
                 params.add(StringUtils.isNotBlank(curPara) ? classCast(baseTypes.get(index), curPara) : null);
             }
-            this.renderJson(response, serviceMethod.invoke(serviceInstance, params.toArray()).toString());
+            this.renderJson(serviceMethod.invoke(serviceInstance, params.toArray()).toString());
         } catch (Exception e) {
             logger.error("调用" + interfaceName + "接口出错: ", e);
             JSONObject json = new JSONObject();
             json.put("state", 0);
             json.put("error", e.getMessage());
-            this.renderJson(response, json.toString());
+            this.renderJson(json.toString());
         }
     }
 

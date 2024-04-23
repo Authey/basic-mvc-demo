@@ -17,6 +17,9 @@ public abstract class BaseController {
     @Resource
     public HttpServletRequest request;
 
+    @Resource
+    public HttpServletResponse response;
+
     public SqlSessionFactoryBean sqlSessionFactoryBean;
 
     public final Logger logger = Logger.getLogger(this.getClass());
@@ -26,7 +29,7 @@ public abstract class BaseController {
     }
 
     public String getPara(String name, String defaultValue) {
-        String str = this.request.getParameter(name);
+        String str = request.getParameter(name);
         str = str.trim();
         str = StringEscapeUtils.escapeSql(str);
         str = HtmlUtils.htmlEscape(str);
@@ -35,34 +38,34 @@ public abstract class BaseController {
     }
 
     public void setAttr(String key, Object value) {
-        this.request.setAttribute(key, value);
+        request.setAttribute(key, value);
     }
 
     public String getAttr(String name) {
-        return (String) this.request.getAttribute(name);
+        return (String) request.getAttribute(name);
     }
 
     public void removeAttr(String name) {
-        this.request.removeAttribute(name);
+        request.removeAttribute(name);
     }
 
-    public void renderText(HttpServletResponse response, String text) {
-        this.render(response, "text/plain;charset=UTF-8", text);
+    public void renderText(String text) {
+        this.render("text/plain;charset=UTF-8", text);
     }
 
-    public void renderJson(HttpServletResponse response, String text) {
-        this.render(response, "application/json;charset=UTF-8", text);
+    public void renderJson(String json) {
+        this.render("application/json;charset=UTF-8", json);
     }
 
-    public void renderXml(HttpServletResponse response, String text) {
-        this.render(response, "text/xml;charset=UTF-8", text);
+    public void renderXml(String xml) {
+        this.render("text/xml;charset=UTF-8", xml);
     }
 
-    public void renderHtml(HttpServletResponse response, String text) {
-        this.render(response, "text/html;charset=UTF-8", text);
+    public void renderHtml(String html) {
+        this.render("text/html;charset=UTF-8", html);
     }
 
-    public void render(HttpServletResponse response, String contentType, String text) {
+    public void render(String contentType, String text) {
         response.setContentType(contentType);
         response.setHeader("Pragma", "No-cache");
         response.setHeader("Cache-Control", "no-cache");
@@ -74,7 +77,7 @@ public abstract class BaseController {
         }
     }
 
-    public void ajaxDoneSuccess(HttpServletResponse response, String message) {
+    public void ajaxDoneSuccess(String message) {
         com.alibaba.fastjson.JSONObject result = new com.alibaba.fastjson.JSONObject();
         result.put("state", 1);
         result.put("statusCode", 200);
@@ -83,10 +86,10 @@ public abstract class BaseController {
         } else {
             result.put("msg", message);
         }
-        this.renderJson(response, result.toString());
+        this.renderJson(result.toString());
     }
 
-    public void ajaxDoneFailure(HttpServletResponse response, String message) {
+    public void ajaxDoneFailure(String message) {
         com.alibaba.fastjson.JSONObject result = new com.alibaba.fastjson.JSONObject();
         result.put("state", 0);
         result.put("statusCode", 300);
@@ -95,7 +98,7 @@ public abstract class BaseController {
         } else {
             result.put("msg", message);
         }
-        this.renderJson(response, result.toString());
+        this.renderJson(result.toString());
     }
 
 }

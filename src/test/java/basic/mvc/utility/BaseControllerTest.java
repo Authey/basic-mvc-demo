@@ -2,20 +2,13 @@ package basic.mvc.utility;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import javax.servlet.http.HttpServletRequest;
-
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
 public class BaseControllerTest extends BaseController {
 
     MockHttpServletRequest request;
@@ -27,6 +20,7 @@ public class BaseControllerTest extends BaseController {
         request = new MockHttpServletRequest();
         super.request = request;
         response = new MockHttpServletResponse(); // No need to .reset() after committing the response in content acquiring
+        super.response = response;
         request.setParameter("Key0", "Value");
         request.setParameter("Key1", "");
         request.setParameter("Key2", "     ");
@@ -94,7 +88,7 @@ public class BaseControllerTest extends BaseController {
 
     @Test
     public void renderText() throws Exception {
-        this.renderText(response, "Text");
+        this.renderText("Text");
         assertEquals("text/plain;charset=UTF-8", response.getContentType());
         assertTrue(response.containsHeader("Pragma"));
         assertTrue(response.containsHeader("Cache-Control"));
@@ -107,7 +101,7 @@ public class BaseControllerTest extends BaseController {
 
     @Test
     public void renderJson() throws Exception {
-        this.renderJson(response, "Json");
+        this.renderJson("Json");
         assertEquals("application/json;charset=UTF-8", response.getContentType());
         assertTrue(response.containsHeader("Pragma"));
         assertTrue(response.containsHeader("Cache-Control"));
@@ -120,7 +114,7 @@ public class BaseControllerTest extends BaseController {
 
     @Test
     public void renderXml() throws Exception {
-        this.renderXml(response, "Xml");
+        this.renderXml("Xml");
         assertEquals("text/xml;charset=UTF-8", response.getContentType());
         assertTrue(response.containsHeader("Pragma"));
         assertTrue(response.containsHeader("Cache-Control"));
@@ -133,7 +127,7 @@ public class BaseControllerTest extends BaseController {
 
     @Test
     public void renderHtml() throws Exception {
-        this.renderHtml(response, "Html");
+        this.renderHtml("Html");
         assertEquals("text/html;charset=UTF-8", response.getContentType());
         assertTrue(response.containsHeader("Pragma"));
         assertTrue(response.containsHeader("Cache-Control"));
@@ -146,7 +140,7 @@ public class BaseControllerTest extends BaseController {
 
     @Test
     public void render() throws Exception {
-        this.render(response, "content/render;charset=UTF-8", "Render");
+        this.render("content/render;charset=UTF-8", "Render");
         assertEquals("content/render;charset=UTF-8", response.getContentType());
         assertTrue(response.containsHeader("Pragma"));
         assertTrue(response.containsHeader("Cache-Control"));
@@ -159,7 +153,7 @@ public class BaseControllerTest extends BaseController {
 
     @Test
     public void ajaxDoneSuccess0() throws Exception {
-        this.ajaxDoneSuccess(response, "Ajax Success");
+        this.ajaxDoneSuccess("Ajax Success");
         JSONObject json = JSON.parseObject(response.getContentAsString());
         assertEquals(1, json.get("state"));
         assertEquals(200, json.get("statusCode"));
@@ -168,7 +162,7 @@ public class BaseControllerTest extends BaseController {
 
     @Test
     public void ajaxDoneSuccess1() throws Exception {
-        this.ajaxDoneSuccess(response, "");
+        this.ajaxDoneSuccess("");
         JSONObject json = JSON.parseObject(response.getContentAsString());
         assertEquals(1, json.get("state"));
         assertEquals(200, json.get("statusCode"));
@@ -177,7 +171,7 @@ public class BaseControllerTest extends BaseController {
 
     @Test
     public void ajaxDoneFailure0() throws Exception {
-        this.ajaxDoneFailure(response, "Ajax Failure");
+        this.ajaxDoneFailure("Ajax Failure");
         JSONObject json = JSON.parseObject(response.getContentAsString());
         assertEquals(0, json.get("state"));
         assertEquals(300, json.get("statusCode"));
@@ -186,7 +180,7 @@ public class BaseControllerTest extends BaseController {
 
     @Test
     public void ajaxDoneFailure1() throws Exception {
-        this.ajaxDoneFailure(response, "");
+        this.ajaxDoneFailure("");
         JSONObject json = JSON.parseObject(response.getContentAsString());
         assertEquals(0, json.get("state"));
         assertEquals(300, json.get("statusCode"));

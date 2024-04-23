@@ -20,13 +20,13 @@ public class UserController extends BaseController {
     private UserService userService;
 
     @RequestMapping(value = "/index", method = RequestMethod.GET)
-    public String index(HttpServletRequest request, HttpServletResponse response) {
+    public String index() {
         logger.info("Accessing User Page");
         return "user/index";
     }
 
     @RequestMapping(value = "/query", method = RequestMethod.POST)
-    public void query(HttpServletRequest request, HttpServletResponse response) {
+    public void query() {
         try {
             List<Map<String, Object>> userList = userService.find("SELECT ID, USER_NAME, AUTH_LEVEL FROM SYS_USER");
             logger.info("User List: " + userList);
