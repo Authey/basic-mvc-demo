@@ -2,6 +2,7 @@ package basic.mvc.utility;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,6 +17,9 @@ public abstract class BaseDao<T> {
 
     @Resource
     private JdbcTemplate jdbcTemplate;
+
+    @Resource
+    public SqlSessionTemplate sqlSessionTemplate;
 
     private final Logger logger = Logger.getLogger(this.getClass());
 

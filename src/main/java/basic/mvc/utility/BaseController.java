@@ -3,7 +3,6 @@ package basic.mvc.utility;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.web.util.HtmlUtils;
 import org.springframework.web.util.JavaScriptUtils;
 
@@ -19,8 +18,6 @@ public abstract class BaseController {
 
     @Resource
     public HttpServletResponse response;
-
-    public SqlSessionFactoryBean sqlSessionFactoryBean;
 
     public final Logger logger = Logger.getLogger(this.getClass());
 
