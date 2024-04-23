@@ -52,7 +52,7 @@ public class GeneralServiceController extends BaseController {
             List<Object> params = new ArrayList<>();
             for (Parameter p : parameters) {
                 String argName = p.getName();
-                String curPara = request.getParameter(argName);
+                String curPara = this.getPara(argName);
                 int index = Integer.parseInt(argName.substring(3));
                 params.add(StringUtils.isNotBlank(curPara) ? classCast(baseTypes.get(index), curPara) : null);
             }
