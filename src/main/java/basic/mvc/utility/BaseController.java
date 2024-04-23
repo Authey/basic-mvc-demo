@@ -34,6 +34,18 @@ public abstract class BaseController {
         return StringUtils.isNotBlank(str) ? str : defaultValue;
     }
 
+    public void setAttr(String key, Object value) {
+        this.request.setAttribute(key, value);
+    }
+
+    public String getAttr(String name) {
+        return (String) this.request.getAttribute(name);
+    }
+
+    public void removeAttr(String name) {
+        this.request.removeAttribute(name);
+    }
+
     public void renderText(HttpServletResponse response, String text) {
         this.render(response, "text/plain;charset=UTF-8", text);
     }
@@ -60,6 +72,30 @@ public abstract class BaseController {
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
+    }
+
+    public void ajaxDoneSuccess(HttpServletResponse response, String message) {
+        com.alibaba.fastjson.JSONObject result = new com.alibaba.fastjson.JSONObject();
+        result.put("state", 1);
+        result.put("statusCode", 200);
+        if (StringUtils.isBlank(message)) {
+            result.put("msg", "Success!");
+        } else {
+            result.put("msg", message);
+        }
+        this.renderJson(response, result.toString());
+    }
+
+    public void ajaxDoneFailure(HttpServletResponse response, String message) {
+        com.alibaba.fastjson.JSONObject result = new com.alibaba.fastjson.JSONObject();
+        result.put("state", 0);
+        result.put("statusCode", 300);
+        if (StringUtils.isBlank(message)) {
+            result.put("msg", "Failure!");
+        } else {
+            result.put("msg", message);
+        }
+        this.renderJson(response, result.toString());
     }
 
 }
