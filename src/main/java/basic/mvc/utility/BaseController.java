@@ -26,12 +26,12 @@ public abstract class BaseController {
         return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/";
     }
 
-    public String getPara(String name) throws Exception {
+    public String getPara(String name) {
         try {
             String str = request.getParameter(name);
             return escape(str);
         } catch (NullPointerException e) {
-            throw new NoSuchElementFoundException("No Such Parameter Found in This Request");
+            throw new NoSuchElementFoundException("No Such Parameter [" + name + "] Found in This Request");
         }
     }
 
