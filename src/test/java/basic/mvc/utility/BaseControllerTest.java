@@ -5,26 +5,23 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.Assert.*;
 
+@RunWith(JUnit4.class)
 public class BaseControllerTest extends BaseController {
 
-    MockHttpServletRequest request;
+    MockHttpServletRequest request = new MockHttpServletRequest();
 
-    MockHttpServletResponse response;
+    MockHttpServletResponse response = new MockHttpServletResponse(); // No need to .reset() after committing the response in content acquiring
 
     @Before
     public void before() {
-        request = new MockHttpServletRequest();
         super.request = request;
-        response = new MockHttpServletResponse(); // No need to .reset() after committing the response in content acquiring
         super.response = response;
-        request.setContextPath("/context");
-        request.setScheme("https");
-        request.setServerName("localhost");
-        request.setServerPort(9134);
         request.setParameter("Key0", "Value");
         request.setParameter("Key1", "");
         request.setParameter("Key2", "     ");
@@ -32,6 +29,10 @@ public class BaseControllerTest extends BaseController {
 
     @Test
     public void getContextPath() {
+        request.setContextPath("/context");
+        request.setScheme("https");
+        request.setServerName("localhost");
+        request.setServerPort(9134);
         String root = this.getRootPath();
         assertEquals("https://localhost:9134/context/", root);
     }
