@@ -1,5 +1,6 @@
 package basic.mvc.utility;
 
+import basic.mvc.utility.exception.NoSuchElementFoundException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -10,7 +11,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.NoSuchElementException;
 
 public abstract class BaseController {
 
@@ -31,7 +31,7 @@ public abstract class BaseController {
             String str = request.getParameter(name);
             return escape(str);
         } catch (NullPointerException e) {
-            throw new NoSuchElementException("No Such Parameter Found in This Request");
+            throw new NoSuchElementFoundException("No Such Parameter Found in This Request");
         }
     }
 

@@ -1,17 +1,12 @@
 package basic.mvc.utility;
 
+import basic.mvc.utility.exception.NoSuchElementFoundException;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.NoSuchElementException;
-
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.*;
 
 public class BaseControllerTest extends BaseController {
@@ -41,7 +36,7 @@ public class BaseControllerTest extends BaseController {
         assertEquals("https://localhost:9134/context/", root);
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test(expected = NoSuchElementFoundException.class)
     public void getPara0() throws Exception {
         String res = this.getPara("Key");
     }
