@@ -51,9 +51,6 @@ public class Record implements Serializable {
 
     public void remove(String... keys) {
         for(String k : keys) {
-            if (!this.data.containsKey(k)) {
-                throw new NoSuchElementFoundException("No Such Key [" + k + "] Found in This Record");
-            }
             this.data.remove(k);
         }
     }
