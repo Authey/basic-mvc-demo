@@ -7,6 +7,11 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.NoSuchElementException;
+
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.*;
 
 public class BaseControllerTest extends BaseController {
@@ -36,38 +41,49 @@ public class BaseControllerTest extends BaseController {
         assertEquals("https://localhost:9134/context/", root);
     }
 
+    @Test(expected = NoSuchElementException.class)
+    public void getPara0() throws Exception {
+        String res = this.getPara("Key");
+    }
+
     @Test
-    public void getPara0() {
+    public void getPara1() throws Exception {
         String res = this.getPara("Key0");
         assertEquals("Value", res);
     }
 
     @Test
-    public void getPara1() {
+    public void getPara2() throws Exception {
         String res = this.getPara("Key1");
         assertEquals("", res);
     }
 
     @Test
-    public void getPara2() {
+    public void getPara3() throws Exception {
         String res = this.getPara("Key2");
         assertEquals("", res);
     }
 
     @Test
-    public void getPara3() {
-        String res = this.getPara("Key0", "DefaultValue");
-        assertEquals("Value", res);
-    }
-
-    @Test
     public void getPara4() {
-        String res = this.getPara("Key1", "DefaultValue");
+        String res = this.getPara("Key", "DefaultValue");
         assertEquals("DefaultValue", res);
     }
 
     @Test
     public void getPara5() {
+        String res = this.getPara("Key0", "DefaultValue");
+        assertEquals("Value", res);
+    }
+
+    @Test
+    public void getPara6() {
+        String res = this.getPara("Key1", "DefaultValue");
+        assertEquals("DefaultValue", res);
+    }
+
+    @Test
+    public void getPara7() {
         String res = this.getPara("Key2", "DefaultValue");
         assertEquals("DefaultValue", res);
     }

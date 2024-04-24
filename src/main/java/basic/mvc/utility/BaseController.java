@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 
 public abstract class BaseController {
 
@@ -25,17 +26,23 @@ public abstract class BaseController {
         return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/";
     }
 
-    public String getPara(String name) {
-        return this.getPara(name, "");
+    public String getPara(String name) throws Exception {
+        try {
+            String str = request.getParameter(name);
+            return escape(str);
+        } catch (NullPointerException e) {
+            throw new NoSuchElementException("No Such Parameter Found in This Request");
+        }
     }
 
     public String getPara(String name, String defaultValue) {
-        String str = request.getParameter(name);
-        str = str.trim();
-        str = StringEscapeUtils.escapeSql(str);
-        str = HtmlUtils.htmlEscape(str);
-        str = JavaScriptUtils.javaScriptEscape(str);
-        return StringUtils.isNotBlank(str) ? str : defaultValue;
+        try {
+            String str = request.getParameter(name);
+            return StringUtils.isNotBlank(str) ? escape(str) : defaultValue;
+        } catch (NullPointerException e) {
+            logger.error("No Such Parameter Found in This Request, Set to Default Value");
+            return defaultValue;
+        }
     }
 
     public void setAttr(String key, Object value) {
@@ -100,6 +107,16 @@ public abstract class BaseController {
             result.put("msg", message);
         }
         this.renderJson(result.toString());
+    }
+
+    private String escape(String str) {
+        str = str.trim();
+        if (StringUtils.isNotBlank(str)) {
+            str = StringEscapeUtils.escapeSql(str);
+            str = HtmlUtils.htmlEscape(str);
+            return JavaScriptUtils.javaScriptEscape(str);
+        }
+        return str;
     }
 
 }
