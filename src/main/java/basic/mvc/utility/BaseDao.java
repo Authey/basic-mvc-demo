@@ -23,94 +23,94 @@ public abstract class BaseDao<T> {
 
     private final Logger logger = Logger.getLogger(this.getClass());
 
-    public void execute(String var1) {
-        this.jdbcTemplate.execute(var1);
+    public void execute(String sql) {
+        jdbcTemplate.execute(sql);
     }
 
-    public void call(CallableStatementCreator var1, List<SqlParameter> var2) throws Exception {
-        this.jdbcTemplate.call(var1, var2);
+    public void call(CallableStatementCreator csc, List<SqlParameter> args) throws Exception {
+        jdbcTemplate.call(csc, args);
     }
 
-    public int update(String var1) throws Exception {
-        return this.jdbcTemplate.update(var1);
+    public int update(String sql) throws Exception {
+        return jdbcTemplate.update(sql);
     }
 
-    public int update(String var1, Object var2) throws Exception {
-        return this.jdbcTemplate.update(var1, var2);
+    public int update(String sql, Object args) throws Exception {
+        return jdbcTemplate.update(sql, args);
     }
 
-    public int update(String var1, Object[] var2) throws Exception {
-        return this.jdbcTemplate.update(var1, var2);
+    public int update(String sql, Object[] args) throws Exception {
+        return jdbcTemplate.update(sql, args);
     }
 
-    public int[] batch(String var1, Object[][] var2) throws Exception {
-        ArrayList<Object[]> var3 = new ArrayList<>();
-        if (var2 != null) {
-            int var4 = 0;
-            for(int var5 = var2.length; var4 < var5; ++var4) {
-                var3.add(var2[var4]);
+    public int[] batch(String sql, Object[][] args) throws Exception {
+        ArrayList<Object[]> batchArgs = new ArrayList<>();
+        if (args != null) {
+            int cur = 0;
+            for(int size = args.length; cur < size; ++cur) {
+                batchArgs.add(args[cur]);
             }
         }
-        return this.jdbcTemplate.batchUpdate(var1, var3);
+        return jdbcTemplate.batchUpdate(sql, batchArgs);
     }
 
-    public int[] batch(String var1, List<Object[]> var2) throws Exception {
-        return this.jdbcTemplate.batchUpdate(var1, var2);
+    public int[] batch(String sql, List<Object[]> args) throws Exception {
+        return jdbcTemplate.batchUpdate(sql, args);
     }
 
-    public List<Map<String, Object>> find(String var1) throws Exception {
-        if (StringUtils.isNotBlank(var1)) {
-            var1 = var1.toUpperCase();
+    public List<Map<String, Object>> find(String sql) throws Exception {
+        if (StringUtils.isNotBlank(sql)) {
+            sql = sql.toUpperCase();
         }
-        return this.jdbcTemplate.queryForList(var1);
+        return jdbcTemplate.queryForList(sql);
     }
 
-    public List<Map<String, Object>> find(String var1, Object var2) throws Exception {
-        if (StringUtils.isNotBlank(var1)) {
-            var1 = var1.toUpperCase();
+    public List<Map<String, Object>> find(String sql, Object args) throws Exception {
+        if (StringUtils.isNotBlank(sql)) {
+            sql = sql.toUpperCase();
         }
-        return this.jdbcTemplate.queryForList(var1, var2);
+        return jdbcTemplate.queryForList(sql, args);
     }
 
-    public List<Map<String, Object>> find(String var1, Object[] var2) throws Exception {
-        if (StringUtils.isNotBlank(var1)) {
-            var1 = var1.toUpperCase();
+    public List<Map<String, Object>> find(String sql, Object[] args) throws Exception {
+        if (StringUtils.isNotBlank(sql)) {
+            sql = sql.toUpperCase();
         }
-        return this.jdbcTemplate.queryForList(var1, var2);
+        return jdbcTemplate.queryForList(sql, args);
     }
 
-    public Object find(Class<T> var1, String var2, Object[] var3) throws Exception {
-        return this.jdbcTemplate.queryForObject(var2, var3, new BeanPropertyRowMapper<T>(var1));
+    public Object find(Class<T> cls, String sql, Object[] args) throws Exception {
+        return jdbcTemplate.queryForObject(sql, args, new BeanPropertyRowMapper<T>(cls));
     }
 
-    public Object findObject(String var1, Class<T> var2) {
-        return this.jdbcTemplate.queryForObject(var1, var2);
+    public Object findObject(String sql, Class<T> cls) {
+        return jdbcTemplate.queryForObject(sql, cls);
     }
 
-    public Object findObject(String var1, Object[] var2, Class<T> var3) {
-        return this.jdbcTemplate.queryForObject(var1, var2, var3);
+    public Object findObject(String sql, Object[] args, Class<T> cls) {
+        return jdbcTemplate.queryForObject(sql, args, cls);
     }
 
-    public Map<String, Object> findMap(String var1) {
+    public Map<String, Object> findMap(String sql) {
         try {
-            if (StringUtils.isNotBlank(var1)) {
-                var1 = var1.toUpperCase();
+            if (StringUtils.isNotBlank(sql)) {
+                sql = sql.toUpperCase();
             }
-            return this.jdbcTemplate.queryForMap(var1);
-        } catch (Exception var3) {
-            logger.error(var3.getMessage());
+            return jdbcTemplate.queryForMap(sql);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
             return null;
         }
     }
 
-    public Map<String, Object> findMap(String var1, Object[] var2) {
+    public Map<String, Object> findMap(String sql, Object[] args) {
         try {
-            if (StringUtils.isNotBlank(var1)) {
-                var1 = var1.toUpperCase();
+            if (StringUtils.isNotBlank(sql)) {
+                sql = sql.toUpperCase();
             }
-            return this.jdbcTemplate.queryForMap(var1, var2);
-        } catch (Exception var4) {
-            logger.error(var4.getMessage());
+            return jdbcTemplate.queryForMap(sql, args);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
             return null;
         }
     }
