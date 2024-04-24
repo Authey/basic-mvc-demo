@@ -3,7 +3,7 @@ package basic.mvc.utility;
 import java.io.Serializable;
 import java.util.List;
 
-public class PageList<T> implements Serializable {
+public class PageList<E> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -15,9 +15,9 @@ public class PageList<T> implements Serializable {
 
     private final long sizeTotal;
 
-    private final List<T> innerList;
+    private final List<E> innerList;
 
-    public PageList(int page, int size, int pageTotal, long sizeTotal, List<T> list) {
+    public PageList(int page, int size, int pageTotal, long sizeTotal, List<E> list) {
         this.page = page;
         this.size = size;
         this.pageTotal = pageTotal;
@@ -41,7 +41,7 @@ public class PageList<T> implements Serializable {
         return this.sizeTotal;
     }
 
-    public List<T> getList() {
+    public List<E> getList() {
         return this.innerList;
     }
 

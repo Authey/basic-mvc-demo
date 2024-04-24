@@ -1,78 +1,91 @@
 package basic.mvc.utility;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import basic.mvc.utility.exception.MapPairUnbalancedException;
+import basic.mvc.utility.exception.NoSuchElementFoundException;
+import net.sf.json.JSONObject;
 
-public class Record<K, V> extends HashMap<K, V> implements Serializable {
+import java.io.Serializable;
+import java.util.*;
+
+public class Record implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Override
-    public int size() {
-        return 0;
+    private final Map<String, Object> data = new HashMap<>();
+
+    public Object get(String key) {
+        if (this.data.containsKey(key)) {
+            return this.data.get(key);
+        }
+        throw new NoSuchElementFoundException("No Such Key [" + key + "] Found in This Record");
     }
 
-    @Override
-    public boolean isEmpty() {
-        return false;
+    public Object get(String key, Object defaultValue) {
+        return this.data.getOrDefault(key, defaultValue);
     }
 
-    @Override
-    public boolean containsKey(Object key) {
-        return false;
+    public void set(String key, Object value) {
+        this.data.put(key, value);
     }
 
-    @Override
-    public boolean containsValue(Object value) {
-        return false;
+    public void set(String[] keys, Object... values) {
+        if (keys.length != values.length) {
+            throw new MapPairUnbalancedException("Key Value Pair Has [" + keys.length + ", " + values.length + "] Elements Which is Unbalanced");
+        }
+        for (int i = 0; i < keys.length; i++) {
+            this.data.put(keys[i], values[i]);
+        }
     }
 
-    @Override
-    public V get(Object key) {
-        return null;
+    public void set(Map<? extends String, ?> map) {
+        this.data.putAll(map);
     }
 
-    @Override
-    public V put(K key, V value) {
-        return null;
+    public void set(Record record) {
+        this.data.putAll(record.getData());
     }
 
-    @Override
-    public V remove(Object key) {
-        return null;
+    public void remove(String key) {
+        this.data.remove(key);
     }
 
-    @Override
-    public void putAll(Map<? extends K, ? extends V> m) {
-
+    public void remove(String... keys) {
+        for(String k : keys) {
+            if (!this.data.containsKey(k)) {
+                throw new NoSuchElementFoundException("No Such Key [" + k + "] Found in This Record");
+            }
+            this.data.remove(k);
+        }
     }
 
-    @Override
-    public Set<K> keySet() {
-        return null;
+    public List<String> getDataKeys() {
+        return new ArrayList<>(this.data.keySet());
     }
 
-    @Override
-    public Collection<V> values() {
-        return null;
+    public List<Object> getDataValues() {
+        return new ArrayList<>(this.data.values());
     }
 
-    @Override
-    public Set<Entry<K, V>> entrySet() {
-        return null;
+    public Map<String, Object> getData() {
+        return this.data;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        return false;
+    public void clear() {
+        this.data.clear();
+    }
+
+    public JSONObject toJson () {
+        return JSONObject.fromObject(this.data);
     }
 
     @Override
     public int hashCode() {
-        return 0;
+        return this.data.hashCode();
+    }
+
+    @Override
+    public String toString () {
+        return JSONObject.fromObject(this.data).toString();
     }
 
 }
