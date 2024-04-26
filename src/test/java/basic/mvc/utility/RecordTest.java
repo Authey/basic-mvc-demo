@@ -1,5 +1,6 @@
 package basic.mvc.utility;
 
+import basic.mvc.utility.exception.MapPairUnbalancedException;
 import basic.mvc.utility.exception.NoSuchElementFoundException;
 import net.sf.json.JSONObject;
 import org.junit.After;
@@ -15,8 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
 public class RecordTest {
@@ -65,13 +65,138 @@ public class RecordTest {
     }
 
     @Test
-    public void remove0() {
+    public void set0() {
+        assertEquals(map, record.getData());
+        assertFalse(map.containsKey("Key2"));
+        record.set("Key2", "Value2");
+        assertNotEquals(map, record.getData());
+        assertFalse(map.containsKey("Key2"));
+        assertTrue(record.getData().containsKey("Key2"));
+        assertEquals("Value2", record.get("Key2"));
+    }
 
+    @Test
+    public void set1() {
+        assertEquals(map, record.getData());
+        assertTrue(map.containsKey("Key1"));
+        assertEquals("Value1", record.get("Key1"));
+        record.set("Key1", "Value2");
+        assertNotEquals(map, record.getData());
+        assertTrue(record.getData().containsKey("Key1"));
+        assertEquals("Value2", record.get("Key1"));
+    }
+
+    @Test
+    public void set2() {
+        assertEquals(map, record.getData());
+        assertFalse(map.containsKey("Key2"));
+        assertFalse(map.containsKey("Key3"));
+        record.set(new String[]{"Key2", "Key3"}, "Value2", "Value3");
+        assertNotEquals(map, record.getData());
+        assertFalse(map.containsKey("Key2"));
+        assertFalse(map.containsKey("Key3"));
+        assertTrue(record.getData().containsKey("Key2"));
+        assertTrue(record.getData().containsKey("Key3"));
+        assertEquals("Value2", record.get("Key2"));
+        assertEquals("Value3", record.get("Key3"));
+    }
+
+    @Test
+    public void set3() {
+        assertEquals(map, record.getData());
+        assertTrue(map.containsKey("Key0"));
+        assertTrue(map.containsKey("Key1"));
+        assertEquals("Value0", record.get("Key0"));
+        assertEquals("Value1", record.get("Key1"));
+        record.set(new String[]{"Key0", "Key1"}, "Value2", "Value3");
+        assertNotEquals(map, record.getData());
+        assertTrue(record.getData().containsKey("Key0"));
+        assertTrue(record.getData().containsKey("Key1"));
+        assertEquals("Value2", record.get("Key0"));
+        assertEquals("Value3", record.get("Key1"));
+    }
+
+    @Test(expected = MapPairUnbalancedException.class)
+    public void set4() {
+        assertEquals(map, record.getData());
+        assertFalse(map.containsKey("Key2"));
+        assertFalse(map.containsKey("Key3"));
+        record.set(new String[]{"Key2", "Key3"}, "Value2");
+    }
+
+    @Test
+    public void set5() {
+        assertEquals(map, record.getData());
+        assertFalse(map.containsKey("Key2"));
+        Map<String, Object> subMap = new HashMap<>();
+        subMap.put("Key2", "Value2");
+        record.set(subMap);
+        assertNotEquals(map, record.getData());
+        assertFalse(map.containsKey("Key2"));
+        assertTrue(record.getData().containsKey("Key2"));
+        assertEquals("Value2", record.get("Key2"));
+    }
+
+    @Test
+    public void set6() {
+        assertEquals(map, record.getData());
+        assertTrue(map.containsKey("Key1"));
+        assertEquals("Value1", record.get("Key1"));
+        Map<String, Object> subMap = new HashMap<>();
+        subMap.put("Key1", "Value2");
+        record.set(subMap);
+        assertNotEquals(map, record.getData());
+        assertTrue(record.getData().containsKey("Key1"));
+        assertEquals("Value2", record.get("Key1"));
+    }
+
+    @Test
+    public void set7() {
+        assertEquals(map, record.getData());
+        assertFalse(map.containsKey("Key2"));
+        Record subRec = new Record();
+        subRec.set("Key2", "Value2");
+        record.set(subRec);
+        assertNotEquals(map, record.getData());
+        assertFalse(map.containsKey("Key2"));
+        assertTrue(record.getData().containsKey("Key2"));
+        assertEquals("Value2", record.get("Key2"));
+    }
+
+    @Test
+    public void set8() {
+        assertEquals(map, record.getData());
+        assertTrue(map.containsKey("Key1"));
+        assertEquals("Value1", record.get("Key1"));
+        Record subRec = new Record();
+        subRec.set("Key1", "Value2");
+        record.set(subRec);
+        assertNotEquals(map, record.getData());
+        assertTrue(record.getData().containsKey("Key1"));
+        assertEquals("Value2", record.get("Key1"));
+    }
+
+    @Test
+    public void remove0() {
+        assertEquals(map, record.getData());
+        assertTrue(map.containsKey("Key0"));
+        record.remove("Key0");
+        assertNotEquals(map, record.getData());
+        assertTrue(map.containsKey("Key0"));
+        assertFalse(record.getData().containsKey("Key0"));
     }
 
     @Test
     public void remove1() {
-
+        assertEquals(map, record.getData());
+        assertTrue(map.containsKey("Key0"));
+        assertTrue(map.containsKey("Key1"));
+        record.remove("Key0", "Key1");
+        assertNotEquals(map, record.getData());
+        assertTrue(map.containsKey("Key0"));
+        assertTrue(map.containsKey("Key1"));
+        assertFalse(record.getData().containsKey("Key0"));
+        assertFalse(record.getData().containsKey("Key1"));
     }
 
     @Test
