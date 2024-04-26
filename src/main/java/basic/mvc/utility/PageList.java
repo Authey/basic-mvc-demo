@@ -1,6 +1,7 @@
 package basic.mvc.utility;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PageList<E> implements Serializable {
@@ -22,7 +23,7 @@ public class PageList<E> implements Serializable {
         this.size = size;
         this.pageTotal = pageTotal;
         this.sizeTotal = sizeTotal;
-        this.innerList = list;
+        this.innerList = new ArrayList<>(list);
     }
 
     public int getPage() {
