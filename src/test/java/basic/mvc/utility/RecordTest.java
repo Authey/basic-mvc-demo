@@ -4,7 +4,6 @@ import basic.mvc.utility.exception.MapPairUnbalancedException;
 import basic.mvc.utility.exception.NoSuchElementFoundException;
 import net.sf.json.JSONObject;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
