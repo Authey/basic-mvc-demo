@@ -3,7 +3,6 @@ package basic.mvc.demo.user.action;
 import basic.mvc.demo.user.service.UserService;
 import basic.mvc.utility.BaseController;
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
