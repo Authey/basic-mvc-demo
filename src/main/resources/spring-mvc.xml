@@ -9,12 +9,20 @@
 
     <mvc:annotation-driven/>
 
-    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <!-- <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/pages/" />
+        <property name="suffix" value=".html" />
+    </bean> -->
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+        <property name="contentType" value="text/html;charset=UTF-8" />
         <property name="suffix" value=".html" />
     </bean>
 
-    <mvc:default-servlet-handler/>
+    <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+        <property name="templateLoaderPath"	value="/WEB-INF/pages" />
+        <property name="defaultEncoding" value="UTF-8" />
+    </bean>
 
     <import resource="spring-jdbc.xml"/>
 
