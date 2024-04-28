@@ -4,7 +4,6 @@ import basic.mvc.demo.user.service.UserService;
 import basic.mvc.utility.BaseController;
 import net.sf.json.JSONArray;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 

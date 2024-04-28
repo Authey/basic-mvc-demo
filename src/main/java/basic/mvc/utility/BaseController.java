@@ -4,8 +4,6 @@ import basic.mvc.utility.exception.NoSuchElementFoundException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.util.HtmlUtils;
 import org.springframework.web.util.JavaScriptUtils;
 
@@ -23,8 +21,6 @@ public abstract class BaseController {
     public HttpServletResponse response;
 
     public final Logger logger = Logger.getLogger(this.getClass());
-
-    public abstract String index();
 
     public String getRootPath() {
         return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/";
