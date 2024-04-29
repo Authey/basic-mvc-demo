@@ -41,4 +41,10 @@
         <constructor-arg index="1" value="BATCH" />
     </bean>
 
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="utf-8" />
+        <property name="maxUploadSize" value="5368709120" />
+        <property name="maxInMemorySize" value="4096" />
+    </bean>
+
 </beans>
