@@ -17,9 +17,19 @@
         <property name="initialSize" value="${jdbc.initialSize}"/>
         <property name="maxWait" value="${jdbc.maxWait}"/>
 
+        <property name="testWhileIdle" value="${jdbc.testWhileIdle}"/>
+        <property name="testOnBorrow" value="${jdbc.testOnBorrow}"/>
+        <property name="testOnReturn" value="${jdbc.testOnReturn}"/>
+
+        <property name="validationQuery" value="${jdbc.validationQuery}"/>
+
         <property name="maxOpenPreparedStatements" value="${jdbc.maxOpenPreparedStatements}"/>
         <property name="removeAbandoned" value="${jdbc.removeAbandoned}"/>
         <property name="removeAbandonedTimeout" value="${jdbc.removeAbandonedTimeout}"/>
+        <property name="timeBetweenEvictionRunsMillis" value="${jdbc.timeBetweenEvictionRunsMillis}"/>
+        <property name="minEvictableIdleTimeMillis" value="${jdbc.minEvictableIdleTimeMillis}"/>
+        <property name="poolPreparedStatements" value="${jdbc.poolPreparedStatements}"/>
+        <property name="maxPoolPreparedStatementPerConnectionSize" value="${jdbc.maxPoolPreparedStatementPerConnectionSize}"/>
     </bean>
 
 </beans>
