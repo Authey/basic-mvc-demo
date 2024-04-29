@@ -4,6 +4,7 @@ import basic.mvc.utility.BaseController;
 import basic.mvc.service.DataService;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,8 +23,7 @@ import java.util.Map;
 @RequestMapping(value = "/general_service")
 public class GeneralServiceController extends BaseController {
 
-    @Resource
-    private DataService dataService;
+    private final DataService dataService;
 
     private static final Map<String, Class<?>> primitiveTypeMap = new HashMap<>();
         static {
@@ -36,6 +36,11 @@ public class GeneralServiceController extends BaseController {
             primitiveTypeMap.put("char", char.class);
             primitiveTypeMap.put("boolean", boolean.class);
         }
+
+    @Autowired
+    public GeneralServiceController(DataService dataService) {
+        this.dataService = dataService;
+    }
 
     // 通用接口测试, 传入测试接口名称及参数类型即可通过Java反射机制调用接口
     @RequestMapping(value = "/invoke", method = RequestMethod.POST)

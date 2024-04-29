@@ -3,6 +3,7 @@ package basic.mvc.demo.user.action;
 import basic.mvc.demo.user.service.UserService;
 import basic.mvc.utility.BaseController;
 import net.sf.json.JSONArray;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,8 +16,12 @@ import java.util.Map;
 @RequestMapping(value = "/user")
 public class UserController extends BaseController {
 
-    @Resource
-    private UserService userService;
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @RequestMapping(value = "/index", method = RequestMethod.GET)
     public String index() {
