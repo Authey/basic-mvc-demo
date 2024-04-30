@@ -39,25 +39,25 @@ public class BaseControllerTest extends BaseController {
     }
 
     @Test(expected = NoSuchElementFoundException.class)
-    public void getPara0() throws Exception {
+    public void getPara0() {
         String res = this.getPara("Key");
         assertNotEquals("Value", res);
     }
 
     @Test
-    public void getPara1() throws Exception {
+    public void getPara1() {
         String res = this.getPara("Key0");
         assertEquals("Value", res);
     }
 
     @Test
-    public void getPara2() throws Exception {
+    public void getPara2() {
         String res = this.getPara("Key1");
         assertEquals("", res);
     }
 
     @Test
-    public void getPara3() throws Exception {
+    public void getPara3() {
         String res = this.getPara("Key2");
         assertEquals("", res);
     }
