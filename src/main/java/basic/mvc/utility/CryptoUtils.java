@@ -37,7 +37,7 @@ public class CryptoUtils {
         if (StringUtils.isBlank(plain)) {
             return "";
         }
-        BigInteger plainInt = new BigInteger(plain.getBytes());
+        BigInteger plainInt = new BigInteger(plain.getBytes(StandardCharsets.UTF_8));
         BigInteger key = new BigInteger(xorKey);
         BigInteger cipherInt = plainInt.xor(key);
         return cipherInt.toString(16);
@@ -51,12 +51,12 @@ public class CryptoUtils {
         BigInteger cipherInt = new BigInteger(cipher, 16);
         BigInteger key = new BigInteger(xorKey);
         BigInteger plainInt = cipherInt.xor(key);
-        return new String(plainInt.toByteArray());
+        return new String(plainInt.toByteArray(), StandardCharsets.UTF_8);
     }
 
     private static SecretKeySpec aesInit(String aesKey) throws NoSuchAlgorithmException {
         SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-        random.setSeed(aesKey.getBytes());
+        random.setSeed(aesKey.getBytes(StandardCharsets.UTF_8));
         KeyGenerator keyGen = KeyGenerator.getInstance("AES");
         keyGen.init(128, random);
         return new SecretKeySpec(keyGen.generateKey().getEncoded(), "AES");
