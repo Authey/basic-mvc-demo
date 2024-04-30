@@ -20,10 +20,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(locations = "classpath:spring-mvc.xml")
 public class UserControllerTest {
 
-    MockMvc mvc;
+    private MockMvc mvc;
 
     @Autowired
-    WebApplicationContext context;
+    private WebApplicationContext context;
 
     @Before
     public void before() {

@@ -6,21 +6,8 @@
 </head>
 <body>
     <div>User Index</div>
-    <button id="user-display">Display</button>
-    <div id="user-info"></div>
+    <form action="query" method="post">
+        <button type="submit">Load User</button>
+    </form>
 </body>
 </html>
-
-<script type="application/javascript">
-    document.getElementById("user-display").addEventListener("click", function () {
-        let xhr = new XMLHttpRequest();
-        xhr.open("POST", "query", true);
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                let data = JSON.parse(xhr.responseText);
-                document.getElementById("user-info").innerHTML = data.result;
-            }
-        };
-        xhr.send();
-    })
-</script>

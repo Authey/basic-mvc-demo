@@ -9,14 +9,15 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
 import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
 public class BaseControllerTest extends BaseController {
 
-    MockHttpServletRequest request = new MockHttpServletRequest();
+    private final MockHttpServletRequest request = new MockHttpServletRequest();
 
-    MockHttpServletResponse response = new MockHttpServletResponse(); // No need to .reset() after committing the response in content acquiring
+    private final MockHttpServletResponse response = new MockHttpServletResponse(); // No need to .reset() after committing the response in content acquiring
 
     @Before
     public void before() {
@@ -38,25 +39,24 @@ public class BaseControllerTest extends BaseController {
     }
 
     @Test(expected = NoSuchElementFoundException.class)
-    public void getPara0() throws Exception {
-        String res = this.getPara("Key");
-        assertNotEquals("Value", res);
+    public void getPara0() {
+        this.getPara("Key");
     }
 
     @Test
-    public void getPara1() throws Exception {
+    public void getPara1() {
         String res = this.getPara("Key0");
         assertEquals("Value", res);
     }
 
     @Test
-    public void getPara2() throws Exception {
+    public void getPara2() {
         String res = this.getPara("Key1");
         assertEquals("", res);
     }
 
     @Test
-    public void getPara3() throws Exception {
+    public void getPara3() {
         String res = this.getPara("Key2");
         assertEquals("", res);
     }

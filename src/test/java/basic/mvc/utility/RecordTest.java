@@ -20,9 +20,9 @@ import static org.junit.Assert.*;
 @RunWith(JUnit4.class)
 public class RecordTest {
 
-    Record record = new Record();
+    private Record record = new Record();
 
-    Map<String, Object> map = new HashMap<>();
+    private Map<String, Object> map = new HashMap<>();
 
     @Before
     public void before() throws NoSuchFieldException, IllegalAccessException {
@@ -45,8 +45,7 @@ public class RecordTest {
 
     @Test(expected = NoSuchElementFoundException.class)
     public void get1() {
-        String res = (String) record.get("Key2");
-        assertNotEquals("Value", res);
+        record.get("Key2");
     }
 
     @Test

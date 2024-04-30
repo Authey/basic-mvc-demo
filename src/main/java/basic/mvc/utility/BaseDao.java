@@ -3,22 +3,22 @@ package basic.mvc.utility;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlParameter;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public abstract class BaseDao<T> {
 
-    @Resource
+    @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Resource
+    @Autowired
     public SqlSessionTemplate sqlSessionTemplate;
 
     private final Logger logger = Logger.getLogger(this.getClass());

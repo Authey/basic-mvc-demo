@@ -4,21 +4,25 @@ import basic.mvc.utility.exception.NoSuchElementFoundException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.util.HtmlUtils;
 import org.springframework.web.util.JavaScriptUtils;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Properties;
 
 public abstract class BaseController {
 
-    @Resource
+    @Autowired
     public HttpServletRequest request;
 
-    @Resource
+    @Autowired
     public HttpServletResponse response;
+
+    @Autowired
+    public Properties constant;
 
     public final Logger logger = Logger.getLogger(this.getClass());
 
