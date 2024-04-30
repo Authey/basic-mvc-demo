@@ -45,8 +45,7 @@ public class RecordTest {
 
     @Test(expected = NoSuchElementFoundException.class)
     public void get1() {
-        String res = (String) record.get("Key2");
-        assertNotEquals("Value", res);
+        record.get("Key2");
     }
 
     @Test

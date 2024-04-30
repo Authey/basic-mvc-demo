@@ -1,7 +1,6 @@
 package basic.mvc.utility;
 
-import org.junit.Assert;
-import org.junit.Before;
+import basic.mvc.utility.exception.SessionTokenExpiredException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -27,12 +26,6 @@ public class CryptoUtilsTest {
     private final String xorKey = "4933910847463829232312312";
 
     private final String aesKey = "NyS4HAR3zYlS1BzQ077l9gSPU";
-
-
-    @Before
-    public void before() {
-
-    }
 
     @Test
     public void base64Encode() {
@@ -79,18 +72,45 @@ public class CryptoUtilsTest {
     }
 
     @Test
-    public void aesEncrypt() throws IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
-        byte[] res = CryptoUtils.aesEncrypt(str, aesKey);
-        assertEquals(48, res.length);
-        byte[] cipher = CryptoUtils.aesEncrypt(UUID.randomUUID().toString(), aesKey);
-        assertNotEquals(new String(res, StandardCharsets.UTF_8), new String(cipher, StandardCharsets.UTF_8));
+    public void aesCrypt() throws IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        byte[] cipher = CryptoUtils.aesEncrypt(str, aesKey);
+        String plain = CryptoUtils.aesDecrypt(cipher, aesKey);
+        assertEquals(str, plain);
     }
 
     @Test
-    public void aesDecrypt() throws IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
-        byte[] cipher = CryptoUtils.aesEncrypt(str, aesKey);
-        String res = CryptoUtils.aesDecrypt(cipher, aesKey);
-        assertEquals(str, res);
+    public void tokenCrypt0() throws IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        String token = CryptoUtils.tokenGenerate(str, aesKey, xorKey);
+        String info = CryptoUtils.tokenAnalyse(token, aesKey, xorKey);
+        assertEquals(str, info);
+    }
+
+    @Test(expected = SessionTokenExpiredException.class)
+    public void tokenCrypt1() throws IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        String content = str + ":" + System.currentTimeMillis();
+        byte[] cipher = CryptoUtils.aesEncrypt(content, aesKey);
+        String cipher64 = CryptoUtils.base64Encode(cipher).replace("+", "_");
+        String token = CryptoUtils.encrypt(cipher64, xorKey);
+        CryptoUtils.tokenAnalyse(token, aesKey, xorKey);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void tokenCrypt2() throws IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        CryptoUtils.tokenGenerate("", aesKey, xorKey);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void tokenCrypt3() throws IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        CryptoUtils.tokenAnalyse("", aesKey, xorKey);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void tokenCrypt4() throws IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        String content = str + "#" + (System.currentTimeMillis() + (3 * 60 * 60 * 1000));
+        byte[] cipher = CryptoUtils.aesEncrypt(content, aesKey);
+        String cipher64 = CryptoUtils.base64Encode(cipher).replace("+", "_");
+        String token = CryptoUtils.encrypt(cipher64, xorKey);
+        CryptoUtils.tokenAnalyse(token, aesKey, xorKey);
     }
 
 }
