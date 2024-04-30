@@ -14,11 +14,11 @@ import static org.junit.Assert.assertNotEquals;
 @RunWith(JUnit4.class)
 public class PageListTest {
 
-    List<Record> recList = new ArrayList<>();
+    private final List<Record> recList = new ArrayList<>();
 
-    PageList<Record> pageRecList0;
+    private PageList<Record> pageRecList0;
 
-    PageList<Record> pageRecList1;
+    private PageList<Record> pageRecList1;
 
     @Before
     public void before() {

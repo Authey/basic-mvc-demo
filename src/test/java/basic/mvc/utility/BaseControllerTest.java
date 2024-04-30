@@ -15,9 +15,9 @@ import static org.junit.Assert.*;
 @RunWith(JUnit4.class)
 public class BaseControllerTest extends BaseController {
 
-    MockHttpServletRequest request = new MockHttpServletRequest();
+    private final MockHttpServletRequest request = new MockHttpServletRequest();
 
-    MockHttpServletResponse response = new MockHttpServletResponse(); // No need to .reset() after committing the response in content acquiring
+    private final MockHttpServletResponse response = new MockHttpServletResponse(); // No need to .reset() after committing the response in content acquiring
 
     @Before
     public void before() {
