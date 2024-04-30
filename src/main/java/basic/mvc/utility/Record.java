@@ -33,7 +33,7 @@ public class Record implements Serializable {
 
     public void set(String[] keys, Object... values) {
         if (keys.length != values.length) {
-            throw new MapPairUnbalancedException("Key Value Pair Has [" + keys.length + ", " + values.length + "] Elements Which is Unbalanced");
+            throw new MapPairUnbalancedException("Key-Value Pair Unbalanced Has [" + keys.length + ", " + values.length + "] Elements");
         }
         for (int i = 0; i < keys.length; i++) {
             this.data.put(keys[i], values[i]);
