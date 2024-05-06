@@ -142,9 +142,9 @@ public class CryptoUtilsTest {
 
     @Test
     public void toHex0() {
-        byte[] src = new byte[]{-128, 127, -127, 59, -64, 64, -97, 36};
+        byte[] src = new byte[]{-128, 127, -127, 59, -64, 64, -97, 36, -39, 89};
         String res = CryptoUtils.toHex(src);
-        assertEquals("807F813BC0409F24", res.toUpperCase());
+        assertEquals("807F813BC0409F24D959", res.toUpperCase());
     }
 
     @Test
