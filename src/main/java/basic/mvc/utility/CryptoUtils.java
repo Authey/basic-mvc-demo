@@ -1,5 +1,6 @@
 package basic.mvc.utility;
 
+import basic.mvc.utility.exception.CryptoProcessFailedException;
 import basic.mvc.utility.exception.SessionTokenExpiredException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Base64Utils;
@@ -9,6 +10,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
@@ -16,11 +18,14 @@ public class CryptoUtils {
 
     private static final Cipher engine;
 
+    private static final MessageDigest digest;
+
     static {
         try {
             engine = Cipher.getInstance("AES");
+            digest = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            throw new RuntimeException(e);
+            throw new CryptoProcessFailedException("Failed to Initial Crypto Utils: ", e);
         }
     }
 
@@ -54,26 +59,38 @@ public class CryptoUtils {
         return new String(plainInt.toByteArray(), StandardCharsets.UTF_8);
     }
 
-    private static SecretKeySpec aesInit(String aesKey) throws NoSuchAlgorithmException {
-        SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-        random.setSeed(aesKey.getBytes(StandardCharsets.UTF_8));
-        KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-        keyGen.init(128, random);
-        return new SecretKeySpec(keyGen.generateKey().getEncoded(), "AES");
+    private static SecretKeySpec aesInit(String aesKey) {
+        try {
+            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+            random.setSeed(aesKey.getBytes(StandardCharsets.UTF_8));
+            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+            keyGen.init(128, random);
+            return new SecretKeySpec(keyGen.generateKey().getEncoded(), "AES");
+        } catch (NoSuchAlgorithmException e) {
+            throw new CryptoProcessFailedException("Failed to Initial AES Crypto: ", e);
+        }
     }
 
-    public static byte[] aesEncrypt(String plain, String aesKey) throws NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        engine.init(Cipher.ENCRYPT_MODE, aesInit(aesKey));
-        return engine.doFinal(plain.getBytes(StandardCharsets.UTF_8));
+    public static byte[] aesEncrypt(String plain, String aesKey) {
+        try {
+            engine.init(Cipher.ENCRYPT_MODE, aesInit(aesKey));
+            return engine.doFinal(plain.getBytes(StandardCharsets.UTF_8));
+        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+            throw new CryptoProcessFailedException("Failed to Perform AES Encryption: ", e);
+        }
     }
 
-    public static String aesDecrypt(byte[] cipher, String aesKey) throws NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        engine.init(Cipher.DECRYPT_MODE, aesInit(aesKey));
-        return new String(engine.doFinal(cipher), StandardCharsets.UTF_8);
+    public static String aesDecrypt(byte[] cipher, String aesKey) {
+        try {
+            engine.init(Cipher.DECRYPT_MODE, aesInit(aesKey));
+            return new String(engine.doFinal(cipher), StandardCharsets.UTF_8);
+        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+            throw new CryptoProcessFailedException("Failed to Perform AES Decryption: ", e);
+        }
     }
 
     // Info -> Content -> AES Cipher -> Base64 Cipher -> XOR Cipher
-    public static String tokenGenerate(String info, String aesKey, String xorKey) throws NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    public static String tokenGenerate(String info, String aesKey, String xorKey) {
         assert StringUtils.isNotBlank(info);
         String content = info + ":" + (System.currentTimeMillis() + (3 * 60 * 60 * 1000));
         byte[] cipher = aesEncrypt(content, aesKey);
@@ -82,7 +99,7 @@ public class CryptoUtils {
     }
 
     // XOR Cipher -> Base64 Cipher -> AES Cipher -> Content -> Info
-    public static String tokenAnalyse(String token, String aesKey, String xorKey) throws NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    public static String tokenAnalyse(String token, String aesKey, String xorKey) {
         assert StringUtils.isNotBlank(token);
         String cipher64 = decrypt(token, xorKey);
         byte[] cipher = base64Decode(cipher64.replace("_", "+"));
@@ -93,6 +110,10 @@ public class CryptoUtils {
             throw new SessionTokenExpiredException("Session Token [" + token + "] Has Already Expired");
         }
         return infoList[0];
+    }
+
+    public static String hash(String plain) {
+        return null;
     }
 
 }
