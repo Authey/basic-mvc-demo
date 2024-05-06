@@ -1,5 +1,6 @@
 package basic.mvc.utility;
 
+import basic.mvc.utility.exception.CryptoProcessFailedException;
 import basic.mvc.utility.exception.SessionTokenExpiredException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -72,22 +73,48 @@ public class CryptoUtilsTest {
     }
 
     @Test
-    public void aesCrypt() throws IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+    public void hash() {
+        byte[] cipher = CryptoUtils.hash("Plain");
+        assertEquals(32, cipher.length);
+    }
+
+    @Test
+    public void aesCrypt() {
         byte[] cipher = CryptoUtils.aesEncrypt(str, aesKey);
         String plain = CryptoUtils.aesDecrypt(cipher, aesKey);
         assertEquals(str, plain);
     }
 
     @Test
-    public void tokenCrypt0() throws IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+    public void aesEncrypt() {
+        byte[] cipher = CryptoUtils.aesEncrypt("Plain", aesKey);
+        assertEquals(16, cipher.length);
+    }
+
+    @Test(expected = CryptoProcessFailedException.class)
+    public void aesDecrypt() {
+        String plain = CryptoUtils.aesDecrypt("Cipher".getBytes(StandardCharsets.UTF_8), aesKey);
+        assertNotEquals(str, plain);
+    }
+
+    @Test
+    public void tokenCrypt0() {
         String token = CryptoUtils.tokenGenerate(str, aesKey, xorKey);
         String info = CryptoUtils.tokenAnalyse(token, aesKey, xorKey);
         assertEquals(str, info);
     }
 
+    @Test
+    public void tokenCrypt1() {
+        String token = CryptoUtils.tokenGenerate(str, aesKey, xorKey);
+        assertEquals(128, token.length());
+        String info = CryptoUtils.tokenAnalyse(token, aesKey, xorKey);
+        assertEquals(str.length(), info.length());
+    }
+
     @Test(expected = SessionTokenExpiredException.class)
-    public void tokenCrypt1() throws IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
-        String content = str + ":" + System.currentTimeMillis();
+    public void tokenCrypt2() {
+        String content = str + ":" + (System.currentTimeMillis() - (60 * 60 * 1000));
         byte[] cipher = CryptoUtils.aesEncrypt(content, aesKey);
         String cipher64 = CryptoUtils.base64Encode(cipher).replace("+", "_");
         String token = CryptoUtils.encrypt(cipher64, xorKey);
@@ -95,22 +122,41 @@ public class CryptoUtilsTest {
     }
 
     @Test(expected = AssertionError.class)
-    public void tokenCrypt2() throws IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+    public void tokenCrypt3() {
         CryptoUtils.tokenGenerate("", aesKey, xorKey);
     }
 
     @Test(expected = AssertionError.class)
-    public void tokenCrypt3() throws IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+    public void tokenCrypt4() {
         CryptoUtils.tokenAnalyse("", aesKey, xorKey);
     }
 
     @Test(expected = AssertionError.class)
-    public void tokenCrypt4() throws IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+    public void tokenCrypt5() {
         String content = str + "#" + (System.currentTimeMillis() + (3 * 60 * 60 * 1000));
         byte[] cipher = CryptoUtils.aesEncrypt(content, aesKey);
         String cipher64 = CryptoUtils.base64Encode(cipher).replace("+", "_");
         String token = CryptoUtils.encrypt(cipher64, xorKey);
         CryptoUtils.tokenAnalyse(token, aesKey, xorKey);
+    }
+
+    @Test
+    public void toHex0() {
+        byte[] src = new byte[]{-128, 127, -127, 59, -64, 64, -97, 36, -39, 89};
+        String res = CryptoUtils.toHex(src);
+        assertEquals("807F813BC0409F24D959", res.toUpperCase());
+    }
+
+    @Test
+    public void toHex1() {
+        String hex = CryptoUtils.toHex(CryptoUtils.hash(str));
+        assertEquals(64, hex.length());
+    }
+
+    @Test
+    public void toHex2() {
+        String hex = CryptoUtils.toHex(CryptoUtils.aesEncrypt(str, aesKey));
+        assertEquals((int) Math.ceil((double) (str.length() + 1) / 16) * 32, hex.length());
     }
 
 }

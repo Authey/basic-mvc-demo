@@ -44,7 +44,7 @@ public abstract class BaseController {
             String str = request.getParameter(name);
             return StringUtils.isNotBlank(str) ? escape(str) : defaultValue;
         } catch (NullPointerException e) {
-            logger.error("No Such Parameter Found in This Request, Set to Default Value");
+            logger.warn("No Such Parameter [" + name + "] Found in This Request, Set to Default Value");
             return defaultValue;
         }
     }

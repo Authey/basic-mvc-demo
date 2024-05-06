@@ -34,12 +34,12 @@ public class UserController extends BaseController {
     @ResponseBody
     public void query() {
         try {
-            List<Map<String, Object>> userList = userService.find("SELECT ID, USER_NAME, AUTH_LEVEL FROM SYS_USER");
+            List<Map<String, Object>> userList = userService.find("SELECT ID, USERNAME, AUTH_LEVEL FROM SYS_USER");
             logger.info("User List: " + userList);
             JSONArray json = JSONArray.fromObject(userList);
             this.renderJson(json.toString());
         } catch (Exception e) {
-            logger.error("Cannot Query User Information");
+            logger.error("Failed to Query User Information: ", e);
         }
     }
 
