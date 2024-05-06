@@ -26,16 +26,17 @@ public class GeneralServiceController extends BaseController {
     private final DataService dataService;
 
     private static final Map<String, Class<?>> primitiveTypeMap = new HashMap<>();
-        static {
-            primitiveTypeMap.put("byte", byte.class);
-            primitiveTypeMap.put("short", short.class);
-            primitiveTypeMap.put("int", int.class);
-            primitiveTypeMap.put("long", long.class);
-            primitiveTypeMap.put("float", float.class);
-            primitiveTypeMap.put("double", double.class);
-            primitiveTypeMap.put("char", char.class);
-            primitiveTypeMap.put("boolean", boolean.class);
-        }
+
+    static {
+        primitiveTypeMap.put("byte", byte.class);
+        primitiveTypeMap.put("short", short.class);
+        primitiveTypeMap.put("int", int.class);
+        primitiveTypeMap.put("long", long.class);
+        primitiveTypeMap.put("float", float.class);
+        primitiveTypeMap.put("double", double.class);
+        primitiveTypeMap.put("char", char.class);
+        primitiveTypeMap.put("boolean", boolean.class);
+    }
 
     @Autowired
     public GeneralServiceController(DataService dataService) {
