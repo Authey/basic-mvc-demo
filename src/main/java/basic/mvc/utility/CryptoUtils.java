@@ -25,7 +25,7 @@ public class CryptoUtils {
             engine = Cipher.getInstance("AES");
             digest = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            throw new CryptoProcessFailedException("Failed to Initial Crypto Utils: ", e);
+            throw new CryptoProcessFailedException("Initial Crypto Utils Failed: ", e);
         }
     }
 
@@ -59,6 +59,11 @@ public class CryptoUtils {
         return new String(plainInt.toByteArray(), StandardCharsets.UTF_8);
     }
 
+    public static byte[] hash(String plain) {
+        digest.update(plain.getBytes(StandardCharsets.UTF_8));
+        return digest.digest();
+    }
+
     private static SecretKeySpec aesInit(String aesKey) {
         try {
             SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
@@ -67,7 +72,7 @@ public class CryptoUtils {
             keyGen.init(128, random);
             return new SecretKeySpec(keyGen.generateKey().getEncoded(), "AES");
         } catch (NoSuchAlgorithmException e) {
-            throw new CryptoProcessFailedException("Failed to Initial AES Crypto: ", e);
+            throw new CryptoProcessFailedException("Initial AES Crypto Failed: ", e);
         }
     }
 
@@ -76,7 +81,7 @@ public class CryptoUtils {
             engine.init(Cipher.ENCRYPT_MODE, aesInit(aesKey));
             return engine.doFinal(plain.getBytes(StandardCharsets.UTF_8));
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
-            throw new CryptoProcessFailedException("Failed to Perform AES Encryption: ", e);
+            throw new CryptoProcessFailedException("Perform AES Encryption Failed: ", e);
         }
     }
 
@@ -85,7 +90,7 @@ public class CryptoUtils {
             engine.init(Cipher.DECRYPT_MODE, aesInit(aesKey));
             return new String(engine.doFinal(cipher), StandardCharsets.UTF_8);
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
-            throw new CryptoProcessFailedException("Failed to Perform AES Decryption: ", e);
+            throw new CryptoProcessFailedException("Perform AES Decryption Failed: ", e);
         }
     }
 
@@ -112,8 +117,14 @@ public class CryptoUtils {
         return infoList[0];
     }
 
-    public static String hash(String plain) {
-        return null;
+    public static String toHex(byte[] cipher) {
+        StringBuilder hexStr = new StringBuilder();
+        for (byte b : cipher) {
+            String curHex = Integer.toHexString(b & 0xFF);
+            hexStr.append(curHex.length() == 1 ? "0" : "");
+            hexStr.append(curHex);
+        }
+        return hexStr.toString();
     }
 
 }
