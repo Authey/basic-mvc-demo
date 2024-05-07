@@ -14,6 +14,7 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -30,6 +31,8 @@ public class CryptoUtilsTest {
     private final String xorKey = "4933910847463829232312312";
 
     private final String aesKey = CryptoUtils.secretKeyGenerate(uid);
+
+    private final Map<String, String> rsaKey = CryptoUtils.keyPairGenerate(uid);
 
     @Test
     public void base64Encode() {
@@ -85,10 +88,12 @@ public class CryptoUtilsTest {
     public void secretKeyGenerate() {
         String res = CryptoUtils.secretKeyGenerate(uid);
         assertEquals(aesKey, res);
+        assertEquals(44, res.length()); // 32 + 12 = 44
         String dum = "MyS4HAR3zYlS1BzQ077l9gSPO";
         assertNotEquals(uid, dum);
         String fake = CryptoUtils.secretKeyGenerate(dum);
         assertNotEquals(aesKey, fake);
+        assertEquals(44, fake.length()); // 32 + 12 = 44
     }
 
     @Test
@@ -108,6 +113,35 @@ public class CryptoUtilsTest {
     public void aesDecrypt() {
         String plain = CryptoUtils.aesDecrypt("Cipher".getBytes(StandardCharsets.UTF_8), aesKey);
         assertNotEquals(str, plain);
+    }
+
+    @Test
+    public void keyPairGenerate() {
+        Map<String, String> res = CryptoUtils.keyPairGenerate(uid);
+        assertEquals(rsaKey, res);
+        String dum = "MyS4HAR3zYlS1BzQ077l9gSPO";
+        assertNotEquals(uid, dum);
+        Map<String, String> fake = CryptoUtils.keyPairGenerate(dum);
+        assertNotEquals(rsaKey, fake);
+    }
+
+    @Test
+    public void rsaCrypto() {
+        byte[] cipher = CryptoUtils.rsaPublicEncrypt(str, rsaKey.get("pubKey"));
+        String plain = CryptoUtils.rsaPrivateDecrypt(cipher, rsaKey.get("priKey"));
+        assertEquals(str, plain);
+        String encoded = CryptoUtils.base64Encode(cipher);
+        byte[] hashed = CryptoUtils.hash(encoded);
+        assertTrue(hashed.length <= 256 - 11);
+        byte[] cipherHash = CryptoUtils.rsaPrivateEncrypt(hashed, rsaKey.get("priKey"));
+        byte[] plainHash = CryptoUtils.rsaPublicDecrypt(cipherHash, rsaKey.get("pubKey"));
+        assertArrayEquals(hashed, plainHash);
+        byte[] cipherFur = CryptoUtils.rsaPrivateEncrypt(src, rsaKey.get("priKey"));
+        byte[] plainFur = CryptoUtils.rsaPublicDecrypt(cipherFur, rsaKey.get("pubKey"));
+        assertArrayEquals(src, plainFur);
+        byte[] sign = CryptoUtils.rsaSign(cipher, rsaKey.get("priKey"));
+        boolean verify = CryptoUtils.rsaVerify(cipher, sign, rsaKey.get("pubKey"));
+        assertTrue(verify);
     }
 
     @Test
@@ -162,14 +196,23 @@ public class CryptoUtilsTest {
 
     @Test
     public void toHex1() {
-        String hex = CryptoUtils.toHex(CryptoUtils.hash(str));
-        assertEquals(64, hex.length());
+        byte[] res = CryptoUtils.hash(str);
+        String hex = CryptoUtils.toHex(res);
+        assertEquals(2 * res.length, hex.length());
     }
 
     @Test
     public void toHex2() {
-        String hex = CryptoUtils.toHex(CryptoUtils.aesEncrypt(str, aesKey));
-        assertEquals((int) Math.ceil((double) (str.length() + 1) / 16) * 32, hex.length());
+        byte[] res = CryptoUtils.aesEncrypt(str, aesKey);
+        String hex = CryptoUtils.toHex(res);
+        assertEquals(2 * res.length, hex.length());
+    }
+
+    @Test
+    public void toHex3() {
+        byte[] res = CryptoUtils.rsaPublicEncrypt(str, rsaKey.get("pubKey"));
+        String hex = CryptoUtils.toHex(res);
+        assertEquals(2 * res.length, hex.length());
     }
 
 }

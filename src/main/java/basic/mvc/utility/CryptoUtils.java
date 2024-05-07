@@ -104,12 +104,20 @@ public final class CryptoUtils {
         }
     }
 
+    private static Signature signatureInit() {
+        try {
+            return Signature.getInstance("SHA256withRSA");
+        } catch (NoSuchAlgorithmException e) {
+            throw new CryptoProcessFailedException("Initial Signature Engine Failed: ", e);
+        }
+    }
+
     public static Map<String, String> keyPairGenerate(String uid) {
         try {
             SecureRandom random = new SecureRandom();
             random.setSeed(uid.getBytes(StandardCharsets.UTF_8));
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-            keyGen.initialize(1048, random);
+            keyGen.initialize(2048, random);
             KeyPair keyPair = keyGen.generateKeyPair();
             byte[] pubKey = keyPair.getPublic().getEncoded();
             byte[] priKey = keyPair.getPrivate().getEncoded();
@@ -147,7 +155,7 @@ public final class CryptoUtils {
     }
 
     // Send - Encrypt Using Public Key of Oppo
-    public static byte[] rsaEncrypt(String plain, String pubKey) {
+    public static byte[] rsaPublicEncrypt(String plain, String pubKey) {
         try {
             Cipher engine = cipherInit("RSA");
             engine.init(Cipher.ENCRYPT_MODE, publicKeyConvert(pubKey));
@@ -158,7 +166,7 @@ public final class CryptoUtils {
     }
 
     // Receive - Decrypt Using Private Key of Self
-    public static String rsaDecrypt(byte[] cipher, String priKey) {
+    public static String rsaPrivateDecrypt(byte[] cipher, String priKey) {
         try {
             Cipher engine = cipherInit("RSA");
             engine.init(Cipher.DECRYPT_MODE, privateKeyConvert(priKey));
@@ -168,25 +176,47 @@ public final class CryptoUtils {
         }
     }
 
-    // Send - Sign Using Private Key of Self
-    public static byte[] rsaSign(byte[] plain, String priKey) {
+    // Send - Encrypt Using Private Key of Self
+    public static byte[] rsaPrivateEncrypt(byte[] plain, String priKey) {
         try {
             Cipher engine = cipherInit("RSA");
             engine.init(Cipher.ENCRYPT_MODE, privateKeyConvert(priKey));
             return engine.doFinal(plain);
-        } catch (Exception e) {
-            throw new CryptoProcessFailedException("Perform RSA Signature Failed: ", e);
+        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+            throw new CryptoProcessFailedException("Perform RSA Encryption Failed: ", e);
         }
     }
 
-    // Receive - Verify Using Public Key of Oppo
-    public static byte[] rsaVerify(byte[] cipher, String pubKey) {
+    // Receive - Decrypt Using Public Key of Oppo
+    public static byte[] rsaPublicDecrypt(byte[] cipher, String pubKey) {
         try {
             Cipher engine = cipherInit("RSA");
             engine.init(Cipher.DECRYPT_MODE, publicKeyConvert(pubKey));
             return engine.doFinal(cipher);
-        } catch (Exception e) {
-            throw new CryptoProcessFailedException("Perform RSA Verification Failed: ", e);
+        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+            throw new CryptoProcessFailedException("Perform RSA Decryption Failed: ", e);
+        }
+    }
+
+    public static byte[] rsaSign(byte[] data, String priKey) {
+        try {
+            Signature engine = signatureInit();
+            engine.initSign(privateKeyConvert(priKey));
+            engine.update(data);
+            return engine.sign();
+        } catch (InvalidKeyException | SignatureException e) {
+            throw new CryptoProcessFailedException("Perform RSA Signature Failed: ", e);
+        }
+    }
+
+    public static boolean rsaVerify(byte[] data, byte[] sign, String pubKey) {
+        try {
+            Signature engine = signatureInit();
+            engine.initVerify(publicKeyConvert(pubKey));
+            engine.update(data);
+            return engine.verify(sign);
+        } catch (InvalidKeyException | SignatureException e){
+            throw new CryptoProcessFailedException("Perform RSA Verification Failed: ");
         }
     }
 
