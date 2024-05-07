@@ -104,6 +104,78 @@ public final class CryptoUtils {
         }
     }
 
+    public static Map<String, String> keyPairGenerate(String uid) {
+        return new HashMap<>();
+    }
+
+    // X509 Standard For Public Key
+    private static PublicKey publicKeyConvert(String publicKey) {
+        try {
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            byte[] decodedKey = base64Decode(publicKey);
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(decodedKey);
+            return keyFactory.generatePublic(keySpec);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new CryptoProcessFailedException("Acquire RSA Public Key Failed: ", e);
+        }
+    }
+
+    // PKCS8 Standard For Private Key
+    private static PrivateKey privateKeyConvert(String privateKey) {
+        try {
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            byte[] decodedKey = base64Decode(privateKey);
+            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(decodedKey);
+            return keyFactory.generatePrivate(keySpec);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new CryptoProcessFailedException("Acquire RSA Private Key Failed: ", e);
+        }
+    }
+
+    // Send - Encrypt Using Public Key of Oppo
+    public static byte[] rsaEncrypt(String plain, String pubKey) {
+        try {
+            Cipher engine = cipherInit("RSA");
+            PublicKey publicKey = publicKeyConvert(pubKey);
+            return null;
+        } catch (Exception e) {
+            throw new CryptoProcessFailedException("Perform RSA Encryption Failed: ", e);
+        }
+    }
+
+    // Receive - Decrypt Using Private Key of Self
+    public static byte[] rsaDecrypt(String cipher, String priKey) {
+        try {
+            Cipher engine = cipherInit("RSA");
+            PrivateKey privateKey = privateKeyConvert(priKey);
+            return null;
+        } catch (Exception e) {
+            throw new CryptoProcessFailedException("Perform RSA Decryption Failed: ", e);
+        }
+    }
+
+    // Send - Sign Using Private Key of Self
+    public static byte[] rsaSign(String plain, String priKey) {
+        try {
+            Cipher engine = cipherInit("RSA");
+            PrivateKey privateKey = privateKeyConvert(priKey);
+            return null;
+        } catch (Exception e) {
+            throw new CryptoProcessFailedException("Perform RSA Signature Failed: ", e);
+        }
+    }
+
+    // Receive - Verify Using Public Key of Oppo
+    public static byte[] rsaVerify(String cipher, String pubKey) {
+        try {
+            Cipher engine = cipherInit("RSA");
+            PublicKey publicKey = publicKeyConvert(pubKey);
+            return null;
+        } catch (Exception e) {
+            throw new CryptoProcessFailedException("Perform RSA Verification Failed: ", e);
+        }
+    }
+
     // Info -> Content -> AES Cipher -> Base64 Cipher -> XOR Cipher
     public static String tokenGenerate(String info, String aesKey, String xorKey) {
         assert StringUtils.isNotBlank(info);
