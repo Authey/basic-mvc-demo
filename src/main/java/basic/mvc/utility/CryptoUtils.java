@@ -75,7 +75,7 @@ public final class CryptoUtils {
             byte[] secretKey = keyGen.generateKey().getEncoded();
             return base64Encode(secretKey);
         } catch (NoSuchAlgorithmException e) {
-            throw new CryptoProcessFailedException("Convert AES Secret Key Failed: ", e);
+            throw new CryptoProcessFailedException("Generate AES Secret Key Failed: ", e);
         }
     }
 
@@ -105,14 +105,28 @@ public final class CryptoUtils {
     }
 
     public static Map<String, String> keyPairGenerate(String uid) {
-        return new HashMap<>();
+        try {
+            SecureRandom random = new SecureRandom();
+            random.setSeed(uid.getBytes(StandardCharsets.UTF_8));
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+            keyGen.initialize(1048, random);
+            KeyPair keyPair = keyGen.generateKeyPair();
+            byte[] pubKey = keyPair.getPublic().getEncoded();
+            byte[] priKey = keyPair.getPrivate().getEncoded();
+            Map<String, String> keyPairMap = new HashMap<>();
+            keyPairMap.put("pubKey", base64Encode(pubKey));
+            keyPairMap.put("priKey", base64Encode(priKey));
+            return keyPairMap;
+        } catch (NoSuchAlgorithmException e) {
+            throw new CryptoProcessFailedException("Generate RSA Key Pair Failed: ", e);
+        }
     }
 
     // X509 Standard For Public Key
-    private static PublicKey publicKeyConvert(String publicKey) {
+    private static PublicKey publicKeyConvert(String pubKey) {
         try {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            byte[] decodedKey = base64Decode(publicKey);
+            byte[] decodedKey = base64Decode(pubKey);
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(decodedKey);
             return keyFactory.generatePublic(keySpec);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
@@ -121,10 +135,10 @@ public final class CryptoUtils {
     }
 
     // PKCS8 Standard For Private Key
-    private static PrivateKey privateKeyConvert(String privateKey) {
+    private static PrivateKey privateKeyConvert(String priKey) {
         try {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            byte[] decodedKey = base64Decode(privateKey);
+            byte[] decodedKey = base64Decode(priKey);
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(decodedKey);
             return keyFactory.generatePrivate(keySpec);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
@@ -136,41 +150,41 @@ public final class CryptoUtils {
     public static byte[] rsaEncrypt(String plain, String pubKey) {
         try {
             Cipher engine = cipherInit("RSA");
-            PublicKey publicKey = publicKeyConvert(pubKey);
-            return null;
-        } catch (Exception e) {
+            engine.init(Cipher.ENCRYPT_MODE, publicKeyConvert(pubKey));
+            return engine.doFinal(plain.getBytes(StandardCharsets.UTF_8));
+        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
             throw new CryptoProcessFailedException("Perform RSA Encryption Failed: ", e);
         }
     }
 
     // Receive - Decrypt Using Private Key of Self
-    public static byte[] rsaDecrypt(String cipher, String priKey) {
+    public static String rsaDecrypt(byte[] cipher, String priKey) {
         try {
             Cipher engine = cipherInit("RSA");
-            PrivateKey privateKey = privateKeyConvert(priKey);
-            return null;
-        } catch (Exception e) {
+            engine.init(Cipher.DECRYPT_MODE, privateKeyConvert(priKey));
+            return new String(engine.doFinal(cipher), StandardCharsets.UTF_8);
+        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
             throw new CryptoProcessFailedException("Perform RSA Decryption Failed: ", e);
         }
     }
 
     // Send - Sign Using Private Key of Self
-    public static byte[] rsaSign(String plain, String priKey) {
+    public static byte[] rsaSign(byte[] plain, String priKey) {
         try {
             Cipher engine = cipherInit("RSA");
-            PrivateKey privateKey = privateKeyConvert(priKey);
-            return null;
+            engine.init(Cipher.ENCRYPT_MODE, privateKeyConvert(priKey));
+            return engine.doFinal(plain);
         } catch (Exception e) {
             throw new CryptoProcessFailedException("Perform RSA Signature Failed: ", e);
         }
     }
 
     // Receive - Verify Using Public Key of Oppo
-    public static byte[] rsaVerify(String cipher, String pubKey) {
+    public static byte[] rsaVerify(byte[] cipher, String pubKey) {
         try {
             Cipher engine = cipherInit("RSA");
-            PublicKey publicKey = publicKeyConvert(pubKey);
-            return null;
+            engine.init(Cipher.DECRYPT_MODE, publicKeyConvert(pubKey));
+            return engine.doFinal(cipher);
         } catch (Exception e) {
             throw new CryptoProcessFailedException("Perform RSA Verification Failed: ", e);
         }
