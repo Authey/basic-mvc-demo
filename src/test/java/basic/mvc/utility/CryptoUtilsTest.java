@@ -7,14 +7,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.springframework.util.Base64Utils;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.spec.SecretKeySpec;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -119,10 +115,14 @@ public class CryptoUtilsTest {
     public void keyPairGenerate() {
         Map<String, String> res = CryptoUtils.keyPairGenerate(uid);
         assertEquals(rsaKey, res);
+        assertEquals(392, res.get("pubKey").length());
+        assertEquals(1624, res.get("priKey").length());
         String dum = "MyS4HAR3zYlS1BzQ077l9gSPO";
         assertNotEquals(uid, dum);
         Map<String, String> fake = CryptoUtils.keyPairGenerate(dum);
         assertNotEquals(rsaKey, fake);
+        assertEquals(392, fake.get("pubKey").length());
+        assertEquals(1624, fake.get("priKey").length());
     }
 
     @Test
@@ -142,6 +142,56 @@ public class CryptoUtilsTest {
         byte[] sign = CryptoUtils.rsaSign(cipher, rsaKey.get("priKey"));
         boolean verify = CryptoUtils.rsaVerify(cipher, sign, rsaKey.get("pubKey"));
         assertTrue(verify);
+    }
+
+    @Test
+    public void rsaPublicEncrypt() {
+        byte[] cipher = CryptoUtils.rsaPublicEncrypt("Plain", rsaKey.get("pubKey"));
+        assertEquals(256, cipher.length);
+    }
+
+    @Test(expected = CryptoProcessFailedException.class)
+    public void rsaPrivateDecrypt() {
+        String plain = CryptoUtils.rsaPrivateDecrypt("Cipher".getBytes(StandardCharsets.UTF_8), rsaKey.get("priKey"));
+        assertNotEquals("Cipher", plain);
+    }
+
+    @Test
+    public void rsaPrivateEncrypt() {
+        byte[] cipher = CryptoUtils.rsaPrivateEncrypt("Plain".getBytes(StandardCharsets.UTF_8), rsaKey.get("priKey"));
+        assertEquals(256, cipher.length);
+    }
+
+    @Test(expected = CryptoProcessFailedException.class)
+    public void rsaPublicDecrypt() {
+        byte[] plain = CryptoUtils.rsaPublicDecrypt("Cipher".getBytes(StandardCharsets.UTF_8), rsaKey.get("pubKey"));
+        assertNotEquals("Cipher", new String(plain, StandardCharsets.UTF_8));
+    }
+
+    @Test
+    public void rsaSign() {
+        byte[] sign = CryptoUtils.rsaSign("Data".getBytes(StandardCharsets.UTF_8), rsaKey.get("priKey"));
+        assertEquals(256, sign.length);
+    }
+
+    @Test
+    public void rsaVerify0() {
+        byte[] signFalse = new byte[256];
+        Random random = new Random();
+        random.nextBytes(signFalse);
+        assertEquals(256, signFalse.length);
+        byte[] signTrue = CryptoUtils.rsaSign("Data".getBytes(StandardCharsets.UTF_8), rsaKey.get("priKey"));
+        assertNotEquals(signTrue, signFalse);
+        boolean verifyFalse = CryptoUtils.rsaVerify("Data".getBytes(StandardCharsets.UTF_8), signFalse, rsaKey.get("pubKey"));
+        assertFalse(verifyFalse);
+        boolean verifyTrue = CryptoUtils.rsaVerify("Data".getBytes(StandardCharsets.UTF_8), signTrue, rsaKey.get("pubKey"));
+        assertTrue(verifyTrue);
+    }
+
+    @Test(expected = CryptoProcessFailedException.class)
+    public void rsaVerify1() {
+        boolean verify = CryptoUtils.rsaVerify("Data".getBytes(StandardCharsets.UTF_8), "Sign".getBytes(StandardCharsets.UTF_8), rsaKey.get("pubKey"));
+        assertFalse(verify);
     }
 
     @Test

@@ -218,7 +218,7 @@ public final class CryptoUtils {
             engine.update(data);
             return engine.verify(sign);
         } catch (InvalidKeyException | SignatureException e){
-            throw new CryptoProcessFailedException("Perform RSA Verification Failed: ");
+            throw new CryptoProcessFailedException("Perform RSA Verification Failed: ", e);
         }
     }
 
