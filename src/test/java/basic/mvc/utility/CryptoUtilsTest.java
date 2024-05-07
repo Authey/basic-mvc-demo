@@ -7,12 +7,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.springframework.util.Base64Utils;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -24,22 +22,26 @@ public class CryptoUtilsTest {
 
     private final byte[] src = UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8);
 
+    private final String uid = "NyS4HAR3zYlS1BzQ077l9gSPU";
+
     private final String xorKey = "4933910847463829232312312";
 
-    private final String aesKey = "NyS4HAR3zYlS1BzQ077l9gSPU";
+    private final String aesKey = CryptoUtils.secretKeyGenerate(uid);
+
+    private final Map<String, String> rsaKey = CryptoUtils.keyPairGenerate(uid);
 
     @Test
     public void base64Encode() {
         String res = CryptoUtils.base64Encode(src);
         assertEquals(Base64Utils.encodeToString(src), res);
-        assertEquals(new String(Base64Utils.encode(src)), res);
+        assertEquals(new String(Base64Utils.encode(src), StandardCharsets.UTF_8), res);
     }
 
     @Test
     public void base64Decode() {
-        String base64Str = Base64Utils.encodeToString(src);
-        byte[] res = CryptoUtils.base64Decode(base64Str);
-        assertArrayEquals(src, res);
+        byte[] res = CryptoUtils.base64Decode(str);
+        assertArrayEquals(Base64Utils.decodeFromString(str), res);
+        assertArrayEquals(Base64Utils.decode(str.getBytes(StandardCharsets.UTF_8)), res);
     }
 
     @Test
@@ -79,7 +81,17 @@ public class CryptoUtilsTest {
     }
 
     @Test
-    public void aesCrypt() {
+    public void secretKeyGenerate() {
+        String res = CryptoUtils.secretKeyGenerate(uid);
+        assertEquals(aesKey, res);
+        String dum = "MyS4HAR3zYlS1BzQ077l9gSPO";
+        assertNotEquals(uid, dum);
+        String fake = CryptoUtils.secretKeyGenerate(dum);
+        assertNotEquals(aesKey, fake);
+    }
+
+    @Test
+    public void aesCrypto() {
         byte[] cipher = CryptoUtils.aesEncrypt(str, aesKey);
         String plain = CryptoUtils.aesDecrypt(cipher, aesKey);
         assertEquals(str, plain);
@@ -98,14 +110,93 @@ public class CryptoUtilsTest {
     }
 
     @Test
-    public void tokenCrypt0() {
+    public void keyPairGenerate() {
+        Map<String, String> res = CryptoUtils.keyPairGenerate(uid);
+        assertEquals(rsaKey, res);
+        String dum = "MyS4HAR3zYlS1BzQ077l9gSPO";
+        assertNotEquals(uid, dum);
+        Map<String, String> fake = CryptoUtils.keyPairGenerate(dum);
+        assertNotEquals(rsaKey, fake);
+    }
+
+    @Test
+    public void rsaCrypto() {
+        byte[] cipher = CryptoUtils.rsaPublicEncrypt(str, rsaKey.get("pubKey"));
+        String plain = CryptoUtils.rsaPrivateDecrypt(cipher, rsaKey.get("priKey"));
+        assertEquals(str, plain);
+        String encoded = CryptoUtils.base64Encode(cipher);
+        byte[] hashed = CryptoUtils.hash(encoded);
+        assertTrue(hashed.length <= 256 - 11);
+        byte[] cipherHash = CryptoUtils.rsaPrivateEncrypt(hashed, rsaKey.get("priKey"));
+        byte[] plainHash = CryptoUtils.rsaPublicDecrypt(cipherHash, rsaKey.get("pubKey"));
+        assertArrayEquals(hashed, plainHash);
+        byte[] cipherFur = CryptoUtils.rsaPrivateEncrypt(src, rsaKey.get("priKey"));
+        byte[] plainFur = CryptoUtils.rsaPublicDecrypt(cipherFur, rsaKey.get("pubKey"));
+        assertArrayEquals(src, plainFur);
+        byte[] sign = CryptoUtils.rsaSign(cipher, rsaKey.get("priKey"));
+        boolean verify = CryptoUtils.rsaVerify(cipher, sign, rsaKey.get("pubKey"));
+        assertTrue(verify);
+    }
+
+    @Test
+    public void rsaPublicEncrypt() {
+        byte[] cipher = CryptoUtils.rsaPublicEncrypt("Plain", rsaKey.get("pubKey"));
+        assertEquals(256, cipher.length);
+    }
+
+    @Test(expected = CryptoProcessFailedException.class)
+    public void rsaPrivateDecrypt() {
+        String plain = CryptoUtils.rsaPrivateDecrypt("Cipher".getBytes(StandardCharsets.UTF_8), rsaKey.get("priKey"));
+        assertNotEquals("Cipher", plain);
+    }
+
+    @Test
+    public void rsaPrivateEncrypt() {
+        byte[] cipher = CryptoUtils.rsaPrivateEncrypt("Plain".getBytes(StandardCharsets.UTF_8), rsaKey.get("priKey"));
+        assertEquals(256, cipher.length);
+    }
+
+    @Test(expected = CryptoProcessFailedException.class)
+    public void rsaPublicDecrypt() {
+        byte[] plain = CryptoUtils.rsaPublicDecrypt("Cipher".getBytes(StandardCharsets.UTF_8), rsaKey.get("pubKey"));
+        assertNotEquals("Cipher", new String(plain, StandardCharsets.UTF_8));
+    }
+
+    @Test
+    public void rsaSign() {
+        byte[] sign = CryptoUtils.rsaSign("Data".getBytes(StandardCharsets.UTF_8), rsaKey.get("priKey"));
+        assertEquals(256, sign.length);
+    }
+
+    @Test
+    public void rsaVerify0() {
+        byte[] signFalse = new byte[256];
+        Random random = new Random();
+        random.nextBytes(signFalse);
+        assertEquals(256, signFalse.length);
+        byte[] signTrue = CryptoUtils.rsaSign("Data".getBytes(StandardCharsets.UTF_8), rsaKey.get("priKey"));
+        assertNotEquals(signTrue, signFalse);
+        boolean verifyFalse = CryptoUtils.rsaVerify("Data".getBytes(StandardCharsets.UTF_8), signFalse, rsaKey.get("pubKey"));
+        assertFalse(verifyFalse);
+        boolean verifyTrue = CryptoUtils.rsaVerify("Data".getBytes(StandardCharsets.UTF_8), signTrue, rsaKey.get("pubKey"));
+        assertTrue(verifyTrue);
+    }
+
+    @Test(expected = CryptoProcessFailedException.class)
+    public void rsaVerify1() {
+        boolean verify = CryptoUtils.rsaVerify("Data".getBytes(StandardCharsets.UTF_8), "Sign".getBytes(StandardCharsets.UTF_8), rsaKey.get("pubKey"));
+        assertFalse(verify);
+    }
+
+    @Test
+    public void tokenCrypto0() {
         String token = CryptoUtils.tokenGenerate(str, aesKey, xorKey);
         String info = CryptoUtils.tokenAnalyse(token, aesKey, xorKey);
         assertEquals(str, info);
     }
 
     @Test
-    public void tokenCrypt1() {
+    public void tokenCrypto1() {
         String token = CryptoUtils.tokenGenerate(str, aesKey, xorKey);
         assertEquals(128, token.length());
         String info = CryptoUtils.tokenAnalyse(token, aesKey, xorKey);
@@ -113,7 +204,7 @@ public class CryptoUtilsTest {
     }
 
     @Test(expected = SessionTokenExpiredException.class)
-    public void tokenCrypt2() {
+    public void tokenCrypto2() {
         String content = str + ":" + (System.currentTimeMillis() - (60 * 60 * 1000));
         byte[] cipher = CryptoUtils.aesEncrypt(content, aesKey);
         String cipher64 = CryptoUtils.base64Encode(cipher).replace("+", "_");
@@ -122,17 +213,17 @@ public class CryptoUtilsTest {
     }
 
     @Test(expected = AssertionError.class)
-    public void tokenCrypt3() {
+    public void tokenCrypto3() {
         CryptoUtils.tokenGenerate("", aesKey, xorKey);
     }
 
     @Test(expected = AssertionError.class)
-    public void tokenCrypt4() {
+    public void tokenCrypto4() {
         CryptoUtils.tokenAnalyse("", aesKey, xorKey);
     }
 
     @Test(expected = AssertionError.class)
-    public void tokenCrypt5() {
+    public void tokenCrypto5() {
         String content = str + "#" + (System.currentTimeMillis() + (3 * 60 * 60 * 1000));
         byte[] cipher = CryptoUtils.aesEncrypt(content, aesKey);
         String cipher64 = CryptoUtils.base64Encode(cipher).replace("+", "_");
@@ -149,14 +240,23 @@ public class CryptoUtilsTest {
 
     @Test
     public void toHex1() {
-        String hex = CryptoUtils.toHex(CryptoUtils.hash(str));
-        assertEquals(64, hex.length());
+        byte[] res = CryptoUtils.hash(str);
+        String hex = CryptoUtils.toHex(res);
+        assertEquals(2 * res.length, hex.length());
     }
 
     @Test
     public void toHex2() {
-        String hex = CryptoUtils.toHex(CryptoUtils.aesEncrypt(str, aesKey));
-        assertEquals((int) Math.ceil((double) (str.length() + 1) / 16) * 32, hex.length());
+        byte[] res = CryptoUtils.aesEncrypt(str, aesKey);
+        String hex = CryptoUtils.toHex(res);
+        assertEquals(2 * res.length, hex.length());
+    }
+
+    @Test
+    public void toHex3() {
+        byte[] res = CryptoUtils.rsaPublicEncrypt(str, rsaKey.get("pubKey"));
+        String hex = CryptoUtils.toHex(res);
+        assertEquals(2 * res.length, hex.length());
     }
 
 }

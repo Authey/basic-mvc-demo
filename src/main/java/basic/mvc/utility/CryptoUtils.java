@@ -9,25 +9,14 @@ import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.HashMap;
+import java.util.Map;
 
-public class CryptoUtils {
-
-    private static final Cipher engine;
-
-    private static final MessageDigest digest;
-
-    static {
-        try {
-            engine = Cipher.getInstance("AES");
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            throw new CryptoProcessFailedException("Initial Crypto Utils Failed: ", e);
-        }
-    }
+public final class CryptoUtils {
 
     public static String base64Encode(byte[] src) {
         return Base64Utils.encodeToString(src);
@@ -60,25 +49,45 @@ public class CryptoUtils {
     }
 
     public static byte[] hash(String plain) {
-        digest.update(plain.getBytes(StandardCharsets.UTF_8));
-        return digest.digest();
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            digest.update(plain.getBytes(StandardCharsets.UTF_8));
+            return digest.digest();
+        } catch (NoSuchAlgorithmException e) {
+            throw new CryptoProcessFailedException("Perform Hash Encoding Failed: ", e);
+        }
     }
 
-    private static SecretKeySpec aesInit(String aesKey) {
+    private static Cipher cipherInit(String instance) {
         try {
-            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-            random.setSeed(aesKey.getBytes(StandardCharsets.UTF_8));
-            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-            keyGen.init(128, random);
-            return new SecretKeySpec(keyGen.generateKey().getEncoded(), "AES");
-        } catch (NoSuchAlgorithmException e) {
-            throw new CryptoProcessFailedException("Initial AES Crypto Failed: ", e);
+            return Cipher.getInstance(instance);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+            throw new CryptoProcessFailedException("Initial Cipher Engine Failed: ", e);
         }
+    }
+
+    public static String secretKeyGenerate(String uid) {
+        try {
+            SecureRandom random = new SecureRandom();
+            random.setSeed(uid.getBytes(StandardCharsets.UTF_8));
+            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+            keyGen.init(256, random);
+            byte[] secretKey = keyGen.generateKey().getEncoded();
+            return base64Encode(secretKey);
+        } catch (NoSuchAlgorithmException e) {
+            throw new CryptoProcessFailedException("Generate AES Secret Key Failed: ", e);
+        }
+    }
+
+    private static SecretKeySpec secretKeyConvert(String aesKey) {
+        byte[] decodedKey = base64Decode(aesKey);
+        return new SecretKeySpec(decodedKey, "AES");
     }
 
     public static byte[] aesEncrypt(String plain, String aesKey) {
         try {
-            engine.init(Cipher.ENCRYPT_MODE, aesInit(aesKey));
+            Cipher engine = cipherInit("AES");
+            engine.init(Cipher.ENCRYPT_MODE, secretKeyConvert(aesKey));
             return engine.doFinal(plain.getBytes(StandardCharsets.UTF_8));
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
             throw new CryptoProcessFailedException("Perform AES Encryption Failed: ", e);
@@ -87,10 +96,129 @@ public class CryptoUtils {
 
     public static String aesDecrypt(byte[] cipher, String aesKey) {
         try {
-            engine.init(Cipher.DECRYPT_MODE, aesInit(aesKey));
+            Cipher engine = cipherInit("AES");
+            engine.init(Cipher.DECRYPT_MODE, secretKeyConvert(aesKey));
             return new String(engine.doFinal(cipher), StandardCharsets.UTF_8);
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
             throw new CryptoProcessFailedException("Perform AES Decryption Failed: ", e);
+        }
+    }
+
+    private static Signature signatureInit() {
+        try {
+            return Signature.getInstance("SHA256withRSA");
+        } catch (NoSuchAlgorithmException e) {
+            throw new CryptoProcessFailedException("Initial Signature Engine Failed: ", e);
+        }
+    }
+
+    public static Map<String, String> keyPairGenerate(String uid) {
+        try {
+            SecureRandom random = new SecureRandom();
+            random.setSeed(uid.getBytes(StandardCharsets.UTF_8));
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+            keyGen.initialize(2048, random);
+            KeyPair keyPair = keyGen.generateKeyPair();
+            byte[] pubKey = keyPair.getPublic().getEncoded();
+            byte[] priKey = keyPair.getPrivate().getEncoded();
+            Map<String, String> keyPairMap = new HashMap<>();
+            keyPairMap.put("pubKey", base64Encode(pubKey));
+            keyPairMap.put("priKey", base64Encode(priKey));
+            return keyPairMap;
+        } catch (NoSuchAlgorithmException e) {
+            throw new CryptoProcessFailedException("Generate RSA Key Pair Failed: ", e);
+        }
+    }
+
+    // X509 Standard For Public Key
+    private static PublicKey publicKeyConvert(String pubKey) {
+        try {
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            byte[] decodedKey = base64Decode(pubKey);
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(decodedKey);
+            return keyFactory.generatePublic(keySpec);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new CryptoProcessFailedException("Acquire RSA Public Key Failed: ", e);
+        }
+    }
+
+    // PKCS8 Standard For Private Key
+    private static PrivateKey privateKeyConvert(String priKey) {
+        try {
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            byte[] decodedKey = base64Decode(priKey);
+            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(decodedKey);
+            return keyFactory.generatePrivate(keySpec);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new CryptoProcessFailedException("Acquire RSA Private Key Failed: ", e);
+        }
+    }
+
+    // Send - Encrypt Using Public Key of Oppo
+    public static byte[] rsaPublicEncrypt(String plain, String pubKey) {
+        try {
+            Cipher engine = cipherInit("RSA");
+            engine.init(Cipher.ENCRYPT_MODE, publicKeyConvert(pubKey));
+            return engine.doFinal(plain.getBytes(StandardCharsets.UTF_8));
+        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+            throw new CryptoProcessFailedException("Perform RSA Encryption Failed: ", e);
+        }
+    }
+
+    // Receive - Decrypt Using Private Key of Self
+    public static String rsaPrivateDecrypt(byte[] cipher, String priKey) {
+        try {
+            Cipher engine = cipherInit("RSA");
+            engine.init(Cipher.DECRYPT_MODE, privateKeyConvert(priKey));
+            return new String(engine.doFinal(cipher), StandardCharsets.UTF_8);
+        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+            throw new CryptoProcessFailedException("Perform RSA Decryption Failed: ", e);
+        }
+    }
+
+    // Send - Encrypt Using Private Key of Self
+    public static byte[] rsaPrivateEncrypt(byte[] plain, String priKey) {
+        try {
+            Cipher engine = cipherInit("RSA");
+            engine.init(Cipher.ENCRYPT_MODE, privateKeyConvert(priKey));
+            return engine.doFinal(plain);
+        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+            throw new CryptoProcessFailedException("Perform RSA Encryption Failed: ", e);
+        }
+    }
+
+    // Receive - Decrypt Using Public Key of Oppo
+    public static byte[] rsaPublicDecrypt(byte[] cipher, String pubKey) {
+        try {
+            Cipher engine = cipherInit("RSA");
+            engine.init(Cipher.DECRYPT_MODE, publicKeyConvert(pubKey));
+            return engine.doFinal(cipher);
+        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+            throw new CryptoProcessFailedException("Perform RSA Decryption Failed: ", e);
+        }
+    }
+
+    // Send - Sign Using Private Key of Self
+    public static byte[] rsaSign(byte[] data, String priKey) {
+        try {
+            Signature engine = signatureInit();
+            engine.initSign(privateKeyConvert(priKey));
+            engine.update(data);
+            return engine.sign();
+        } catch (InvalidKeyException | SignatureException e) {
+            throw new CryptoProcessFailedException("Perform RSA Signature Failed: ", e);
+        }
+    }
+
+    // Receive - Verify Using Public Key of Oppo
+    public static boolean rsaVerify(byte[] data, byte[] sign, String pubKey) {
+        try {
+            Signature engine = signatureInit();
+            engine.initVerify(publicKeyConvert(pubKey));
+            engine.update(data);
+            return engine.verify(sign);
+        } catch (InvalidKeyException | SignatureException e){
+            throw new CryptoProcessFailedException("Perform RSA Verification Failed: ", e);
         }
     }
 
