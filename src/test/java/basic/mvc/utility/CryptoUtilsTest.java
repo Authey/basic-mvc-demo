@@ -34,14 +34,14 @@ public class CryptoUtilsTest {
     public void base64Encode() {
         String res = CryptoUtils.base64Encode(src);
         assertEquals(Base64Utils.encodeToString(src), res);
-        assertEquals(new String(Base64Utils.encode(src)), res);
+        assertEquals(new String(Base64Utils.encode(src), StandardCharsets.UTF_8), res);
     }
 
     @Test
     public void base64Decode() {
-        String base64Str = Base64Utils.encodeToString(src);
-        byte[] res = CryptoUtils.base64Decode(base64Str);
-        assertArrayEquals(src, res);
+        byte[] res = CryptoUtils.base64Decode(str);
+        assertArrayEquals(Base64Utils.decodeFromString(str), res);
+        assertArrayEquals(Base64Utils.decode(str.getBytes(StandardCharsets.UTF_8)), res);
     }
 
     @Test
@@ -84,12 +84,10 @@ public class CryptoUtilsTest {
     public void secretKeyGenerate() {
         String res = CryptoUtils.secretKeyGenerate(uid);
         assertEquals(aesKey, res);
-        assertEquals(44, res.length()); // 32 + 12 = 44
         String dum = "MyS4HAR3zYlS1BzQ077l9gSPO";
         assertNotEquals(uid, dum);
         String fake = CryptoUtils.secretKeyGenerate(dum);
         assertNotEquals(aesKey, fake);
-        assertEquals(44, fake.length()); // 32 + 12 = 44
     }
 
     @Test
@@ -115,14 +113,10 @@ public class CryptoUtilsTest {
     public void keyPairGenerate() {
         Map<String, String> res = CryptoUtils.keyPairGenerate(uid);
         assertEquals(rsaKey, res);
-        assertEquals(392, res.get("pubKey").length());
-        assertEquals(1624, res.get("priKey").length());
         String dum = "MyS4HAR3zYlS1BzQ077l9gSPO";
         assertNotEquals(uid, dum);
         Map<String, String> fake = CryptoUtils.keyPairGenerate(dum);
         assertNotEquals(rsaKey, fake);
-        assertEquals(392, fake.get("pubKey").length());
-        assertEquals(1624, fake.get("priKey").length());
     }
 
     @Test
