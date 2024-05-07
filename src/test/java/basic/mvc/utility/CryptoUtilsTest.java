@@ -82,7 +82,17 @@ public class CryptoUtilsTest {
     }
 
     @Test
-    public void aesCrypt() {
+    public void secretKeyGenerate() {
+        String res = CryptoUtils.secretKeyGenerate(uid);
+        assertEquals(aesKey, res);
+        String dum = "MyS4HAR3zYlS1BzQ077l9gSPO";
+        assertNotEquals(uid, dum);
+        String fake = CryptoUtils.secretKeyGenerate(dum);
+        assertNotEquals(aesKey, fake);
+    }
+
+    @Test
+    public void aesCrypto() {
         byte[] cipher = CryptoUtils.aesEncrypt(str, aesKey);
         String plain = CryptoUtils.aesDecrypt(cipher, aesKey);
         assertEquals(str, plain);
@@ -101,14 +111,14 @@ public class CryptoUtilsTest {
     }
 
     @Test
-    public void tokenCrypt0() {
+    public void tokenCrypto0() {
         String token = CryptoUtils.tokenGenerate(str, aesKey, xorKey);
         String info = CryptoUtils.tokenAnalyse(token, aesKey, xorKey);
         assertEquals(str, info);
     }
 
     @Test
-    public void tokenCrypt1() {
+    public void tokenCrypto1() {
         String token = CryptoUtils.tokenGenerate(str, aesKey, xorKey);
         assertEquals(128, token.length());
         String info = CryptoUtils.tokenAnalyse(token, aesKey, xorKey);
@@ -116,7 +126,7 @@ public class CryptoUtilsTest {
     }
 
     @Test(expected = SessionTokenExpiredException.class)
-    public void tokenCrypt2() {
+    public void tokenCrypto2() {
         String content = str + ":" + (System.currentTimeMillis() - (60 * 60 * 1000));
         byte[] cipher = CryptoUtils.aesEncrypt(content, aesKey);
         String cipher64 = CryptoUtils.base64Encode(cipher).replace("+", "_");
@@ -125,17 +135,17 @@ public class CryptoUtilsTest {
     }
 
     @Test(expected = AssertionError.class)
-    public void tokenCrypt3() {
+    public void tokenCrypto3() {
         CryptoUtils.tokenGenerate("", aesKey, xorKey);
     }
 
     @Test(expected = AssertionError.class)
-    public void tokenCrypt4() {
+    public void tokenCrypto4() {
         CryptoUtils.tokenAnalyse("", aesKey, xorKey);
     }
 
     @Test(expected = AssertionError.class)
-    public void tokenCrypt5() {
+    public void tokenCrypto5() {
         String content = str + "#" + (System.currentTimeMillis() + (3 * 60 * 60 * 1000));
         byte[] cipher = CryptoUtils.aesEncrypt(content, aesKey);
         String cipher64 = CryptoUtils.base64Encode(cipher).replace("+", "_");
