@@ -9,25 +9,14 @@ import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class CryptoUtils {
-
-    private static final Cipher engine;
-
-    private static final MessageDigest digest;
-
-    static {
-        try {
-            engine = Cipher.getInstance("AES");
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            throw new CryptoProcessFailedException("Initial Crypto Utils Failed: ", e);
-        }
-    }
 
     public static String base64Encode(byte[] src) {
         return Base64Utils.encodeToString(src);
@@ -60,25 +49,45 @@ public final class CryptoUtils {
     }
 
     public static byte[] hash(String plain) {
-        digest.update(plain.getBytes(StandardCharsets.UTF_8));
-        return digest.digest();
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            digest.update(plain.getBytes(StandardCharsets.UTF_8));
+            return digest.digest();
+        } catch (NoSuchAlgorithmException e) {
+            throw new CryptoProcessFailedException("Perform Hash Encoding Failed: ", e);
+        }
     }
 
-    private static SecretKeySpec aesInit(String aesKey) {
+    private static Cipher cipherInit(String instance) {
         try {
-            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-            random.setSeed(aesKey.getBytes(StandardCharsets.UTF_8));
-            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-            keyGen.init(128, random);
-            return new SecretKeySpec(keyGen.generateKey().getEncoded(), "AES");
-        } catch (NoSuchAlgorithmException e) {
-            throw new CryptoProcessFailedException("Initial AES Crypto Failed: ", e);
+            return Cipher.getInstance(instance);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+            throw new CryptoProcessFailedException("Initial Cipher Engine Failed: ", e);
         }
+    }
+
+    public static String secretKeyGenerate(String uid) {
+        try {
+            SecureRandom random = new SecureRandom();
+            random.setSeed(uid.getBytes(StandardCharsets.UTF_8));
+            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+            keyGen.init(256, random);
+            byte[] secretKey = keyGen.generateKey().getEncoded();
+            return base64Encode(secretKey);
+        } catch (NoSuchAlgorithmException e) {
+            throw new CryptoProcessFailedException("Convert AES Secret Key Failed: ", e);
+        }
+    }
+
+    private static SecretKeySpec secretKeyConvert(String aesKey) {
+        byte[] decodedKey = base64Decode(aesKey);
+        return new SecretKeySpec(decodedKey, "AES");
     }
 
     public static byte[] aesEncrypt(String plain, String aesKey) {
         try {
-            engine.init(Cipher.ENCRYPT_MODE, aesInit(aesKey));
+            Cipher engine = cipherInit("AES");
+            engine.init(Cipher.ENCRYPT_MODE, secretKeyConvert(aesKey));
             return engine.doFinal(plain.getBytes(StandardCharsets.UTF_8));
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
             throw new CryptoProcessFailedException("Perform AES Encryption Failed: ", e);
@@ -87,7 +96,8 @@ public final class CryptoUtils {
 
     public static String aesDecrypt(byte[] cipher, String aesKey) {
         try {
-            engine.init(Cipher.DECRYPT_MODE, aesInit(aesKey));
+            Cipher engine = cipherInit("AES");
+            engine.init(Cipher.DECRYPT_MODE, secretKeyConvert(aesKey));
             return new String(engine.doFinal(cipher), StandardCharsets.UTF_8);
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
             throw new CryptoProcessFailedException("Perform AES Decryption Failed: ", e);

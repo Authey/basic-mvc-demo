@@ -9,6 +9,7 @@ import org.springframework.util.Base64Utils;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.spec.SecretKeySpec;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
@@ -24,9 +25,11 @@ public class CryptoUtilsTest {
 
     private final byte[] src = UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8);
 
+    private final String uid = "NyS4HAR3zYlS1BzQ077l9gSPU";
+
     private final String xorKey = "4933910847463829232312312";
 
-    private final String aesKey = "NyS4HAR3zYlS1BzQ077l9gSPU";
+    private final String aesKey = CryptoUtils.secretKeyGenerate(uid);
 
     @Test
     public void base64Encode() {
