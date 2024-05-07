@@ -198,6 +198,7 @@ public final class CryptoUtils {
         }
     }
 
+    // Send - Sign Using Private Key of Self
     public static byte[] rsaSign(byte[] data, String priKey) {
         try {
             Signature engine = signatureInit();
@@ -209,6 +210,7 @@ public final class CryptoUtils {
         }
     }
 
+    // Receive - Verify Using Public Key of Oppo
     public static boolean rsaVerify(byte[] data, byte[] sign, String pubKey) {
         try {
             Signature engine = signatureInit();
