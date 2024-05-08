@@ -16,7 +16,7 @@ import java.util.Map;
 public abstract class BaseDao<T> {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    public JdbcTemplate jdbcTemplate;
 
     @Autowired
     public SqlSessionTemplate sqlSessionTemplate;
@@ -27,23 +27,23 @@ public abstract class BaseDao<T> {
         jdbcTemplate.execute(sql);
     }
 
-    public void call(CallableStatementCreator csc, List<SqlParameter> args) throws Exception {
+    public void call(CallableStatementCreator csc, List<SqlParameter> args) {
         jdbcTemplate.call(csc, args);
     }
 
-    public int update(String sql) throws Exception {
+    public int update(String sql) {
         return jdbcTemplate.update(sql);
     }
 
-    public int update(String sql, Object args) throws Exception {
+    public int update(String sql, Object args) {
         return jdbcTemplate.update(sql, args);
     }
 
-    public int update(String sql, Object[] args) throws Exception {
+    public int update(String sql, Object[] args) {
         return jdbcTemplate.update(sql, args);
     }
 
-    public int[] batch(String sql, Object[][] args) throws Exception {
+    public int[] batch(String sql, Object[][] args) {
         ArrayList<Object[]> batchArgs = new ArrayList<>();
         if (args != null) {
             int cur = 0;
@@ -54,32 +54,32 @@ public abstract class BaseDao<T> {
         return jdbcTemplate.batchUpdate(sql, batchArgs);
     }
 
-    public int[] batch(String sql, List<Object[]> args) throws Exception {
+    public int[] batch(String sql, List<Object[]> args) {
         return jdbcTemplate.batchUpdate(sql, args);
     }
 
-    public List<Map<String, Object>> find(String sql) throws Exception {
+    public List<Map<String, Object>> find(String sql) {
         if (StringUtils.isNotBlank(sql)) {
             sql = sql.toUpperCase();
         }
         return jdbcTemplate.queryForList(sql);
     }
 
-    public List<Map<String, Object>> find(String sql, Object args) throws Exception {
+    public List<Map<String, Object>> find(String sql, Object args) {
         if (StringUtils.isNotBlank(sql)) {
             sql = sql.toUpperCase();
         }
         return jdbcTemplate.queryForList(sql, args);
     }
 
-    public List<Map<String, Object>> find(String sql, Object[] args) throws Exception {
+    public List<Map<String, Object>> find(String sql, Object[] args) {
         if (StringUtils.isNotBlank(sql)) {
             sql = sql.toUpperCase();
         }
         return jdbcTemplate.queryForList(sql, args);
     }
 
-    public Object find(Class<T> cls, String sql, Object[] args) throws Exception {
+    public Object find(Class<T> cls, String sql, Object[] args) {
         return jdbcTemplate.queryForObject(sql, args, new BeanPropertyRowMapper<T>(cls));
     }
 
