@@ -30,7 +30,7 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/index", method = RequestMethod.GET)
     public String index() {
         logger.info("Accessing User Page");
-        this.setAttr("root", this.getRootPath() + "/user");
+        this.setAttr("root", this.getRootPath());
         return "user/index";
     }
 
