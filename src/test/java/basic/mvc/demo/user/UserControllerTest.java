@@ -44,4 +44,18 @@ public class UserControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    public void add() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/add"))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    public void remove() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/remove"))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
 }

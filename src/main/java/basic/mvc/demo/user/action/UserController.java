@@ -35,6 +35,7 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value = "/query", method = RequestMethod.POST)
+    @ResponseBody
     public void query() {
         try {
             List<Map<String, Object>> userList = userService.find("SELECT ID, USERNAME, PASSWORD, AUTH_LEVEL FROM SYS_USER");
@@ -47,6 +48,7 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
+    @ResponseBody
     public void add() {
         JSONObject json = new JSONObject();
         try {
@@ -67,6 +69,7 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value = "/remove", method = RequestMethod.POST)
+    @ResponseBody
     public void remove() {
         JSONObject json = new JSONObject();
         try {

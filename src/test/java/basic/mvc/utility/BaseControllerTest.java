@@ -35,7 +35,7 @@ public class BaseControllerTest extends BaseController {
         request.setServerName("localhost");
         request.setServerPort(9134);
         String root = this.getRootPath();
-        assertEquals("https://localhost:9134/context/", root);
+        assertEquals("https://localhost:9134/context", root);
     }
 
     @Test(expected = NoSuchElementFoundException.class)
