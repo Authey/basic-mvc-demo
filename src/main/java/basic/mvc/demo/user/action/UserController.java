@@ -50,7 +50,6 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
     public void add() {
-        JSONObject json = new JSONObject();
         try {
             List<Object> params = new ArrayList<>();
             params.add(UUID.randomUUID().toString().toUpperCase());
@@ -59,28 +58,23 @@ public class UserController extends BaseController {
             params.add("ALL");
             userService.update("INSERT INTO SYS_USER (ID, USERNAME, PASSWORD, AUTH_LEVEL) VALUES (?, ?, ?, ?)", params.toArray());
             logger.info("Succeeded to Insert User Information");
-            json.put("status", "200");
+            this.ajaxDoneSuccess(null);
         } catch (Exception e) {
             logger.error("Failed to Insert User Information: ", e);
-            json.put("status", "300");
-        } finally {
-            this.renderJson(json.toString());
+            this.ajaxDoneFailure(null);
         }
     }
 
     @RequestMapping(value = "/remove", method = RequestMethod.POST)
     @ResponseBody
     public void remove() {
-        JSONObject json = new JSONObject();
         try {
             userService.update("DELETE FROM SYS_USER");
             logger.info("Succeeded to Delete User Information");
-            json.put("status", "200");
+            this.ajaxDoneSuccess(null);
         } catch (Exception e) {
             logger.error("Failed to Delete User Information: ", e);
-            json.put("status", "300");
-        } finally {
-            this.renderJson(json.toString());
+            this.ajaxDoneFailure(null);
         }
     }
 
