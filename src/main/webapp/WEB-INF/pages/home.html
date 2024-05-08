@@ -5,6 +5,13 @@
     <title>Home</title>
 </head>
 <body>
-    HTML Test
+    <div>Home Index</div>
+    <button onclick="toUser()">Jump to User</button>
 </body>
 </html>
+
+<script type="text/javascript">
+    function toUser() {
+        window.location.href = "${root!}/user/index"
+    }
+</script>

@@ -6,9 +6,10 @@
 </head>
 <body>
     <div>User Index</div>
-    <button type="submit" onclick="query()">Load User</button>
-    <button type="submit" onclick="add()">Add User</button>
-    <button type="submit" onclick="remove()">Remove User</button>
+    <button onclick="query()">Load User</button>
+    <button onclick="add()">Add User</button>
+    <button onclick="remove()">Remove User</button>
+    <button onclick="toHome()">Jump to Home</button>
     <div id="user-info"></div>
 </body>
 </html>
@@ -41,5 +42,9 @@
         xhr.open('POST', '${root!}/user/remove', false)
         xhr.send()
         window.alert(xhr.responseText)
+    }
+
+    function toHome() {
+        window.location.href = "${root!}/home"
     }
 </script>

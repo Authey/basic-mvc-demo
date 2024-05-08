@@ -10,14 +10,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class HomeController extends BaseController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String index() {
+    public String base() {
         logger.info("Base URL Request");
         return "redirect:/home";
     }
 
     @RequestMapping(value = "/home", method = RequestMethod.GET)
     public String home() {
-        logger.info("Home URL Request");
+        logger.info("Accessing Home Page");
+        this.setAttr("root", this.getRootPath());
         return "home";
     }
 
