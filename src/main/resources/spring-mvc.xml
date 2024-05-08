@@ -10,7 +10,7 @@
     <context:component-scan base-package="basic.mvc" />
 
     <util:properties id="constant" location="classpath:constant.properties" />
-    
+
     <mvc:resources mapping="/static/**" location="classpath:/assets/" />
 
     <!-- <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -45,6 +45,17 @@
         <constructor-arg index="1" value="BATCH" />
     </bean>
 
+    <!-- <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" />
+
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <ref bean="stringHttpMessageConverter" />
+                <ref bean="mappingJacksonHttpMessageConverter" />
+            </list>
+        </property>
+    </bean>
+
     <bean id="mappingJacksonHttpMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
         <property name="supportedMediaTypes">
             <list>
@@ -61,7 +72,7 @@
                 <value>application/xhtml+xml;charset=UTF-8</value>
             </list>
         </property>
-    </bean>
+    </bean> -->
 
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="defaultEncoding" value="utf-8" />
