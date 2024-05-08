@@ -13,6 +13,8 @@ public interface UserService {
 
     public int update(String sql) throws Exception;
 
+    public int update(String sql, Object param) throws Exception;
+
     public int update(String sql, Object[] param) throws Exception;
 
 }

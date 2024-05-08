@@ -30,6 +30,10 @@ public class UserServiceImpl implements UserService {
         return userDao.update(sql);
     }
 
+    public int update(String sql, Object param) throws Exception {
+        return userDao.update(sql, param);
+    }
+
     public int update(String sql, Object[] param) throws Exception {
         return userDao.update(sql, param);
     }

@@ -6,8 +6,32 @@
 </head>
 <body>
     <div>User Index</div>
-    <form action="query" method="post">
-        <button type="submit">Load User</button>
-    </form>
+    <button type="submit" onclick="query()">Load User</button>
+    <button type="submit" onclick="add()">Add User</button>
+    <button type="submit" onclick="remove()">Remove User</button>
+    <div id="user-info"></div>
 </body>
 </html>
+
+<script type="text/javascript">
+    function query() {
+        let xhr = new XMLHttpRequest()
+        xhr.open('POST', '${root!}/query', false)
+        xhr.send()
+        document.getElementById('user-info').innerHTML = xhr.responseText
+    }
+
+    function add() {
+        let xhr = new XMLHttpRequest()
+        xhr.open('POST', '${root!}/add', false)
+        xhr.send()
+        window.alert(xhr.responseText)
+    }
+
+    function remove() {
+        let xhr = new XMLHttpRequest()
+        xhr.open('POST', '${root!}/remove', false)
+        xhr.send()
+        window.alert(xhr.responseText)
+    }
+</script>
