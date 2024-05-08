@@ -27,7 +27,7 @@ public final class CryptoUtils {
     }
 
     // Plain -> Byte -> PlainInt -> CipherInt -> Cipher
-    public static String encrypt(String plain, String xorKey) {
+    public static String xorEncrypt(String plain, String xorKey) {
         if (StringUtils.isBlank(plain)) {
             return "";
         }
@@ -38,7 +38,7 @@ public final class CryptoUtils {
     }
 
     // Cipher -> CipherInt -> PlainInt -> Byte -> Plain
-    public static String decrypt(String cipher, String xorKey) {
+    public static String xorDecrypt(String cipher, String xorKey) {
         if (StringUtils.isBlank(cipher)) {
             return "";
         }
@@ -48,9 +48,9 @@ public final class CryptoUtils {
         return new String(plainInt.toByteArray(), StandardCharsets.UTF_8);
     }
 
-    public static byte[] hash(String plain) {
+    public static byte[] hash(String plain, String algorithm) {
         try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            MessageDigest digest = MessageDigest.getInstance(algorithm);
             digest.update(plain.getBytes(StandardCharsets.UTF_8));
             return digest.digest();
         } catch (NoSuchAlgorithmException e) {
@@ -228,13 +228,13 @@ public final class CryptoUtils {
         String content = info + ":" + (System.currentTimeMillis() + (3 * 60 * 60 * 1000));
         byte[] cipher = aesEncrypt(content, aesKey);
         String cipher64 = base64Encode(cipher).replace("+", "_");
-        return encrypt(cipher64, xorKey);
+        return xorEncrypt(cipher64, xorKey);
     }
 
     // XOR Cipher -> Base64 Cipher -> AES Cipher -> Content -> Info
     public static String tokenAnalyse(String token, String aesKey, String xorKey) {
         assert StringUtils.isNotBlank(token);
-        String cipher64 = decrypt(token, xorKey);
+        String cipher64 = xorDecrypt(token, xorKey);
         byte[] cipher = base64Decode(cipher64.replace("_", "+"));
         String content = aesDecrypt(cipher, aesKey);
         assert content.contains(":");
