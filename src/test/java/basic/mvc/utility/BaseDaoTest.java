@@ -1,7 +1,6 @@
 package basic.mvc.utility;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -27,11 +25,11 @@ import static org.junit.Assert.*;
 @Transactional
 public class BaseDaoTest extends BaseDao<Object> {
 
-    private static final JdbcTemplate jdbcTemplate = new JdbcTemplate();
+    private final JdbcTemplate jdbcTemplate = new JdbcTemplate();
 
-    private static final SqlSessionTemplate sqlSessionTemplate;
+    private final SqlSessionTemplate sqlSessionTemplate;
 
-    static {
+    public BaseDaoTest() {
         try {
             ApplicationContext context = new ClassPathXmlApplicationContext("spring-jdbc.xml");
             DataSource dataSource = (DataSource) context.getBean("oracleDataSource");
