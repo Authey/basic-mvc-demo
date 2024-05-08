@@ -11,7 +11,7 @@
 
     <util:properties id="constant" location="classpath:constant.properties" />
     
-    <mvc:resources mapping="/assets/**" location="/assets/" />
+    <mvc:resources mapping="/static/**" location="classpath:/assets/" />
 
     <!-- <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/pages/" />
