@@ -4,7 +4,6 @@ import basic.mvc.demo.user.service.UserService;
 import basic.mvc.utility.BaseController;
 import basic.mvc.utility.CryptoUtils;
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
