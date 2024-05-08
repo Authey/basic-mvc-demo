@@ -5,17 +5,17 @@ import basic.mvc.utility.BaseController;
 import basic.mvc.utility.CryptoUtils;
 import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@Controller
+@RestController
 @RequestMapping(value = "/user")
 public class UserController extends BaseController {
 
@@ -27,14 +27,13 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value = "/index", method = RequestMethod.GET)
-    public String index() {
+    public ModelAndView index() {
         logger.info("Accessing User Page");
         this.setAttr("root", this.getRootPath());
-        return "user/index";
+        return new ModelAndView("user/index");
     }
 
     @RequestMapping(value = "/query", method = RequestMethod.POST)
-    @ResponseBody
     public void query() {
         try {
             List<Map<String, Object>> userList = userService.find("SELECT ID, USERNAME, PASSWORD, AUTH_LEVEL FROM SYS_USER");
@@ -47,7 +46,6 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    @ResponseBody
     public void add() {
         try {
             List<Object> params = new ArrayList<>();
@@ -65,7 +63,6 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value = "/remove", method = RequestMethod.POST)
-    @ResponseBody
     public void remove() {
         try {
             userService.update("DELETE FROM SYS_USER");
