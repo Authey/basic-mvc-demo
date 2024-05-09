@@ -1,23 +1,17 @@
 package basic.mvc.demo;
 
-import com.alibaba.fastjson.annotation.JSONField;
-
 import java.io.Serializable;
 
 public class Test implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @JSONField(name = "ID")
     private String id;
 
-    @JSONField(name = "CREATE_DATE")
     private String createDate;
 
-    @JSONField(name = "FLAG")
     private String flag;
 
-    @JSONField(name = "DESCRIPTION")
     private String description;
 
     public void setId(String id) {
