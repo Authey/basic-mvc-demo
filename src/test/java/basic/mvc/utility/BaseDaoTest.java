@@ -4,13 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.mybatis.spring.SqlSessionFactoryBean;
-import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,21 +22,11 @@ public class BaseDaoTest extends BaseDao<Object> {
 
     private final JdbcTemplate jdbcTemplate = new JdbcTemplate();
 
-    private final SqlSessionTemplate sqlSessionTemplate;
-
     public BaseDaoTest() {
         try {
             ApplicationContext context = new ClassPathXmlApplicationContext("spring-jdbc.xml");
             DataSource dataSource = (DataSource) context.getBean("oracleDataSource");
-            Resource configuration = new ClassPathResource("mybatis-config.xml");
-            PathMatchingResourcePatternResolver resource = new PathMatchingResourcePatternResolver();
-            Resource[] mappers = resource.getResources("mappers/*.xml");
             jdbcTemplate.setDataSource(dataSource);
-            SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
-            sqlSessionFactory.setDataSource(dataSource);
-            sqlSessionFactory.setConfigLocation(configuration);
-            sqlSessionFactory.setMapperLocations(mappers);
-            sqlSessionTemplate = new SqlSessionTemplate(sqlSessionFactory.getObject());
         } catch (Exception e) {
             throw new RuntimeException("Initialise Static Attributes Failed: ", e);
         }
@@ -50,7 +35,6 @@ public class BaseDaoTest extends BaseDao<Object> {
     @Before
     public void before() {
         super.jdbcTemplate = jdbcTemplate;
-        super.sqlSessionTemplate = sqlSessionTemplate;
     }
 
     @Test

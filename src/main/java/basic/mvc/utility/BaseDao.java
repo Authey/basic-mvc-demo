@@ -18,9 +18,6 @@ public abstract class BaseDao<T> {
     @Autowired
     public JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    public SqlSessionTemplate sqlSessionTemplate;
-
     private final Logger logger = Logger.getLogger(this.getClass());
 
     public void execute(String sql) {
