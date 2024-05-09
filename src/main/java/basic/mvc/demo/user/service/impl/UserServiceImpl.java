@@ -26,15 +26,15 @@ public class UserServiceImpl implements UserService {
         return userDao.find(sql, param);
     }
 
-    public int update(String sql) throws Exception {
+    public int update(String sql) {
         return userDao.update(sql);
     }
 
-    public int update(String sql, Object param) throws Exception {
+    public int update(String sql, Object param) {
         return userDao.update(sql, param);
     }
 
-    public int update(String sql, Object[] param) throws Exception {
+    public int update(String sql, Object[] param) {
         return userDao.update(sql, param);
     }
 
