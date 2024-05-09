@@ -2,7 +2,11 @@ package basic.mvc.demo.test;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
-public class Test {
+import java.io.Serializable;
+
+public class Test implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @JSONField(name = "ID")
     private String id;
