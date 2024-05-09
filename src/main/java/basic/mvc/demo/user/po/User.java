@@ -1,13 +1,19 @@
 package basic.mvc.demo.user.po;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 public class User {
 
+    @JSONField(name = "ID")
     private String id;
 
+    @JSONField(name = "USERNAME")
     private String username;
 
+    @JSONField(name = "PASSWORD")
     private String password;
 
+    @JSONField(name = "AUTH_LEVEL")
     private String authLevel;
 
     public void setId(String id) {

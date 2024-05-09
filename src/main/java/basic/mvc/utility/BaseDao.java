@@ -2,7 +2,6 @@ package basic.mvc.utility;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.CallableStatementCreator;
@@ -76,16 +75,8 @@ public abstract class BaseDao<T> {
         return jdbcTemplate.queryForList(sql, args);
     }
 
-    public Object find(Class<T> cls, String sql, Object[] args) {
-        return jdbcTemplate.queryForObject(sql, args, new BeanPropertyRowMapper<T>(cls));
-    }
-
-    public Object findObject(String sql, Class<T> cls) {
-        return jdbcTemplate.queryForObject(sql, cls);
-    }
-
-    public Object findObject(String sql, Object[] args, Class<T> cls) {
-        return jdbcTemplate.queryForObject(sql, args, cls);
+    public T find(Class<T> cls, String sql, Object[] args) {
+        return jdbcTemplate.queryForObject(sql, args, new BeanPropertyRowMapper<>(cls));
     }
 
     public Map<String, Object> findMap(String sql) {
