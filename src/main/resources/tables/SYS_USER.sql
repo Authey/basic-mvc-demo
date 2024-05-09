@@ -3,15 +3,15 @@
 
  Source Server         : BASIC_MVC
  Source Server Type    : Oracle
- Source Server Version : 190000
+ Source Server Version : 190000 (Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production)
  Source Host           : localhost:1521
  Source Schema         : BASIC_MVC
 
  Target Server Type    : Oracle
- Target Server Version : 190000
+ Target Server Version : 190000 (Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production)
  File Encoding         : 65001
 
- Date: 06/05/2024 19:41:16
+ Date: 09/05/2024 16:47:43
 */
 
 
@@ -48,7 +48,7 @@ COMMENT ON COLUMN "BASIC_MVC"."SYS_USER"."AUTH_LEVEL" IS '权限等级';
 -- ----------------------------
 -- Records of SYS_USER
 -- ----------------------------
-INSERT INTO "BASIC_MVC"."SYS_USER" VALUES ('8dbca3f8-5ceb-46b8-afee-89faccc64fdd', 'Authey', 'root', 'ALL');
+INSERT INTO "BASIC_MVC"."SYS_USER" VALUES ('80F9F63E-F7D3-4782-A6CB-8E5F456B49A2', 'Authey', '63A9F0EA7BB98050796B649E85481845', 'ALL');
 
 -- ----------------------------
 -- Primary Key structure for table SYS_USER
