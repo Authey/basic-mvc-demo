@@ -31,7 +31,7 @@ import java.util.UUID;
 import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
-public class BaseDaoTest extends BaseDao<basic.mvc.demo.test.Test> {
+public class BaseDaoTest extends BaseDao<basic.mvc.demo.Test> {
 
     private final JdbcTemplate jdbcTemplate = new JdbcTemplate();
 
@@ -39,7 +39,7 @@ public class BaseDaoTest extends BaseDao<basic.mvc.demo.test.Test> {
 
     private TransactionStatus status;
 
-    private final Class<basic.mvc.demo.test.Test> clazz = basic.mvc.demo.test.Test.class;
+    private final Class<basic.mvc.demo.Test> clazz = basic.mvc.demo.Test.class;
 
     private final String id = "1EFC535F-34E0-4271-B43A-71E462539D29";
 
@@ -268,32 +268,32 @@ public class BaseDaoTest extends BaseDao<basic.mvc.demo.test.Test> {
 
     @Test
     public void find7() {
-        basic.mvc.demo.test.Test expect = jdbcTemplate.queryForObject(select + " WHERE ID = ?", new Object[]{id}, new BeanPropertyRowMapper<>(clazz));
-        basic.mvc.demo.test.Test res = find(clazz, select + " WHERE ID = ?", new Object[]{id});
+        basic.mvc.demo.Test expect = jdbcTemplate.queryForObject(select + " WHERE ID = ?", new Object[]{id}, new BeanPropertyRowMapper<>(clazz));
+        basic.mvc.demo.Test res = find(clazz, select + " WHERE ID = ?", new Object[]{id});
         assertEquals(expect.toString(), res.toString());
     }
 
     @Test(expected = BadSqlGrammarException.class)
     public void find8() {
-        basic.mvc.demo.test.Test res = find(clazz, select + " WHERE COLUMN = ?", new Object[]{"COL"});
+        basic.mvc.demo.Test res = find(clazz, select + " WHERE COLUMN = ?", new Object[]{"COL"});
         assertNull(res);
     }
 
     @Test(expected = DataIntegrityViolationException.class)
     public void find9() {
-        basic.mvc.demo.test.Test res = find(clazz, select + " WHERE CREATE_DATE = ?", new Object[]{"2024-05-09 16:03:27"});
+        basic.mvc.demo.Test res = find(clazz, select + " WHERE CREATE_DATE = ?", new Object[]{"2024-05-09 16:03:27"});
         assertNull(res);
     }
 
     @Test(expected = EmptyResultDataAccessException.class)
     public void find10() {
-        basic.mvc.demo.test.Test res = find(clazz, select + " WHERE ID = ?", new Object[]{"ID"});
+        basic.mvc.demo.Test res = find(clazz, select + " WHERE ID = ?", new Object[]{"ID"});
         assertNull(res);
     }
 
     @Test(expected = IncorrectResultSizeDataAccessException.class)
     public void find11() {
-        basic.mvc.demo.test.Test res = find(clazz, select, new Object[]{});
+        basic.mvc.demo.Test res = find(clazz, select, new Object[]{});
         assertNull(res);
     }
 

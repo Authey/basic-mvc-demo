@@ -1,4 +1,4 @@
-package basic.mvc.demo.test;
+package basic.mvc.demo;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
