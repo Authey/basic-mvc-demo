@@ -190,7 +190,7 @@ public class BaseControllerTest extends BaseController {
         JSONObject json = JSON.parseObject(response.getContentAsString());
         assertEquals(1, json.get("state"));
         assertEquals(200, json.get("statusCode"));
-        assertEquals("Success!", json.get("msg"));
+        assertEquals("Success", json.get("msg"));
     }
 
     @Test
@@ -208,7 +208,7 @@ public class BaseControllerTest extends BaseController {
         JSONObject json = JSON.parseObject(response.getContentAsString());
         assertEquals(0, json.get("state"));
         assertEquals(300, json.get("statusCode"));
-        assertEquals("Failure!", json.get("msg"));
+        assertEquals("Failure", json.get("msg"));
     }
 
 }
