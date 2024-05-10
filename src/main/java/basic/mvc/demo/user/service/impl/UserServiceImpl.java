@@ -14,7 +14,7 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserDao userDao;
 
-    public List<Map<String, Object>> find(String sql, Object... param) throws Exception {
+    public List<Map<String, Object>> find(String sql, Object... param) {
         return userDao.findList(sql, param);
     }
 
