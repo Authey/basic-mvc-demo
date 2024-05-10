@@ -35,6 +35,12 @@ public class RecordTest {
         data.set(record, newMap);
     }
 
+    @After
+    public void after() {
+        record = new Record();
+        map = new HashMap<>();
+    }
+
     @Test
     public void get0() {
         String res0 = (String) record.get("Key0");
@@ -257,12 +263,6 @@ public class RecordTest {
         map.put("Keys", "Values");
         String newStr = record.toString();
         assertNotEquals(JSONObject.fromObject(map).toString(), newStr);
-    }
-
-    @After
-    public void after() {
-        record = new Record();
-        map = new HashMap<>();
     }
 
 }

@@ -5,9 +5,106 @@
     <title>User</title>
 </head>
 <body>
-    <div>User Index</div>
-    <form action="query" method="post">
-        <button type="submit">Load User</button>
-    </form>
+    <table>
+        <tr><td><div>${type!}</div></td></tr>
+        <tr><td><div id="user-alert"></div></td></tr>
+    </table>
+    <table>
+        <tr>
+            <td><label for="username">Username:</label></td>
+            <td colspan="2"><input type="text" id="username"></td>
+        </tr>
+        <#if type != 'Manage'>
+            <tr>
+                <td><label for="password">Password:</label></td>
+                <td colspan="2"><input type="password" id="password"></td>
+            </tr>
+        </#if>
+        <tr>
+            <#if type == 'Login'>
+                <td><button onclick="login()">Log In</button></td>
+            <#elseif type == 'Enroll'>
+                <td><button onclick="enroll()">Enroll</button></td>
+            <#elseif type == 'Manage'>
+                <td><button onclick="load()">Load User</button></td>
+                <td><button onclick="remove()">Remove</button></td>
+            </#if>
+            <td><button onclick="toHome()">Home</button></td>
+        </tr>
+    </table>
+    <div id="user-info"></div>
 </body>
 </html>
+
+<#include "*/resources.html" />
+
+<script type="text/javascript">
+    function login() {
+        let username = $("#username").val();
+        let password = $("#password").val();
+        $.ajax({
+            type: "POST",
+            url: "${root!}/user/login",
+            async: false,
+            data: {"username": username, "password": password},
+            dataType: "json",
+            success: function(msg) {
+                if (eval(msg).state === 1) {
+                    toHome()
+                } else {
+                    $("#user-alert").html(JSON.stringify(msg))
+                }
+            }
+        })
+    }
+
+    function enroll() {
+        let username = $("#username").val();
+        let password = $("#password").val();
+        $.ajax({
+            type: "POST",
+            url: "${root!}/user/enroll",
+            async: false,
+            data: {"username": username, "password": password},
+            dataType: "json",
+            success: function(msg) {
+                if (eval(msg).state === 1) {
+                    window.location.href = "${root!}/user/index";
+                } else {
+                    $("#user-alert").html(JSON.stringify(msg))
+                }
+            },
+        })
+    }
+
+    function load() {
+        $.ajax({
+            type: "POST",
+            url: "${root!}/user/load",
+            async: false,
+            data: {},
+            dataType: "json",
+            success: function(info) {
+                $("#user-info").html(JSON.stringify(info))
+            }
+        })
+    }
+
+    function remove() {
+        let username = $("#username").val();
+        $.ajax({
+            type: "POST",
+            url: "${root!}/user/remove",
+            async: false,
+            data: {"username": username},
+            dataType: "json",
+            success: function(msg) {
+                $("#user-alert").html(JSON.stringify(msg))
+            }
+        })
+    }
+
+    function toHome() {
+        window.location.href = "${root!}/home"
+    }
+</script>

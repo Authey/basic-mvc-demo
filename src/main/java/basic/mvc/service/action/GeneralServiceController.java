@@ -5,13 +5,8 @@ import basic.mvc.service.DataService;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -19,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Controller
+@RestController
 @RequestMapping(value = "/general_service")
 public class GeneralServiceController extends BaseController {
 
@@ -44,8 +39,8 @@ public class GeneralServiceController extends BaseController {
     }
 
     // 通用接口测试, 传入测试接口名称及参数类型即可通过Java反射机制调用接口
-    @RequestMapping(value = "/invoke", method = RequestMethod.POST)
-    public void invoke(@RequestParam String interfaceName, @RequestParam String serviceClass, @RequestParam String paramTypes, HttpServletResponse response) {
+    @PostMapping(value = "/invoke")
+    public void invoke(@RequestParam String interfaceName, @RequestParam String serviceClass, @RequestParam String paramTypes) {
         try {
             Object serviceInstance = serviceMap(Class.forName(serviceClass));
             List<Class<?>> baseTypes = new ArrayList<>();

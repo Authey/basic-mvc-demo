@@ -38,6 +38,6 @@ build/
 ### Mac OS ###
 .DS_Store
 
-/log/
+/mvc-logs/
 /src/main/webapp/WEB-INF/classes/
 /src/main/webapp/WEB-INF/lib/

@@ -1,18 +1,16 @@
 package basic.mvc.demo.user.service;
 
+import basic.mvc.demo.user.po.User;
+
 import java.util.List;
 import java.util.Map;
 
 public interface UserService {
 
-    public List<Map<String, Object>> find(String sql) throws Exception;
+    List<Map<String, Object>> findList(String sql, Object... param);
 
-    public List<Map<String, Object>> find(String sql, Object param) throws Exception;
+    User findObject(String sql, Object... param);
 
-    public List<Map<String, Object>> find(String sql, Object[] param) throws Exception;
-
-    public int update(String sql) throws Exception;
-
-    public int update(String sql, Object[] param) throws Exception;
+    int update(String sql, Object... param);
 
 }

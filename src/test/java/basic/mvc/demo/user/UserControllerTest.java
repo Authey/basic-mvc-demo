@@ -10,14 +10,17 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = "classpath:spring-mvc.xml")
+@Transactional
 public class UserControllerTest {
 
     private MockMvc mvc;
@@ -34,12 +37,39 @@ public class UserControllerTest {
     public void index() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/user/index"))
                 .andExpect(status().isOk())
+                .andExpect(request().attribute("type", "Login"))
                 .andDo(print());
     }
 
     @Test
-    public void query() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/user/query"))
+    public void login() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/login")
+                        .param("username", "Username")
+                        .param("password", "Password"))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    public void enroll() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/enroll")
+                        .param("username", "Username")
+                        .param("password", "Password"))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    public void load() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/load"))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    public void remove() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/remove")
+                        .param("username", "Username"))
                 .andExpect(status().isOk())
                 .andDo(print());
     }

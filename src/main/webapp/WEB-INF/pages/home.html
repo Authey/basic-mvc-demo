@@ -5,6 +5,15 @@
     <title>Home</title>
 </head>
 <body>
-    HTML Test
+    <div>Home Index</div>
+    <button onclick="toUser('Enroll')">Enroll</button>
+    <button onclick="toUser('Login')">Log In</button>
+    <button onclick="toUser('Manage')">Manage</button>
 </body>
 </html>
+
+<script type="text/javascript">
+    function toUser(type) {
+        window.location.href = "${root!}/user/index?type=" + type;
+    }
+</script>
