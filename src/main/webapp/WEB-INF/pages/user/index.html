@@ -5,11 +5,24 @@
     <title>User</title>
 </head>
 <body>
-    <div>User Index</div>
-    <button onclick="query()">Load User</button>
-    <button onclick="add()">Add User</button>
-    <button onclick="remove()">Remove User</button>
-    <button onclick="toHome()">Jump to Home</button>
+    <div id="user-alert"></div>
+    <table>
+        <tr>
+            <td><label for="username">Username:</label></td>
+            <td colspan="4"><input type="text" id="username"></td>
+        </tr>
+        <tr>
+            <td><label for="password">Password:</label></td>
+            <td colspan="4"><input type="password" id="password"></td>
+        </tr>
+        <tr>
+            <td><button onclick="query()">Load User</button></td>
+            <td><button onclick="add()">Add User</button></td>
+            <td><button onclick="remove()">Remove User</button></td>
+            <td><button onclick="compare()">Compare User</button></td>
+            <td><button onclick="toHome()">Jump to Home</button></td>
+        </tr>
+    </table>
     <div id="user-info"></div>
 </body>
 </html>
@@ -31,17 +44,47 @@
     }
 
     function add() {
-        let xhr = new XMLHttpRequest()
-        xhr.open('POST', '${root!}/user/add', false)
-        xhr.send()
-        window.alert(xhr.responseText)
+        let username = $("#username").val();
+        let password = $("#password").val();
+        $.ajax({
+            type: "POST",
+            url: "${root!}/user/add",
+            async: false,
+            data: {"username": username, "password": password},
+            dataType: "text",
+            success: function(msg) {
+                $("#user-alert").html(msg)
+            },
+        })
     }
 
     function remove() {
-        let xhr = new XMLHttpRequest()
-        xhr.open('POST', '${root!}/user/remove', false)
-        xhr.send()
-        window.alert(xhr.responseText)
+        let username = $("#username").val();
+        $.ajax({
+            type: "POST",
+            url: "${root!}/user/remove",
+            async: false,
+            data: {"username": username},
+            dataType: "text",
+            success: function(msg) {
+                $("#user-alert").html(msg)
+            }
+        })
+    }
+
+    function compare() {
+        let username = $("#username").val();
+        let password = $("#password").val();
+        $.ajax({
+            type: "POST",
+            url: "${root!}/user/compare",
+            async: false,
+            data: {"username": username, "password": password},
+            dataType: "text",
+            success: function(msg) {
+                $("#user-alert").html(msg)
+            }
+        })
     }
 
     function toHome() {
