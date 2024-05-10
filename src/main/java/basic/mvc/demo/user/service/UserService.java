@@ -5,7 +5,7 @@ import java.util.Map;
 
 public interface UserService {
 
-    List<Map<String, Object>> find(String sql, Object... param);
+    List<Map<String, Object>> findList(String sql, Object... param);
 
     int update(String sql, Object... param);
 

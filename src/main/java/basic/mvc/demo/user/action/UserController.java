@@ -34,7 +34,7 @@ public class UserController extends BaseController {
     @PostMapping(value = "/query")
     public void query() {
         try {
-            List<Map<String, Object>> userList = userService.find("SELECT ID, USERNAME, PASSWORD, AUTH_LEVEL FROM SYS_USER");
+            List<Map<String, Object>> userList = userService.findList("SELECT ID, USERNAME, PASSWORD, AUTH_LEVEL FROM SYS_USER");
             logger.info("User List: " + userList);
             JSONArray json = JSONArray.fromObject(userList);
             this.renderJson(json.toString());
@@ -51,9 +51,9 @@ public class UserController extends BaseController {
             params.add("Authey");
             params.add(CryptoUtils.hash("root", "MD5"));
             params.add("ALL");
-            userService.update("INSERT INTO SYS_USER (ID, USERNAME, PASSWORD, AUTH_LEVEL) VALUES (?, ?, ?, ?)", params.toArray());
+            int status = userService.update("INSERT INTO SYS_USER (ID, USERNAME, PASSWORD, AUTH_LEVEL) VALUES (?, ?, ?, ?)", params.toArray());
             logger.info("Succeeded to Insert User Information");
-            this.ajaxDoneSuccess(null);
+            this.ajaxDoneSuccess(String.valueOf(status));
         } catch (Exception e) {
             logger.error("Failed to Insert User Information: ", e);
             this.ajaxDoneFailure(null);
@@ -63,9 +63,9 @@ public class UserController extends BaseController {
     @PostMapping(value = "/remove")
     public void remove() {
         try {
-            userService.update("DELETE FROM SYS_USER");
+            int status = userService.update("DELETE FROM SYS_USER");
             logger.info("Succeeded to Delete User Information");
-            this.ajaxDoneSuccess(null);
+            this.ajaxDoneSuccess(String.valueOf(status));
         } catch (Exception e) {
             logger.error("Failed to Delete User Information: ", e);
             this.ajaxDoneFailure(null);
