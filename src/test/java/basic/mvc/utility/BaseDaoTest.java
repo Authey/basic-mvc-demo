@@ -12,6 +12,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.BadSqlGrammarException;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -315,13 +316,21 @@ public class BaseDaoTest extends BaseDao<basic.mvc.demo.Test> {
     @Test(expected = DataIntegrityViolationException.class)
     public void update6() {
         int prev = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
+        update(insert, null, Timestamp.valueOf(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis())), "1", "Empty Description");
+        int post = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
+        assertEquals(prev, post);
+    }
+
+    @Test(expected = DataIntegrityViolationException.class)
+    public void update7() {
+        int prev = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
         update(insert, UUID.randomUUID().toString(), "2024-05-09 16:03:27", "1", "Empty Description");
         int post = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
         assertEquals(prev, post);
     }
 
     @Test(expected = DuplicateKeyException.class)
-    public void update7() {
+    public void update8() {
         int prev = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
         update(insert, id0, Timestamp.valueOf(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis())), "1", "Empty Description");
         int post = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
@@ -329,7 +338,7 @@ public class BaseDaoTest extends BaseDao<basic.mvc.demo.Test> {
     }
 
     @Test
-    public void update8() {
+    public void update9() {
         int prev = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
         List<Map<String, Object>> prevList = jdbcTemplate.queryForList(select);
         for(Map<String, Object> map : prevList) {
@@ -345,7 +354,7 @@ public class BaseDaoTest extends BaseDao<basic.mvc.demo.Test> {
     }
 
     @Test
-    public void update9() {
+    public void update10() {
         int prev = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
         List<Map<String, Object>> prevList = jdbcTemplate.queryForList(select);
         for(Map<String, Object> map : prevList) {
@@ -361,7 +370,7 @@ public class BaseDaoTest extends BaseDao<basic.mvc.demo.Test> {
     }
 
     @Test
-    public void update10() {
+    public void update11() {
         int prev = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
         List<Map<String, Object>> prevList = jdbcTemplate.queryForList(select);
         for(Map<String, Object> map : prevList) {
@@ -377,7 +386,7 @@ public class BaseDaoTest extends BaseDao<basic.mvc.demo.Test> {
     }
 
     @Test(expected = BadSqlGrammarException.class)
-    public void update11() {
+    public void update12() {
         int prev = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
         List<Map<String, Object>> prevList = jdbcTemplate.queryForList(select);
         for(Map<String, Object> map : prevList) {
@@ -392,8 +401,24 @@ public class BaseDaoTest extends BaseDao<basic.mvc.demo.Test> {
         }
     }
 
+    @Test(expected = UncategorizedSQLException.class)
+    public void update13() {
+        int prev = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
+        List<Map<String, Object>> prevList = jdbcTemplate.queryForList(select);
+        for(Map<String, Object> map : prevList) {
+            assertEquals(id0.equals(map.get("ID")) ? "1" : "0", map.get("FLAG"));
+        }
+        update(update + ", ID = ? WHERE ID = ?", 2, null, id0);
+        int post = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
+        assertEquals(prev, post);
+        List<Map<String, Object>> postList = jdbcTemplate.queryForList(select);
+        for(Map<String, Object> map : postList) {
+            assertEquals(id0.equals(map.get("ID")) ? "2" : "0", map.get("FLAG"));
+        }
+    }
+
     @Test(expected = DataIntegrityViolationException.class)
-    public void update12() {
+    public void update14() {
         int prev = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
         List<Map<String, Object>> prevList = jdbcTemplate.queryForList(select);
         for(Map<String, Object> map : prevList) {
@@ -409,7 +434,7 @@ public class BaseDaoTest extends BaseDao<basic.mvc.demo.Test> {
     }
 
     @Test(expected = DuplicateKeyException.class)
-    public void update13() {
+    public void update15() {
         int prev = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
         List<Map<String, Object>> prevList = jdbcTemplate.queryForList(select);
         for(Map<String, Object> map : prevList) {
@@ -470,6 +495,16 @@ public class BaseDaoTest extends BaseDao<basic.mvc.demo.Test> {
     public void batch5() {
         int prev = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
         Object[] arg0 = new Object[]{UUID.randomUUID().toString(), Timestamp.valueOf(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis())), "1", "Empty Description"};
+        Object[] arg1 = new Object[]{null, Timestamp.valueOf(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis())), "0", "Empty Description"};
+        batch(insert, arg0, arg1);
+        int post = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
+        assertEquals(prev + 1, post);
+    }
+
+    @Test(expected = DataIntegrityViolationException.class)
+    public void batch6() {
+        int prev = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
+        Object[] arg0 = new Object[]{UUID.randomUUID().toString(), Timestamp.valueOf(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis())), "1", "Empty Description"};
         Object[] arg1 = new Object[]{UUID.randomUUID().toString(), "2024-05-09 16:03:27", "0", "Empty Description"};
         batch(insert, arg0, arg1);
         int post = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
@@ -477,7 +512,7 @@ public class BaseDaoTest extends BaseDao<basic.mvc.demo.Test> {
     }
 
     @Test(expected = DuplicateKeyException.class)
-    public void batch6() {
+    public void batch7() {
         int prev = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
         Object[] arg0 = new Object[]{UUID.randomUUID().toString(), Timestamp.valueOf(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis())), "1", "Empty Description"};
         Object[] arg1 = new Object[]{id0, Timestamp.valueOf(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis())), "0", "Empty Description"};
@@ -487,7 +522,7 @@ public class BaseDaoTest extends BaseDao<basic.mvc.demo.Test> {
     }
 
     @Test
-    public void batch7() {
+    public void batch8() {
         int prev = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
         List<Map<String, Object>> prevList = jdbcTemplate.queryForList(select);
         for(Map<String, Object> map : prevList) {
@@ -503,7 +538,7 @@ public class BaseDaoTest extends BaseDao<basic.mvc.demo.Test> {
     }
 
     @Test
-    public void batch8() {
+    public void batch9() {
         int prev = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
         List<Map<String, Object>> prevList = jdbcTemplate.queryForList(select);
         for(Map<String, Object> map : prevList) {
@@ -519,7 +554,7 @@ public class BaseDaoTest extends BaseDao<basic.mvc.demo.Test> {
     }
 
     @Test(expected = BadSqlGrammarException.class)
-    public void batch9() {
+    public void batch10() {
         int prev = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
         List<Map<String, Object>> prevList = jdbcTemplate.queryForList(select);
         for(Map<String, Object> map : prevList) {
@@ -534,8 +569,24 @@ public class BaseDaoTest extends BaseDao<basic.mvc.demo.Test> {
         }
     }
 
+    @Test(expected = UncategorizedSQLException.class)
+    public void batch11() {
+        int prev = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
+        List<Map<String, Object>> prevList = jdbcTemplate.queryForList(select);
+        for(Map<String, Object> map : prevList) {
+            assertEquals(id0.equals(map.get("ID")) ? "1" : "0", map.get("FLAG"));
+        }
+        batch(update + ", ID = ? WHERE ID = ?", new Object[]{0, null, id0});
+        int post = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
+        assertEquals(prev, post);
+        List<Map<String, Object>> postList = jdbcTemplate.queryForList(select);
+        for(Map<String, Object> map : postList) {
+            assertEquals("0", map.get("FLAG"));
+        }
+    }
+
     @Test(expected = DataIntegrityViolationException.class)
-    public void batch10() {
+    public void batch12() {
         int prev = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
         List<Map<String, Object>> prevList = jdbcTemplate.queryForList(select);
         for(Map<String, Object> map : prevList) {
@@ -551,7 +602,7 @@ public class BaseDaoTest extends BaseDao<basic.mvc.demo.Test> {
     }
 
     @Test(expected = DuplicateKeyException.class)
-    public void batch11() {
+    public void batch13() {
         int prev = JdbcTestUtils.countRowsInTable(jdbcTemplate, "TEST");
         List<Map<String, Object>> prevList = jdbcTemplate.queryForList(select);
         for(Map<String, Object> map : prevList) {
