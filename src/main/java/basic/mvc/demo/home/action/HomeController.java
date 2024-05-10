@@ -1,25 +1,26 @@
 package basic.mvc.demo.home.action;
 
 import basic.mvc.utility.BaseController;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
-@Controller
-@RequestMapping("")
+@RestController
+@RequestMapping(value = "")
 public class HomeController extends BaseController {
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String base() {
+    @GetMapping(value = "/")
+    public ModelAndView base() {
         logger.info("Base URL Request");
-        return "redirect:/home";
+        return new ModelAndView("redirect:/home");
     }
 
-    @RequestMapping(value = "/home", method = RequestMethod.GET)
-    public String home() {
+    @GetMapping(value = "/home")
+    public ModelAndView home() {
         logger.info("Accessing Home Page");
         this.setAttr("root", this.getRootPath());
-        return "home";
+        return new ModelAndView("home");
     }
 
 }
