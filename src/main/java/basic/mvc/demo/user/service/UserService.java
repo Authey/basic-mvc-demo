@@ -5,16 +5,8 @@ import java.util.Map;
 
 public interface UserService {
 
-    List<Map<String, Object>> find(String sql) throws Exception;
+    List<Map<String, Object>> find(String sql, Object... param) throws Exception;
 
-    List<Map<String, Object>> find(String sql, Object param) throws Exception;
-
-    List<Map<String, Object>> find(String sql, Object[] param) throws Exception;
-
-    int update(String sql) throws Exception;
-
-    int update(String sql, Object param) throws Exception;
-
-    int update(String sql, Object[] param) throws Exception;
+    int update(String sql, Object... param) throws Exception;
 
 }

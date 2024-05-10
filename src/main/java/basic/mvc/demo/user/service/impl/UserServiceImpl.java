@@ -14,27 +14,11 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserDao userDao;
 
-    public List<Map<String, Object>> find(String sql) throws Exception {
-        return userDao.find(sql);
+    public List<Map<String, Object>> find(String sql, Object... param) throws Exception {
+        return userDao.findList(sql, param);
     }
 
-    public List<Map<String, Object>> find(String sql, Object param) throws Exception {
-        return userDao.find(sql, param);
-    }
-
-    public List<Map<String, Object>> find(String sql, Object[] param) throws Exception {
-        return userDao.find(sql, param);
-    }
-
-    public int update(String sql) {
-        return userDao.update(sql);
-    }
-
-    public int update(String sql, Object param) {
-        return userDao.update(sql, param);
-    }
-
-    public int update(String sql, Object[] param) {
+    public int update(String sql, Object... param) {
         return userDao.update(sql, param);
     }
 
