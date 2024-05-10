@@ -41,7 +41,7 @@ public class GeneralServiceController extends BaseController {
 
     // 通用接口测试, 传入测试接口名称及参数类型即可通过Java反射机制调用接口
     @PostMapping(value = "/invoke")
-    public void invoke(@RequestParam String interfaceName, @RequestParam String serviceClass, @RequestParam String paramTypes, HttpServletResponse response) {
+    public void invoke(@RequestParam String interfaceName, @RequestParam String serviceClass, @RequestParam String paramTypes) {
         try {
             Object serviceInstance = serviceMap(Class.forName(serviceClass));
             List<Class<?>> baseTypes = new ArrayList<>();
