@@ -6,12 +6,14 @@
 </head>
 <body>
     <div>Home Index</div>
-    <button onclick="toUser()">Jump to User</button>
+    <button onclick="toUser('Enroll')">Enroll</button>
+    <button onclick="toUser('Login')">Log In</button>
+    <button onclick="toUser('Manage')">Manage</button>
 </body>
 </html>
 
 <script type="text/javascript">
-    function toUser() {
-        window.location.href = "${root!}/user/index"
+    function toUser(type) {
+        window.location.href = "${root!}/user/index?type=" + type;
     }
 </script>

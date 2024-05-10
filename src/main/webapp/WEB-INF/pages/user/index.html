@@ -5,22 +5,31 @@
     <title>User</title>
 </head>
 <body>
-    <div id="user-alert"></div>
+    <table>
+        <tr><td><div>${type!}</div></td></tr>
+        <tr><td><div id="user-alert"></div></td></tr>
+    </table>
     <table>
         <tr>
             <td><label for="username">Username:</label></td>
-            <td colspan="4"><input type="text" id="username"></td>
+            <td colspan="2"><input type="text" id="username"></td>
         </tr>
+        <#if type != 'Manage'>
+            <tr>
+                <td><label for="password">Password:</label></td>
+                <td colspan="2"><input type="password" id="password"></td>
+            </tr>
+        </#if>
         <tr>
-            <td><label for="password">Password:</label></td>
-            <td colspan="4"><input type="password" id="password"></td>
-        </tr>
-        <tr>
-            <td><button onclick="query()">Load User</button></td>
-            <td><button onclick="add()">Add User</button></td>
-            <td><button onclick="remove()">Remove User</button></td>
-            <td><button onclick="compare()">Compare User</button></td>
-            <td><button onclick="toHome()">Jump to Home</button></td>
+            <#if type == 'Login'>
+                <td><button onclick="login()">Log In</button></td>
+            <#elseif type == 'Enroll'>
+                <td><button onclick="enroll()">Enroll</button></td>
+            <#elseif type == 'Manage'>
+                <td><button onclick="load()">Load User</button></td>
+                <td><button onclick="remove()">Remove</button></td>
+            </#if>
+            <td><button onclick="toHome()">Home</button></td>
         </tr>
     </table>
     <div id="user-info"></div>
@@ -30,31 +39,54 @@
 <#include "*/resources.html" />
 
 <script type="text/javascript">
-    function query() {
-        $.ajax({
-            type: "POST",
-            url: "${root!}/user/query",
-            async: false,
-            data: {},
-            dataType: "text",
-            success: function(info) {
-                $("#user-info").html(info)
-            }
-        })
-    }
-
-    function add() {
+    function login() {
         let username = $("#username").val();
         let password = $("#password").val();
         $.ajax({
             type: "POST",
-            url: "${root!}/user/add",
+            url: "${root!}/user/login",
             async: false,
             data: {"username": username, "password": password},
-            dataType: "text",
+            dataType: "json",
             success: function(msg) {
-                $("#user-alert").html(msg)
+                if (eval(msg).state === 1) {
+                    toHome()
+                } else {
+                    $("#user-alert").html(JSON.stringify(msg))
+                }
+            }
+        })
+    }
+
+    function enroll() {
+        let username = $("#username").val();
+        let password = $("#password").val();
+        $.ajax({
+            type: "POST",
+            url: "${root!}/user/enroll",
+            async: false,
+            data: {"username": username, "password": password},
+            dataType: "json",
+            success: function(msg) {
+                if (eval(msg).state === 1) {
+                    window.location.href = "${root!}/user/index";
+                } else {
+                    $("#user-alert").html(JSON.stringify(msg))
+                }
             },
+        })
+    }
+
+    function load() {
+        $.ajax({
+            type: "POST",
+            url: "${root!}/user/load",
+            async: false,
+            data: {},
+            dataType: "json",
+            success: function(info) {
+                $("#user-info").html(JSON.stringify(info))
+            }
         })
     }
 
@@ -65,24 +97,9 @@
             url: "${root!}/user/remove",
             async: false,
             data: {"username": username},
-            dataType: "text",
+            dataType: "json",
             success: function(msg) {
-                $("#user-alert").html(msg)
-            }
-        })
-    }
-
-    function compare() {
-        let username = $("#username").val();
-        let password = $("#password").val();
-        $.ajax({
-            type: "POST",
-            url: "${root!}/user/compare",
-            async: false,
-            data: {"username": username, "password": password},
-            dataType: "text",
-            success: function(msg) {
-                $("#user-alert").html(msg)
+                $("#user-alert").html(JSON.stringify(msg))
             }
         })
     }

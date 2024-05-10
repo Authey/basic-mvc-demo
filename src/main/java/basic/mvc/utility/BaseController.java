@@ -94,7 +94,7 @@ public abstract class BaseController {
         result.put("state", 1);
         result.put("statusCode", 200);
         if (StringUtils.isBlank(message)) {
-            result.put("msg", "Success!");
+            result.put("msg", "Success");
         } else {
             result.put("msg", message);
         }
@@ -106,7 +106,7 @@ public abstract class BaseController {
         result.put("state", 0);
         result.put("statusCode", 300);
         if (StringUtils.isBlank(message)) {
-            result.put("msg", "Failure!");
+            result.put("msg", "Failure");
         } else {
             result.put("msg", message);
         }

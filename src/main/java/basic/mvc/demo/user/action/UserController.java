@@ -30,25 +30,35 @@ public class UserController extends BaseController {
 
     @GetMapping(value = "/index")
     public ModelAndView index() {
-        logger.info("Accessing User Page");
         this.setAttr("root", this.getRootPath());
+        String type = this.getPara("type", "Login");
+        this.setAttr("type", type);
+        logger.info("Accessing Type Is " + type);
         return new ModelAndView("user/index");
     }
 
-    @PostMapping(value = "/query")
-    public void query() {
+    @PostMapping(value = "/login")
+    public void login(@RequestParam String username, @RequestParam String password) {
         try {
-            List<Map<String, Object>> userList = userService.findList("SELECT ID, USERNAME, PASSWORD, AUTH_LEVEL FROM SYS_USER");
-            logger.info("User List: " + userList);
-            JSONArray json = JSONArray.fromObject(userList);
-            this.renderJson(json.toString());
+            User pwd = userService.findObject("SELECT PASSWORD FROM SYS_USER WHERE USERNAME = ?", username);
+            boolean match = CryptoUtils.toHex(CryptoUtils.hash(password, "MD5")).equalsIgnoreCase(pwd.getPassword());
+            logger.info(match ? "User Information Matched" : "User Information Unmatched");
+            if (match) {
+                this.ajaxDoneSuccess(null);
+            } else {
+                this.ajaxDoneFailure(null);
+            }
+        } catch (EmptyResultDataAccessException e) {
+            logger.error("Failed to Perform User Information Comparison: ", e);
+            this.ajaxDoneFailure("No User Found");
         } catch (Exception e) {
-            logger.error("Failed to Query User Information: ", e);
+            logger.error("Failed to Perform User Information Comparison: ", e);
+            this.ajaxDoneFailure(null);
         }
     }
 
-    @PostMapping(value = "/add")
-    public void add(@RequestParam String username, @RequestParam String password) {
+    @PostMapping(value = "/enroll")
+    public void enroll(@RequestParam String username, @RequestParam String password) {
         try {
             if (password.length() <= 6) {
                 logger.error("Failed to Insert User Information");
@@ -75,6 +85,18 @@ public class UserController extends BaseController {
         }
     }
 
+    @PostMapping(value = "/load")
+    public void load() {
+        try {
+            List<Map<String, Object>> userList = userService.findList("SELECT ID, USERNAME, PASSWORD, AUTH_LEVEL FROM SYS_USER");
+            logger.info("User List: " + userList);
+            JSONArray json = JSONArray.fromObject(userList);
+            this.renderJson(json.toString());
+        } catch (Exception e) {
+            logger.error("Failed to Query User Information: ", e);
+        }
+    }
+
     @PostMapping(value = "/remove")
     public void remove(@RequestParam String username) {
         try {
@@ -83,22 +105,6 @@ public class UserController extends BaseController {
             this.ajaxDoneSuccess("Affected Row: " + row);
         } catch (Exception e) {
             logger.error("Failed to Delete User Information: ", e);
-            this.ajaxDoneFailure(null);
-        }
-    }
-
-    @PostMapping(value = "/compare")
-    public void compare(@RequestParam String username, @RequestParam String password) {
-        try {
-            User pwd = userService.findObject("SELECT PASSWORD FROM SYS_USER WHERE USERNAME = ?", username);
-            boolean match = CryptoUtils.toHex(CryptoUtils.hash(password, "MD5")).equalsIgnoreCase(pwd.getPassword());
-            logger.info(match ? "User Information Matched" : "User Information Unmatched");
-            this.ajaxDoneSuccess("Comparison Result: " + String.valueOf(match).toUpperCase());
-        } catch (EmptyResultDataAccessException e) {
-            logger.error("Failed to Perform User Information Comparison: ", e);
-            this.ajaxDoneFailure("No User Found");
-        } catch (Exception e) {
-            logger.error("Failed to Perform User Information Comparison: ", e);
             this.ajaxDoneFailure(null);
         }
     }
