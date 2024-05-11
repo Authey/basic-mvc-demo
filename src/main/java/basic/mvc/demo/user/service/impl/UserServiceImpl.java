@@ -8,18 +8,12 @@ import basic.mvc.utility.Record;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Map;
 
 @Service("UserServiceImpl")
 public class UserServiceImpl implements UserService {
 
     @Resource
     private UserDao userDao;
-
-    public List<Map<String, Object>> findList(String sql, Object... param) {
-        return userDao.findList(sql, param);
-    }
 
     public User findObject(String sql, Object... param) {
         return userDao.findObject(User.class, sql, param);
