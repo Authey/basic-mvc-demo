@@ -1,5 +1,6 @@
 package basic.mvc.utility;
 
+import basic.mvc.utility.exception.ParameterUnexpectedException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -262,6 +263,96 @@ public class BaseDaoTest extends BaseDao<basic.mvc.demo.Test> {
     public void findMap4() {
         Map<String, Object> res = findMap(select);
         assertNull(res);
+    }
+
+    @Test
+    public void findPage0() {
+        PageList<Record> res = findPage(select, 1, 1);
+        System.out.println(res.toJsonGrid());
+        assertEquals(2, res.getPageTotal());
+        assertEquals(2, res.getSizeTotal());
+        assertEquals(1, res.getList().size());
+    }
+
+    @Test
+    public void findPage1() {
+        PageList<Record> res = findPage(select, 2, 1);
+        System.out.println(res.getList());
+        assertEquals(2, res.getPageTotal());
+        assertEquals(2, res.getSizeTotal());
+        assertEquals(1, res.getList().size());
+    }
+
+    @Test
+    public void findPage2() {
+        PageList<Record> res = findPage(select, 1, 2);
+        assertEquals(1, res.getPageTotal());
+        assertEquals(2, res.getSizeTotal());
+        assertEquals(2, res.getList().size());
+    }
+
+    @Test
+    public void findPage3() {
+        PageList<Record> res = findPage(select, 2, 2);
+        assertEquals(1, res.getPageTotal());
+        assertEquals(2, res.getSizeTotal());
+        assertEquals(0, res.getList().size());
+    }
+
+    @Test(expected = ParameterUnexpectedException.class)
+    public void findPage4() {
+        PageList<Record> res = findPage(select, 0, 1);
+        assertEquals(1, res.getPageTotal());
+        assertEquals(2, res.getSizeTotal());
+        assertEquals(0, res.getList().size());
+    }
+
+    @Test(expected = ParameterUnexpectedException.class)
+    public void findPage5() {
+        PageList<Record> res = findPage(select, 1, 0);
+        assertEquals(1, res.getPageTotal());
+        assertEquals(2, res.getSizeTotal());
+        assertEquals(0, res.getList().size());
+    }
+
+    @Test(expected = ParameterUnexpectedException.class)
+    public void findPage6() {
+        PageList<Record> res = findPage(select, 0, 0);
+        assertEquals(1, res.getPageTotal());
+        assertEquals(2, res.getSizeTotal());
+        assertEquals(0, res.getList().size());
+    }
+
+    @Test
+    public void findPage7() {
+        PageList<Record> res = findPage(select + " WHERE ID = ?", 1, 2, id0);
+        assertEquals(1, res.getPageTotal());
+        assertEquals(1, res.getSizeTotal());
+        assertEquals(1, res.getList().size());
+    }
+
+    @Test
+    public void findPage8() {
+        PageList<Record> res = findPage(select + " WHERE ID = ?", 1, 2, "ID");
+        assertEquals(0, res.getPageTotal());
+        assertEquals(0, res.getSizeTotal());
+        assertEquals(0, res.getList().size());
+    }
+
+    @Test(expected = BadSqlGrammarException.class)
+    public void findPage9() {
+        PageList<Record> res = findPage(select + " WHERE COLUMN = ?", 1, 2, "COL");
+        assertEquals(0, res.getPageTotal());
+        assertEquals(0, res.getSizeTotal());
+        assertEquals(0, res.getList().size());
+    }
+
+    @Test(expected = DataIntegrityViolationException.class)
+    public void findPage10() {
+        PageList<Record> res = findPage(select + " WHERE CREATE_DATE = ?", 1, 2, "2024-05-09 16:03:27");
+        assertEquals(0, res.getPageTotal());
+        assertEquals(0, res.getSizeTotal());
+        assertEquals(0, res.getList().size());
     }
 
     @Test
