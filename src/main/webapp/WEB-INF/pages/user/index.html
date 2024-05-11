@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>User</title>
+    <#include "*/resources.html" />
 </head>
 <body>
     <table>
@@ -33,13 +34,13 @@
         </tr>
     </table>
     <table id="user-info"></table>
-    <div id="user-page"></div>
+    <div id="user-pager"></div>
 </body>
 </html>
 
-<#include "*/resources.html" />
-
 <script type="text/javascript">
+    let $user_grid;
+
     function login() {
         let username = $("#username").val();
         let password = $("#password").val();
@@ -49,11 +50,12 @@
             async: false,
             data: {"username": username, "password": password},
             dataType: "json",
-            success: function(msg) {
-                if (eval(msg).state === 1) {
+            success: function(resp) {
+                let response = eval(resp)
+                if (response.state === 1) {
                     toHome()
                 } else {
-                    $("#user-alert").html(JSON.stringify(msg))
+                    $("#user-alert").html(response.msg)
                 }
             }
         })
@@ -68,18 +70,19 @@
             async: false,
             data: {"username": username, "password": password},
             dataType: "json",
-            success: function(msg) {
-                if (eval(msg).state === 1) {
-                    window.location.href = "${root!}/user/index";
+            success: function(resp) {
+                let response = eval(resp)
+                if (response.state === 1) {
+                    window.location.href = "${root!}/user/index"
                 } else {
-                    $("#user-alert").html(JSON.stringify(msg))
+                    $("#user-alert").html(response.msg)
                 }
-            },
+            }
         })
     }
 
     function load() {
-        jQuery("#user-info").jqGrid({
+        $user_grid = jQuery("#user-info").jqGrid({
             url: "${root!}/user/load",
             datatype: "json",
             mtype: "POST",
@@ -88,14 +91,22 @@
                 {name: 'ID', index: 'ID', hidden: true, align: 'center', width: 10},
                 {name: 'USERNAME', index: 'USERNAME', hidden: false, align: 'center', width: 30},
                 {name: 'PASSWORD', index: 'PASSWORD', hidden: false, align: 'center', width: 30},
-                {name: 'AUTH_LEVEL', index: 'AUTH_LEVEL', hidden: false, align: 'center', width: 30},
+                {name: 'AUTH_LEVEL', index: 'AUTH_LEVEL', hidden: false, align: 'center', width: 30}
             ],
             rowNum: 10,
-            pager: "#user-page",
+            pager: "#user-pager",
             rownumbers: true,
             autoheight: true,
             autowidth: true,
-            subGrid: false,
+            viewrecords: true
+        })
+
+        jQuery("#user-info").jqGrid('navGrid', "#user-pager", {
+            add: false,
+            edit: false,
+            del : false,
+            search : false,
+            refresh : true
         })
     }
 
@@ -107,13 +118,29 @@
             async: false,
             data: {"username": username},
             dataType: "json",
-            success: function(msg) {
-                $("#user-alert").html(JSON.stringify(msg))
+            success: function(resp) {
+                let response = eval(resp)
+                if (response.state === 1 && response.msg !== "0") {
+                    reload()
+                } else if (response.msg === "0") {
+                    $("#user-alert").html("No Username Matched")
+                } else {
+                    $("#user-alert").html(response.msg)
+                }
             }
         })
     }
 
     function toHome() {
         window.location.href = "${root!}/home"
+    }
+
+    function reload() {
+        $("#user-alert").html("")
+        $user_grid.jqGrid('setGridParam', {
+            search: true,
+            postData: {},
+            page: 1
+        }).trigger("reloadGrid")
     }
 </script>

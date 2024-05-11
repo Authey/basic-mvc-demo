@@ -61,7 +61,9 @@ public class UserControllerTest {
 
     @Test
     public void load() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/user/load"))
+        mvc.perform(MockMvcRequestBuilders.post("/user/load")
+                        .param("page", "1")
+                        .param("rows", "1"))
                 .andExpect(status().isOk())
                 .andDo(print());
     }

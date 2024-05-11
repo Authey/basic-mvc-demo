@@ -46,7 +46,7 @@ public class UserController extends BaseController {
             if (match) {
                 this.ajaxDoneSuccess(null);
             } else {
-                this.ajaxDoneFailure(null);
+                this.ajaxDoneFailure("Password Unmatched");
             }
         } catch (EmptyResultDataAccessException e) {
             logger.error("Failed to Perform User Information Comparison: ", e);
@@ -71,7 +71,7 @@ public class UserController extends BaseController {
                 params.add("GUEST");
                 int row = userService.update("INSERT INTO SYS_USER (ID, USERNAME, PASSWORD, AUTH_LEVEL) VALUES (?, ?, ?, ?)", params.toArray());
                 logger.info("Succeeded to Insert User Information");
-                this.ajaxDoneSuccess("Affected Row: " + row);
+                this.ajaxDoneSuccess(Integer.toString(row));
             }
         } catch (DuplicateKeyException e) {
             logger.error("Failed to Insert User Information: ", e);
@@ -101,7 +101,7 @@ public class UserController extends BaseController {
         try {
             int row = userService.update("DELETE FROM SYS_USER WHERE USERNAME = ?", username);
             logger.info("Succeeded to Delete User Information");
-            this.ajaxDoneSuccess("Affected Row: " + row);
+            this.ajaxDoneSuccess(Integer.toString(row));
         } catch (Exception e) {
             logger.error("Failed to Delete User Information: ", e);
             this.ajaxDoneFailure(null);
