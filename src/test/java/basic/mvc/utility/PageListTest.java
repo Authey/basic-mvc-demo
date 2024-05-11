@@ -1,15 +1,17 @@
 package basic.mvc.utility;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
 public class PageListTest {
@@ -22,11 +24,14 @@ public class PageListTest {
 
     @Before
     public void before() {
-        Record rec = new Record();
-        rec.set("Key0", "Value0");
-        rec.set("Key1", "Value1");
-        recList.add(rec);
-        recList.add(rec);
+        Record rec0 = new Record();
+        rec0.set("Key0", "Value0");
+        rec0.set("Key1", "Value1");
+        recList.add(rec0);
+        Record rec1 = new Record();
+        rec1.set("Key2", "Value2");
+        rec1.set("Key3", "Value3");
+        recList.add(rec1);
         pageRecList0 = new PageList<>(1, 5, 10, 50, recList);
         pageRecList1 = new PageList<>(2, 10, 5, 45, recList);
     }
@@ -79,6 +84,32 @@ public class PageListTest {
         assertEquals(recList, pageRecList1.getList());
         assertEquals(1, pageRecList0.getList().size());
         assertEquals(1, pageRecList1.getList().size());
+    }
+
+    @Test
+    public void toJsonGrid() {
+        JSONObject json0 = pageRecList0.toJsonGrid();
+        JSONArray array0 = json0.getJSONArray("rows");
+        assertTrue(json0.containsKey("rows"));
+        JSONArray arrayTrue0 = new JSONArray();
+        for (Record rec : pageRecList0.getList()) {
+            JSONObject json = new JSONObject();
+            json.put("cell", JSONObject.toJSON(rec.getData()));
+            arrayTrue0.add(json);
+        }
+        assertArrayEquals(arrayTrue0.toArray(), array0.toArray());
+        System.out.println(Arrays.toString(array0.toArray()));
+        JSONObject json1 = pageRecList1.toJsonGrid();
+        JSONArray array1 = json1.getJSONArray("rows");
+        assertTrue(json1.containsKey("rows"));
+        JSONArray arrayTrue1 = new JSONArray();
+        for (Record rec : pageRecList1.getList()) {
+            JSONObject json = new JSONObject();
+            json.put("cell", JSONObject.toJSON(rec.getData()));
+            arrayTrue1.add(json);
+        }
+        assertArrayEquals(arrayTrue1.toArray(), array1.toArray());
+        System.out.println(Arrays.toString(array1.toArray()));
     }
 
 }

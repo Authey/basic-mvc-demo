@@ -1,5 +1,8 @@
 package basic.mvc.utility;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +47,22 @@ public class PageList<E> implements Serializable {
 
     public List<E> getList() {
         return this.innerList;
+    }
+
+    public JSONObject toJsonGrid() {
+        JSONObject grid = new JSONObject();
+        grid.put("page", getPage());
+        grid.put("total", getPageTotal());
+        grid.put("records", getSizeTotal());
+        JSONArray array = new JSONArray();
+        for (E inner : innerList) {
+            Record rec = (Record) inner;
+            JSONObject json = new JSONObject();
+            json.put("cell", JSONObject.toJSON(rec.getData()));
+            array.add(json);
+        }
+        grid.put("rows", array);
+        return grid;
     }
 
 }
