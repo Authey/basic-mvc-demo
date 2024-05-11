@@ -5,35 +5,41 @@
     <title>User</title>
     <#include "*/resources.html" />
 </head>
-<body>
-    <table>
+<body class="container-fluid">
+    <table class="table">
         <tr><td><div>${type!}</div></td></tr>
         <tr><td><div id="user-alert"></div></td></tr>
     </table>
-    <table>
-        <tr>
-            <td><label for="username">Username:</label></td>
-            <td colspan="2"><input type="text" id="username"></td>
-        </tr>
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label for="username" class="col-sm-2 control-label">Username:</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="username" placeholder="username">
+            </div>
+        </div>
         <#if type != 'Manage'>
-            <tr>
-                <td><label for="password">Password:</label></td>
-                <td colspan="2"><input type="password" id="password"></td>
-            </tr>
+            <div class="form-group">
+                <label for="password" class="col-sm-2 control-label">Password:</label>
+                <div class="col-sm-4">
+                    <input type="password" class="form-control" id="password" placeholder="password">
+                </div>
+            </div>
         </#if>
-        <tr>
-            <#if type == 'Login'>
-                <td><button onclick="login()">Log In</button></td>
-            <#elseif type == 'Enroll'>
-                <td><button onclick="enroll()">Enroll</button></td>
-            <#elseif type == 'Manage'>
-                <td><button onclick="load()">Load User</button></td>
-                <td><button onclick="remove()">Remove</button></td>
-            </#if>
-            <td><button onclick="toHome()">Home</button></td>
-        </tr>
-    </table>
-    <table id="user-info"></table>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-4">
+                <#if type == 'Login'>
+                    <input class="btn btn-primary" type="button" onclick="login()" value="Log In"/>
+                <#elseif type == 'Enroll'>
+                    <input class="btn btn-primary" type="button" onclick="enroll()" value="Enroll"/>
+                <#elseif type == 'Manage'>
+                    <input class="btn btn-info" type="button" onclick="load()" value="Load User"/>
+                    <input class="btn btn-danger" type="button" onclick="remove()" value="Remove"/>
+                </#if>
+                <input class="btn btn-default" type="button" onclick="toHome()" value="Home"/>
+            </div>
+        </div>
+    </form>
+    <table id="user-info" class="table table-hover table-bordered"></table>
     <div id="user-pager"></div>
 </body>
 </html>
@@ -55,7 +61,7 @@
                 if (response.state === 1) {
                     toHome()
                 } else {
-                    $("#user-alert").html(response.msg)
+                    $("#user-alert").html(warn(response.msg))
                 }
             }
         })
@@ -75,7 +81,7 @@
                 if (response.state === 1) {
                     window.location.href = "${root!}/user/index"
                 } else {
-                    $("#user-alert").html(response.msg)
+                    $("#user-alert").html(warn(response.msg))
                 }
             }
         })
@@ -123,9 +129,9 @@
                 if (response.state === 1 && response.msg !== "0") {
                     reload()
                 } else if (response.msg === "0") {
-                    $("#user-alert").html("No Username Matched")
+                    $("#user-alert").html(warn("No Username Matched"))
                 } else {
-                    $("#user-alert").html(response.msg)
+                    $("#user-alert").html(warn(response.msg))
                 }
             }
         })
@@ -136,11 +142,15 @@
     }
 
     function reload() {
-        $("#user-alert").html("")
+        $("#user-alert").html('<div class="alert alert-success" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><b>Delete User Successfully</b></div>')
         $user_grid.jqGrid('setGridParam', {
             search: true,
             postData: {},
             page: 1
         }).trigger("reloadGrid")
+    }
+
+    function warn(content) {
+        return '<div class="alert alert-warning" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><b>' + content + '</b></div>'
     }
 </script>

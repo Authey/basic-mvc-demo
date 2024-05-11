@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
+    <#include "*/resources.html" />
 </head>
-<body>
-    <div>Home Index</div>
-    <button onclick="toUser('Enroll')">Enroll</button>
-    <button onclick="toUser('Login')">Log In</button>
-    <button onclick="toUser('Manage')">Manage</button>
+<body class="container-fluid">
+    <table class="table">
+        <tr><td><div>Home</div></td></tr>
+    </table>
+    <button class="btn btn-primary" onclick="toUser('Enroll')">Enroll</button>
+    <button class="btn btn-success" onclick="toUser('Login')">Log In</button>
+    <button class="btn btn-info" onclick="toUser('Manage')">Manage</button>
 </body>
 </html>
 
