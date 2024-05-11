@@ -32,7 +32,8 @@
             <td><button onclick="toHome()">Home</button></td>
         </tr>
     </table>
-    <div id="user-info"></div>
+    <table id="user-info"></table>
+    <div id="user-page"></div>
 </body>
 </html>
 
@@ -78,15 +79,23 @@
     }
 
     function load() {
-        $.ajax({
-            type: "POST",
+        jQuery("#user-info").jqGrid({
             url: "${root!}/user/load",
-            async: false,
-            data: {},
-            dataType: "json",
-            success: function(info) {
-                $("#user-info").html(JSON.stringify(info))
-            }
+            datatype: "json",
+            mtype: "POST",
+            colNames: ['ID', 'USERNAME', 'PASSWORD', 'AUTH LEVEL'],
+            colModel: [
+                {name: 'ID', index: 'ID', hidden: true, align: 'center', width: 10},
+                {name: 'USERNAME', index: 'USERNAME', hidden: false, align: 'center', width: 30},
+                {name: 'PASSWORD', index: 'PASSWORD', hidden: false, align: 'center', width: 30},
+                {name: 'AUTH_LEVEL', index: 'AUTH_LEVEL', hidden: false, align: 'center', width: 30},
+            ],
+            rownum: 10,
+            pager: "#user-page",
+            rownumbers: true,
+            autoheight: true,
+            autowidth: true,
+            subGrid: false,
         })
     }
 

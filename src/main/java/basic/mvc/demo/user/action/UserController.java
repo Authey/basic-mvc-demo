@@ -4,6 +4,8 @@ import basic.mvc.demo.user.po.User;
 import basic.mvc.demo.user.service.UserService;
 import basic.mvc.utility.BaseController;
 import basic.mvc.utility.CryptoUtils;
+import basic.mvc.utility.PageList;
+import basic.mvc.utility.Record;
 import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -86,12 +88,11 @@ public class UserController extends BaseController {
     }
 
     @PostMapping(value = "/load")
-    public void load() {
+    public void load(@RequestParam int page, @RequestParam int rows) {
         try {
-            List<Map<String, Object>> userList = userService.findList("SELECT ID, USERNAME, PASSWORD, AUTH_LEVEL FROM SYS_USER");
+            PageList<Record> userList = userService.findPage("SELECT ID, USERNAME, PASSWORD, AUTH_LEVEL FROM SYS_USER", page, rows);
             logger.info("User List: " + userList);
-            JSONArray json = JSONArray.fromObject(userList);
-            this.renderJson(json.toString());
+            this.renderJson(userList.toJsonGrid().toString());
         } catch (Exception e) {
             logger.error("Failed to Query User Information: ", e);
         }
