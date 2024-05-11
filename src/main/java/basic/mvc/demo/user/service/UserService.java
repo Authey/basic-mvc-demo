@@ -9,8 +9,6 @@ import java.util.Map;
 
 public interface UserService {
 
-    List<Map<String, Object>> findList(String sql, Object... param);
-
     User findObject(String sql, Object... param);
 
     PageList<Record> findPage(String sql, int page, int size, Object... param);
