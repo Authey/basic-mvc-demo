@@ -65,4 +65,10 @@ public class PageList<E> implements Serializable {
         return grid;
     }
 
+    public String toString() {
+        JSONArray json = new JSONArray();
+        json.addAll(this.innerList);
+        return json.toString();
+    }
+
 }

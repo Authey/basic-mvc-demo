@@ -98,7 +98,6 @@ public class PageListTest {
             arrayTrue0.add(json);
         }
         assertArrayEquals(arrayTrue0.toArray(), array0.toArray());
-        System.out.println(Arrays.toString(array0.toArray()));
         JSONObject json1 = pageRecList1.toJsonGrid();
         JSONArray array1 = json1.getJSONArray("rows");
         assertTrue(json1.containsKey("rows"));
@@ -109,7 +108,15 @@ public class PageListTest {
             arrayTrue1.add(json);
         }
         assertArrayEquals(arrayTrue1.toArray(), array1.toArray());
-        System.out.println(Arrays.toString(array1.toArray()));
+    }
+
+    @Test
+    public void toString0() {
+        String str = pageRecList0.toString();
+        JSONArray json0 = new JSONArray();
+        json0.addAll(recList);
+        assertEquals(json0.toJSONString(), str);
+        assertTrue(JSONObject.parseObject(JSONArray.parseArray(str).get(0).toString()).containsKey("data"));
     }
 
 }
