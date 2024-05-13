@@ -21,9 +21,7 @@
 </html>
 
 <script type="text/javascript">
-    if ("${alert!}" !== "") {
-        $("#home-alert").html('<div class="alert alert-success" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><b>${alert!}</b></div>')
-    }
+    alertMsg("#home-alert", "success", "${alert!}")
 
     function toUser(type) {
         window.location.href = "${root!}/user/index?type=" + type;

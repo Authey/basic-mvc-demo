@@ -33,9 +33,7 @@
                     <input class="btn btn-primary" type="button" onclick="enroll()" value="Enroll"/>
                 <#elseif type == 'Manage'>
                     <input class="btn btn-info" type="button" onclick="load()" value="Load User"/>
-                    <#if auth ?? && auth == 'ADMIN'>
-                        <input class="btn btn-danger" type="button" onclick="remove()" value="Remove"/>
-                    </#if>
+                    <input class="btn btn-danger" type="button" onclick="remove()" value="Remove" <#if auth ?? && auth != 'ADMIN'>disabled</#if>/>
                 </#if>
                 <input class="btn btn-default" type="button" onclick="toHome()" value="Home"/>
             </div>
@@ -49,9 +47,7 @@
 <script type="text/javascript">
     let $user_grid;
 
-    if ("${alert!}" !== "") {
-        $("#user-alert").html('<div class="alert alert-success" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><b>${alert!}</b></div>')
-    }
+    alertMsg("#user-alert", "success", "${alert!}")
 
     if ("${type!}" === "Logout") {
         $.ajax({
@@ -80,7 +76,7 @@
                 if (response.state === 1) {
                     postMsg("${root!}/home", "Login Successfully")
                 } else {
-                    $("#user-alert").html(warn(response.msg))
+                    alertMsg("#user-alert", "warning", response.msg)
                 }
             }
         })
@@ -100,7 +96,7 @@
                 if (response.state === 1) {
                     postMsg("${root!}/user/index", "Enroll Successfully")
                 } else {
-                    $("#user-alert").html(warn(response.msg))
+                    alertMsg("#user-alert", "warning", response.msg)
                 }
             }
         })
@@ -148,9 +144,9 @@
                 if (response.state === 1 && response.msg !== "0") {
                     reload()
                 } else if (response.msg === "0") {
-                    $("#user-alert").html(warn("No Username Matched"))
+                    alertMsg("#user-alert", "warning", "No Username Matched")
                 } else {
-                    $("#user-alert").html(warn(response.msg))
+                    alertMsg("#user-alert", "warning", response.msg)
                 }
             }
         })
@@ -161,15 +157,11 @@
     }
 
     function reload() {
-        $("#user-alert").html('<div class="alert alert-success" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><b>Delete User Successfully</b></div>')
+        alertMsg("#user-alert", "success", "Delete User Successfully")
         $user_grid.jqGrid('setGridParam', {
             search: true,
             postData: {},
             page: 1
         }).trigger("reloadGrid")
-    }
-
-    function warn(content) {
-        return '<div class="alert alert-warning" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><b>' + content + '</b></div>'
     }
 </script>
