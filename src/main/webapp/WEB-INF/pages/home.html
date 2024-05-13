@@ -2,18 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Home</title>
+    <title>Home Page</title>
     <#include "*/resources.html" />
 </head>
 <body class="container-fluid">
-    <#include "*/template.html" />
-    <#if user ??>
-        <button class="btn btn-danger" onclick="toUser('Logout')">Log Out</button>
-        <button class="btn btn-info" onclick="toUser('Manage')">Manage</button>
-    <#else>
-        <button class="btn btn-primary" onclick="toUser('Enroll')">Enroll</button>
-        <button class="btn btn-success" onclick="toUser('Login')">Log In</button>
-    </#if>
+    <ul class="nav nav-tabs">
+        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
+        <#if user ??>
+            <li role="presentation"><a href="#manage" aria-controls="manage" role="tab" data-toggle="tab">Manage</a></li>
+        <#else>
+            <li role="presentation"><a href="#enroll" aria-controls="enroll" role="tab" data-toggle="tab">Enroll</a></li>
+            <li role="presentation"><a href="#login" aria-controls="login" role="tab" data-toggle="tab">Login</a></li>
+        </#if>
+    </ul>
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="home">
+            <iframe class="embed-responsive-item" src="${root!}/index"></iframe>
+        </div>
+        <#if user ??>
+            <div role="tabpanel" class="tab-pane" id="manage">
+                <iframe class="embed-responsive-item" src="${root!}/user/index?type=Manage"></iframe>
+            </div>
+        <#else>
+            <div role="tabpanel" class="tab-pane" id="enroll">
+                <iframe class="embed-responsive-item" src="${root!}/user/index?type=Enroll"></iframe>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="login">
+                <iframe class="embed-responsive-item" src="${root!}/user/index?type=Login"></iframe>
+            </div>
+        </#if>
+    </div>
 </body>
 </html>
 

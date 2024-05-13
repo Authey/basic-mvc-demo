@@ -43,7 +43,6 @@ public class UserController extends BaseController {
         this.setAttr("type", type);
         this.setAttr("alert", this.getPara("alert", null));
         this.setAttr("tag", "user");
-        this.setAttr("title", type);
         return new ModelAndView("user/index");
     }
 

@@ -23,10 +23,16 @@ public class HomeController extends BaseController {
         if (user != null) {
             this.setAttr("user", user);
         }
+        return new ModelAndView("home");
+    }
+
+    @GetMapping(value = "/index")
+    public ModelAndView index() {
+        this.setAttr("root", this.getRootPath());
+        logger.info("Home Index Request");
         this.setAttr("alert", this.getPara("alert", null));
         this.setAttr("tag", "home");
-        this.setAttr("title", "Home");
-        return new ModelAndView("home");
+        return new ModelAndView("base/index");
     }
 
 }
