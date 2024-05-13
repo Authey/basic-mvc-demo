@@ -1,5 +1,6 @@
 package basic.mvc.utility;
 
+import basic.mvc.demo.user.po.User;
 import basic.mvc.utility.exception.NoSuchElementFoundException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +29,14 @@ public abstract class BaseController {
 
     public String getRootPath() {
         return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
+    }
+
+    public void setUser(User user) {
+        request.getSession().setAttribute("user", user);
+    }
+
+    public User getUser() {
+        return (User) request.getSession().getAttribute("user");
     }
 
     public String getPara(String name) {

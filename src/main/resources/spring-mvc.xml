@@ -12,6 +12,19 @@
     <util:properties id="constant" location="classpath:constant.properties" />
 
     <mvc:resources mapping="/static/**" location="classpath:/assets/" />
+    
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**" />
+            <mvc:exclude-mapping path="/" />
+            <mvc:exclude-mapping path="/home" />
+            <mvc:exclude-mapping path="/user/**" />
+            <mvc:exclude-mapping path="/static/**" />
+            <mvc:exclude-mapping path="/service/**" />
+            <mvc:exclude-mapping path="/general_service/**" />
+            <bean class="basic.mvc.utility.BaseInterceptor" />
+        </mvc:interceptor>
+    </mvc:interceptors>
 
     <!-- <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/pages/" />

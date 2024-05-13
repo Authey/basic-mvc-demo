@@ -40,10 +40,11 @@ public class UserController extends BaseController {
     @PostMapping(value = "/login")
     public void login(@RequestParam String username, @RequestParam String password) {
         try {
-            User pwd = userService.findObject("SELECT PASSWORD FROM SYS_USER WHERE USERNAME = ?", username);
-            boolean match = CryptoUtils.toHex(CryptoUtils.hash(password, "MD5")).equalsIgnoreCase(pwd.getPassword());
+            User user = userService.findObject("SELECT USERNAME, PASSWORD, AUTH_LEVEL FROM SYS_USER WHERE USERNAME = ?", username);
+            boolean match = CryptoUtils.toHex(CryptoUtils.hash(password, "MD5")).equalsIgnoreCase(user.getPassword());
             logger.info(match ? "User Information Matched" : "User Information Unmatched");
             if (match) {
+                this.setUser(user);
                 this.ajaxDoneSuccess(null);
             } else {
                 this.ajaxDoneFailure("Password Unmatched");
@@ -55,6 +56,11 @@ public class UserController extends BaseController {
             logger.error("Failed to Perform User Information Comparison: ", e);
             this.ajaxDoneFailure(null);
         }
+    }
+
+    @PostMapping(value = "/logout")
+    public void logout() {
+        request.getSession().removeAttribute("user");
     }
 
     @PostMapping(value = "/enroll")

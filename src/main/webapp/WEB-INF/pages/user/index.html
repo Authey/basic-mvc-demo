@@ -47,6 +47,19 @@
 <script type="text/javascript">
     let $user_grid;
 
+    if ("${type!}" === "Logout") {
+        $.ajax({
+            type: "POST",
+            url: "${root!}/user/logout",
+            async: false,
+            data: {},
+            dataType: "json",
+            success: function(resp) {
+                toHome()
+            }
+        })
+    }
+
     function login() {
         let username = $("#username").val();
         let password = $("#password").val();

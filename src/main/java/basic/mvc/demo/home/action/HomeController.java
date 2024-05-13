@@ -1,5 +1,6 @@
 package basic.mvc.demo.home.action;
 
+import basic.mvc.demo.user.po.User;
 import basic.mvc.utility.BaseController;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,10 @@ public class HomeController extends BaseController {
     public ModelAndView home() {
         logger.info("Accessing Home Page");
         this.setAttr("root", this.getRootPath());
+        User user = this.getUser();
+        if (user != null) {
+            this.setAttr("user", user);
+        }
         return new ModelAndView("home");
     }
 
