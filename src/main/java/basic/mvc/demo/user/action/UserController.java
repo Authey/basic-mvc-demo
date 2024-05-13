@@ -32,9 +32,12 @@ public class UserController extends BaseController {
     public ModelAndView index() {
         this.setAttr("root", this.getRootPath());
         String type = this.getPara("type", "Login");
-        if (this.getUser() == null && ("Logout".equals(type) || "Manage".equals(type))) {
+        User user = this.getUser();
+        if (user == null && ("Logout".equals(type) || "Manage".equals(type))) {
             logger.warn("Unauthorised Request Type: " + type);
             type = "Login";
+        } else if (user != null) {
+            this.setAttr("auth", user.getAuthLevel());
         }
         this.setAttr("type", type);
         logger.info("Accessing Type Is " + type);
@@ -78,7 +81,7 @@ public class UserController extends BaseController {
                 params.add(UUID.randomUUID().toString().toUpperCase());
                 params.add(username);
                 params.add(CryptoUtils.hash(password, "MD5"));
-                params.add("GUEST");
+                params.add("NORMAL");
                 int row = userService.update("INSERT INTO SYS_USER (ID, USERNAME, PASSWORD, AUTH_LEVEL) VALUES (?, ?, ?, ?)", params.toArray());
                 logger.info("Succeeded to Insert User Information");
                 this.ajaxDoneSuccess(Integer.toString(row));

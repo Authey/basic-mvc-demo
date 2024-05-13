@@ -33,7 +33,9 @@
                     <input class="btn btn-primary" type="button" onclick="enroll()" value="Enroll"/>
                 <#elseif type == 'Manage'>
                     <input class="btn btn-info" type="button" onclick="load()" value="Load User"/>
-                    <input class="btn btn-danger" type="button" onclick="remove()" value="Remove"/>
+                    <#if auth ?? && auth == 'ADMIN'>
+                        <input class="btn btn-danger" type="button" onclick="remove()" value="Remove"/>
+                    </#if>
                 </#if>
                 <input class="btn btn-default" type="button" onclick="toHome()" value="Home"/>
             </div>

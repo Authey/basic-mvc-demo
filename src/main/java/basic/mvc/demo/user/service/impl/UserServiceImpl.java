@@ -6,10 +6,12 @@ import basic.mvc.demo.user.service.UserService;
 import basic.mvc.utility.PageList;
 import basic.mvc.utility.Record;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
 @Service("UserServiceImpl")
+@Transactional
 public class UserServiceImpl implements UserService {
 
     @Resource
