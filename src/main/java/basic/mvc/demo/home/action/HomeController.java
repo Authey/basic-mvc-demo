@@ -12,10 +12,10 @@ public class HomeController extends BaseController {
     @GetMapping(value = "/")
     public ModelAndView base() {
         logger.info("Base URL Request");
-        return new ModelAndView("redirect:/home");
+        return new ModelAndView("redirect:/index");
     }
 
-    @RequestMapping(value = "/home", method = {RequestMethod.GET, RequestMethod.POST})
+    @GetMapping(value = "/home")
     public ModelAndView home() {
         this.setAttr("root", this.getRootPath());
         logger.info("Home Page Request");
@@ -26,10 +26,14 @@ public class HomeController extends BaseController {
         return new ModelAndView("home");
     }
 
-    @GetMapping(value = "/index")
+    @RequestMapping(value = "/index", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView index() {
         this.setAttr("root", this.getRootPath());
-        logger.info("Home Index Request");
+        logger.info("Home Page Request");
+        User user = this.getUser();
+        if (user != null) {
+            this.setAttr("user", user);
+        }
         this.setAttr("alert", this.getPara("alert", null));
         this.setAttr("tag", "home");
         return new ModelAndView("base/index");

@@ -71,7 +71,7 @@
             success: function(resp) {
                 let response = eval(resp)
                 if (response.state === 1) {
-                    postMsg("${root!}/home", "Login Successfully")
+                    postMsg("${root!}/index", "Login Successfully")
                 } else {
                     alertMsg("${tag!}", "warning", response.msg)
                 }
@@ -150,7 +150,7 @@
     }
 
     function toHome() {
-        window.open("${root!}/home", "_self")
+        window.open("${root!}/index", "_self")
     }
 
     function reload() {

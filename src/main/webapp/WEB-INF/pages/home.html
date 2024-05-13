@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -17,28 +16,20 @@
     </ul>
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="home">
-            <iframe class="embed-responsive-item" src="${root!}/index"></iframe>
+            <iframe class="embed-responsive-item" src="${root!}/index" width="100%" height="90%" frameborder="0"></iframe>
         </div>
         <#if user ??>
             <div role="tabpanel" class="tab-pane" id="manage">
-                <iframe class="embed-responsive-item" src="${root!}/user/index?type=Manage"></iframe>
+                <iframe class="embed-responsive-item" src="${root!}/user/index?type=Manage" width="100%"  height="90%" frameborder="0"></iframe>
             </div>
         <#else>
             <div role="tabpanel" class="tab-pane" id="enroll">
-                <iframe class="embed-responsive-item" src="${root!}/user/index?type=Enroll"></iframe>
+                <iframe class="embed-responsive-item" src="${root!}/user/index?type=Enroll" width="100%" height="90%" frameborder="0"></iframe>
             </div>
             <div role="tabpanel" class="tab-pane" id="login">
-                <iframe class="embed-responsive-item" src="${root!}/user/index?type=Login"></iframe>
+                <iframe class="embed-responsive-item" src="${root!}/user/index?type=Login" width="100%" height="90%" frameborder="0"></iframe>
             </div>
         </#if>
     </div>
 </body>
 </html>
-
-<script type="text/javascript">
-    alertMsg("${tag!}", "success", "${alert!}")
-
-    function toUser(type) {
-        window.open("${root!}/user/index?type=" + type, "_self")
-    }
-</script>
