@@ -1,5 +1,6 @@
 package basic.mvc.utility;
 
+import basic.mvc.demo.user.po.User;
 import basic.mvc.utility.exception.NoSuchElementFoundException;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -29,13 +30,46 @@ public class BaseControllerTest extends BaseController {
     }
 
     @Test
-    public void getContextPath() {
+    public void getRootPath0() {
         request.setContextPath("/context");
         request.setScheme("https");
         request.setServerName("localhost");
         request.setServerPort(9134);
         String root = this.getRootPath();
         assertEquals("https://localhost:9134/context", root);
+    }
+
+    @Test
+    public void getRootPath1() {
+        String context = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
+        String root = this.getRootPath();
+        assertEquals(context, root);
+    }
+
+    @Test
+    public void setUser0() {
+        User user = new User();
+        this.setUser(user);
+        assertEquals(user, request.getSession().getAttribute("user"));
+    }
+
+    @Test
+    public void setUser1() {
+        this.setUser(null);
+        assertNull(request.getSession().getAttribute("user"));
+    }
+
+    @Test
+    public void getUser0() {
+        User user = new User();
+        request.getSession().setAttribute("user", user);
+        assertEquals(request.getSession().getAttribute("user"), this.getUser());
+    }
+
+    @Test
+    public void getUser1() {
+        request.getSession().setAttribute("user", null);
+        assertNull(this.getUser());
     }
 
     @Test(expected = NoSuchElementFoundException.class)

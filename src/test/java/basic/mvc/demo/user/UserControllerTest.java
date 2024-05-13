@@ -51,6 +51,13 @@ public class UserControllerTest {
     }
 
     @Test
+    public void logout() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/logout"))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
     public void enroll() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/user/enroll")
                         .param("username", "Username")
