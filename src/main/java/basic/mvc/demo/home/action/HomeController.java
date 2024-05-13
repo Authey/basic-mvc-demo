@@ -26,7 +26,7 @@ public class HomeController extends BaseController {
         this.setAttr("alert", this.getPara("alert", null));
         this.setAttr("tag", "home");
         this.setAttr("title", "Home");
-        return new ModelAndView("base/home");
+        return new ModelAndView("home");
     }
 
 }

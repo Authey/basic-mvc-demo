@@ -21,6 +21,6 @@
     alertMsg("${tag!}", "success", "${alert!}")
 
     function toUser(type) {
-        window.location.href = "${root!}/user/index?type=" + type;
+        window.open("${root!}/user/index?type=" + type, "_self")
     }
 </script>
