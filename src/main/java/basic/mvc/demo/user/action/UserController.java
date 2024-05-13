@@ -39,9 +39,11 @@ public class UserController extends BaseController {
         } else if (user != null) {
             this.setAttr("auth", user.getAuthLevel());
         }
+        logger.info("User " + type + " Request");
         this.setAttr("type", type);
         this.setAttr("alert", this.getPara("alert", null));
-        logger.info("User " + type + " Request");
+        this.setAttr("tag", "user");
+        this.setAttr("title", type);
         return new ModelAndView("user/index");
     }
 

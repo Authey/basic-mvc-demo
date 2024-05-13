@@ -6,10 +6,7 @@
     <#include "*/resources.html" />
 </head>
 <body class="container-fluid">
-    <table class="table">
-        <tr><td><div>${type!}</div></td></tr>
-        <tr><td><div id="user-alert"></div></td></tr>
-    </table>
+    <#include "*/template.html" />
     <form class="form-horizontal">
         <div class="form-group">
             <label for="username" class="col-sm-2 control-label">Username:</label>
@@ -47,7 +44,7 @@
 <script type="text/javascript">
     let $user_grid;
 
-    alertMsg("#user-alert", "success", "${alert!}")
+    alertMsg("${tag!}", "success", "${alert!}")
 
     if ("${type!}" === "Logout") {
         $.ajax({
@@ -76,7 +73,7 @@
                 if (response.state === 1) {
                     postMsg("${root!}/home", "Login Successfully")
                 } else {
-                    alertMsg("#user-alert", "warning", response.msg)
+                    alertMsg("${tag!}", "warning", response.msg)
                 }
             }
         })
@@ -96,7 +93,7 @@
                 if (response.state === 1) {
                     postMsg("${root!}/user/index", "Enroll Successfully")
                 } else {
-                    alertMsg("#user-alert", "warning", response.msg)
+                    alertMsg("${tag!}", "warning", response.msg)
                 }
             }
         })
@@ -144,9 +141,9 @@
                 if (response.state === 1 && response.msg !== "0") {
                     reload()
                 } else if (response.msg === "0") {
-                    alertMsg("#user-alert", "warning", "No Username Matched")
+                    alertMsg("${tag!}", "warning", "No Username Matched")
                 } else {
-                    alertMsg("#user-alert", "warning", response.msg)
+                    alertMsg("${tag!}", "warning", response.msg)
                 }
             }
         })
@@ -157,7 +154,7 @@
     }
 
     function reload() {
-        alertMsg("#user-alert", "success", "Delete User Successfully")
+        alertMsg("${tag!}", "success", "Delete User Successfully")
         $user_grid.jqGrid('setGridParam', {
             search: true,
             postData: {},

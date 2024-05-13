@@ -6,10 +6,7 @@
     <#include "*/resources.html" />
 </head>
 <body class="container-fluid">
-    <table class="table">
-        <tr><td><div>Home</div></td></tr>
-        <tr><td><div id="home-alert"></div></td></tr>
-    </table>
+    <#include "*/template.html" />
     <#if user ??>
         <button class="btn btn-danger" onclick="toUser('Logout')">Log Out</button>
         <button class="btn btn-info" onclick="toUser('Manage')">Manage</button>
@@ -21,7 +18,7 @@
 </html>
 
 <script type="text/javascript">
-    alertMsg("#home-alert", "success", "${alert!}")
+    alertMsg("${tag!}", "success", "${alert!}")
 
     function toUser(type) {
         window.location.href = "${root!}/user/index?type=" + type;
