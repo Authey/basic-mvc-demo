@@ -49,6 +49,10 @@
 <script type="text/javascript">
     let $user_grid;
 
+    if ("${alert!}" !== "") {
+        $("#user-alert").html('<div class="alert alert-success" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><b>${alert!}</b></div>')
+    }
+
     if ("${type!}" === "Logout") {
         $.ajax({
             type: "POST",
@@ -56,8 +60,8 @@
             async: false,
             data: {},
             dataType: "json",
-            success: function(resp) {
-                toHome()
+            success: function() {
+                postMsg("${root!}/user/index", "Logout Successfully")
             }
         })
     }
@@ -74,7 +78,7 @@
             success: function(resp) {
                 let response = eval(resp)
                 if (response.state === 1) {
-                    toHome()
+                    postMsg("${root!}/home", "Login Successfully")
                 } else {
                     $("#user-alert").html(warn(response.msg))
                 }
@@ -94,7 +98,7 @@
             success: function(resp) {
                 let response = eval(resp)
                 if (response.state === 1) {
-                    window.location.href = "${root!}/user/index"
+                    postMsg("${root!}/user/index", "Enroll Successfully")
                 } else {
                     $("#user-alert").html(warn(response.msg))
                 }

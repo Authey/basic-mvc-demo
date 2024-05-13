@@ -28,7 +28,7 @@ public class UserController extends BaseController {
         this.userService = userService;
     }
 
-    @GetMapping(value = "/index")
+    @RequestMapping(value = "/index", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView index() {
         this.setAttr("root", this.getRootPath());
         String type = this.getPara("type", "Login");
@@ -40,7 +40,8 @@ public class UserController extends BaseController {
             this.setAttr("auth", user.getAuthLevel());
         }
         this.setAttr("type", type);
-        logger.info("Accessing Type Is " + type);
+        this.setAttr("alert", this.getPara("alert", null));
+        logger.info("User " + type + " Request");
         return new ModelAndView("user/index");
     }
 

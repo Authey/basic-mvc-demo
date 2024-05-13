@@ -34,8 +34,16 @@ public class UserControllerTest {
     }
 
     @Test
-    public void index() throws Exception {
+    public void index0() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/user/index"))
+                .andExpect(status().isOk())
+                .andExpect(request().attribute("type", "Login"))
+                .andDo(print());
+    }
+
+    @Test
+    public void index1() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/index"))
                 .andExpect(status().isOk())
                 .andExpect(request().attribute("type", "Login"))
                 .andDo(print());

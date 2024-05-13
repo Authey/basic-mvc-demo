@@ -8,6 +8,7 @@
 <body class="container-fluid">
     <table class="table">
         <tr><td><div>Home</div></td></tr>
+        <tr><td><div id="home-alert"></div></td></tr>
     </table>
     <#if user ??>
         <button class="btn btn-danger" onclick="toUser('Logout')">Log Out</button>
@@ -20,6 +21,10 @@
 </html>
 
 <script type="text/javascript">
+    if ("${alert!}" !== "") {
+        $("#home-alert").html('<div class="alert alert-success" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><b>${alert!}</b></div>')
+    }
+
     function toUser(type) {
         window.location.href = "${root!}/user/index?type=" + type;
     }

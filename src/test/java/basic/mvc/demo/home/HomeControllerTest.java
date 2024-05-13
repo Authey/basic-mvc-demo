@@ -38,8 +38,15 @@ public class HomeControllerTest {
     }
 
     @Test
-    public void home() throws Exception {
+    public void home0() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/home"))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    public void home1() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/home"))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
