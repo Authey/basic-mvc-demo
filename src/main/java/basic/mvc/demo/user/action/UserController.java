@@ -32,6 +32,10 @@ public class UserController extends BaseController {
     public ModelAndView index() {
         this.setAttr("root", this.getRootPath());
         String type = this.getPara("type", "Login");
+        if (this.getUser() == null && ("Logout".equals(type) || "Manage".equals(type))) {
+            logger.warn("Unauthorised Request Type: " + type);
+            type = "Login";
+        }
         this.setAttr("type", type);
         logger.info("Accessing Type Is " + type);
         return new ModelAndView("user/index");
