@@ -31,7 +31,7 @@ public class HomeControllerTest {
     }
 
     @Test
-    public void index() throws Exception {
+    public void base() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/"))
                 .andExpect(status().isFound())
                 .andDo(print());
@@ -45,15 +45,8 @@ public class HomeControllerTest {
     }
 
     @Test
-    public void index0() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/index"))
-                .andExpect(status().isOk())
-                .andDo(print());
-    }
-
-    @Test
-    public void index1() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/index"))
+    public void home1() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/home"))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
