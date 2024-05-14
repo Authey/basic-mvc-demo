@@ -17,6 +17,7 @@ public class HomeController extends BaseController {
 
     @GetMapping(value = "/home")
     public ModelAndView home() {
+        this.setAttr("root", this.getRootPath());
         logger.info("Integrated Home Page Request");
         return new ModelAndView("home");
     }

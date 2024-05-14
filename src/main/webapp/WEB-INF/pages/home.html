@@ -2,25 +2,46 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible">
     <title>Home</title>
     <#include "*/resources.html" />
 </head>
-<body class="container-fluid">
-    <#include "*/template.html" />
-    <#if user ??>
-        <button class="btn btn-danger" onclick="toUser('Logout')">Log Out</button>
-        <button class="btn btn-info" onclick="toUser('Manage')">Manage</button>
-    <#else>
-        <button class="btn btn-primary" onclick="toUser('Enroll')">Enroll</button>
-        <button class="btn btn-success" onclick="toUser('Login')">Log In</button>
-    </#if>
-</body>
+<nav id="navbar" class="navbar navbar-default">
+    <div id="nav-div" class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="javascript:" onclick="showPage('${root!}/index')">Basic Mvc Demo</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <#if user ??>
+                    <li><a href="javascript:" onclick="showPage('${root!}/user/index?type=Manage')">Manage</a></li>
+                </#if>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <#if user ??>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">${user.username!}<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="javascript:">User Centre</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="javascript:" onclick="showPage('${root!}/user/index?type=Logout')">Logout</a></li>
+                        </ul>
+                    </li>
+                <#else>
+                    <li><a href="javascript:" onclick="showPage('${root!}/user/index?type=Enroll')">Enroll</a></li>
+                    <li><a href="javascript:" onclick="showPage('${root!}/user/index?type=Login')">Login</a></li>
+                </#if>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div style="height: 500px">
+    <iframe id="ifr-content" class="embed-responsive-item" width="100%" height="90%" frameborder="0" scrolling="no" src="${root!}/index"></iframe>
+</div>
 </html>
 
 <script type="text/javascript">
-    alertMsg("${tag!}", "success", "${alert!}")
-
-    function toUser(type) {
-        window.open("${root!}/user/index?type=" + type, "_self")
+    function showPage(url) {
+        $("#content").attr("src", url)
     }
 </script>

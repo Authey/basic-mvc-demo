@@ -40,7 +40,7 @@ public class HomeControllerTest {
     @Test
     public void home() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/home"))
-                .andExpect(status().isOk())
+                .andExpect(status().isFound())
                 .andDo(print());
     }
 
