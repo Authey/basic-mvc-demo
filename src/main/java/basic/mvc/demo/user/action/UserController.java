@@ -31,6 +31,8 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/index", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView index() {
         this.setAttr("root", this.getRootPath());
+        String model = constant.getProperty("view.model", "navigate");
+        this.setAttr("view", model);
         String type = this.getPara("type", "Login");
         User user = this.getUser();
         if (user == null && ("Logout".equals(type) || "Manage".equals(type))) {
