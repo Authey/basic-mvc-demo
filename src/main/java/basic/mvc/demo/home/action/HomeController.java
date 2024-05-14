@@ -26,7 +26,7 @@ public class HomeController extends BaseController {
     @RequestMapping(value = "/index", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView index() {
         this.setAttr("root", this.getRootPath());
-        String model = constant.getProperty("view.model", "navigate");
+        String model = constant.getProperty("view.model", "navi");
         this.setAttr("view", model);
         logger.info("Home Page Request");
         User user = this.getUser();
