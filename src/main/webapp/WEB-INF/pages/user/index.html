@@ -147,8 +147,6 @@
                 let response = eval(resp)
                 if (response.state === 1 && response.msg !== "0") {
                     reload()
-                } else if (response.msg === "0") {
-                    alertMsg("${tag!}", "warning", "No Username Matched")
                 } else {
                     alertMsg("${tag!}", "warning", response.msg)
                 }

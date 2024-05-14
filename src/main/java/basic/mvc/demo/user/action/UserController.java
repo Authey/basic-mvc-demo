@@ -87,7 +87,7 @@ public class UserController extends BaseController {
                 params.add(CryptoUtils.hash(password, "MD5"));
                 params.add("NORMAL");
                 int row = userService.update("INSERT INTO SYS_USER (ID, USERNAME, PASSWORD, AUTH_LEVEL) VALUES (?, ?, ?, ?)", params.toArray());
-                logger.info("Succeeded to Insert User Information");
+                logger.info("Succeeded to Insert User " + username);
                 this.ajaxDoneSuccess(Integer.toString(row));
             }
         } catch (DuplicateKeyException e) {
@@ -116,9 +116,18 @@ public class UserController extends BaseController {
     @PostMapping(value = "/remove")
     public void remove(@RequestParam String username) {
         try {
-            int row = userService.update("DELETE FROM SYS_USER WHERE USERNAME = ?", username);
-            logger.info("Succeeded to Delete User Information");
-            this.ajaxDoneSuccess(Integer.toString(row));
+            String authLevel = userService.findObject("SELECT AUTH_LEVEL FROM SYS_USER WHERE USERNAME = ?", username).getAuthLevel();
+            if ("ADMIN".equals(authLevel)) {
+                logger.error("Failed to Delete Admin User " + username);
+                this.ajaxDoneFailure("Cannot Delete Admin User");
+            } else {
+                int row = userService.update("DELETE FROM SYS_USER WHERE USERNAME = ?", username);
+                logger.info("Succeeded to Delete User " + username);
+                this.ajaxDoneSuccess(Integer.toString(row));
+            }
+        } catch (EmptyResultDataAccessException e) {
+            logger.error("Failed to Delete User Information: ", e);
+            this.ajaxDoneFailure("No Username Matched");
         } catch (Exception e) {
             logger.error("Failed to Delete User Information: ", e);
             this.ajaxDoneFailure(null);
