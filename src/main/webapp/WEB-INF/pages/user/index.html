@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>User</title>
-    <#include "*/resources.html" />
 </head>
+<#include "*/navbar.html" />
 <body class="container-fluid">
-    <#include "*/template.html" />
+    <div id="user-alert"></div>
     <form class="form-horizontal">
         <div class="form-group">
             <label for="username" class="col-sm-2 control-label">Username:</label>
@@ -32,7 +32,6 @@
                     <input class="btn btn-info" type="button" onclick="load()" value="Load User"/>
                     <input class="btn btn-danger" type="button" onclick="remove()" value="Remove" <#if auth ?? && auth != 'ADMIN'>disabled</#if>/>
                 </#if>
-                <input class="btn btn-default" type="button" onclick="toHome()" value="Home"/>
             </div>
         </div>
     </form>
@@ -44,7 +43,7 @@
 <script type="text/javascript">
     let $user_grid;
 
-    alertMsg("${tag!}", "success", "${alert!}")
+    alertMsg("user", "success", "${alert!}")
 
     if ("${type!}" === "Logout") {
         $.ajax({
@@ -71,7 +70,7 @@
             success: function(resp) {
                 let response = eval(resp)
                 if (response.state === 1) {
-                    postMsg("${root!}/home", "Login Successfully")
+                    postMsg("${root!}/index", "Login Successfully")
                 } else {
                     alertMsg("${tag!}", "warning", response.msg)
                 }
@@ -147,10 +146,6 @@
                 }
             }
         })
-    }
-
-    function toHome() {
-        window.open("${root!}/home", "_self")
     }
 
     function reload() {
