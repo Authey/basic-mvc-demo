@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>User</title>
 </head>
-<#if view ?? && view == 'navi'>
+<#if view ?? && view == 'nav'>
     <#include "*/navbar.html" />
 <#elseif view == 'embed'>
     <#include "*/resources.html" />
@@ -74,7 +74,7 @@
             success: function(resp) {
                 let response = eval(resp)
                 if (response.state === 1) {
-                    if ("${view!}" === "navi") {
+                    if ("${view!}" === "nav") {
                         postMsg("${root!}/index", "Login Successfully")
                     } else {
                         window.open("${root!}/home", "_self")

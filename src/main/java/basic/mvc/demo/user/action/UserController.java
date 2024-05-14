@@ -31,11 +31,11 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/index", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView index() {
         this.setAttr("root", this.getRootPath());
-        String model = constant.getProperty("view.model", "navi");
+        String model = constant.getProperty("view.model", "nav");
         this.setAttr("view", model);
         String type = this.getPara("type", "Login");
         User user = this.getUser();
-        if (user == null && ("Logout".equals(type) || "Manage".equals(type))) {
+        if (user == null && !"Login".equals(type) && !"Enroll".equals(type)) {
             logger.warn("Unauthorised Request Type: " + type);
             type = "Login";
         } else if (user != null) {
@@ -137,7 +137,7 @@ public class UserController extends BaseController {
     @GetMapping(value = "/centre")
     public ModelAndView centre() {
         this.setAttr("root", this.getRootPath());
-        String model = constant.getProperty("view.model", "navigate");
+        String model = constant.getProperty("view.model", "nav");
         this.setAttr("view", model);
         User user = this.getUser();
         if (user == null) {
