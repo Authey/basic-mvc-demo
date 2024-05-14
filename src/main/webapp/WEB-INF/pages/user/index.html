@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <title>User</title>
 </head>
-<#if view == 'embed'>
-    <#include "*/resources.html" />
-<#else>
+<#if view ?? && view == 'navi'>
     <#include "*/navbar.html" />
+<#elseif view == 'embed'>
+    <#include "*/resources.html" />
 </#if>
 <body class="container-fluid">
     <div id="user-alert"></div>
@@ -74,7 +74,11 @@
             success: function(resp) {
                 let response = eval(resp)
                 if (response.state === 1) {
-                    postMsg("${root!}/index", "Login Successfully")
+                    if ("${view!}" === "navi") {
+                        postMsg("${root!}/index", "Login Successfully")
+                    } else {
+                        window.open("${root!}/home", "_self")
+                    }
                 } else {
                     alertMsg("${tag!}", "warning", response.msg)
                 }

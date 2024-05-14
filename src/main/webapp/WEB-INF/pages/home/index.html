@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <title>Home</title>
 </head>
-<#if view == 'embed'>
-    <#include "*/resources.html" />
-<#else>
+<#if view ?? && view == 'navi'>
     <#include "*/navbar.html" />
+<#elseif view == 'embed'>
+    <#include "*/resources.html" />
 </#if>
 <body class="container-fluid">
     <div id="home-alert"></div>
