@@ -52,7 +52,7 @@ public class UserController extends BaseController {
     public void login(@RequestParam String username, @RequestParam String password) {
         try {
             User user = userService.findObject("SELECT USERNAME, PASSWORD, AUTH_LEVEL FROM SYS_USER WHERE USERNAME = ?", username);
-            boolean match = CryptoUtils.toHex(CryptoUtils.hash(password, "MD5")).equalsIgnoreCase(user.getPassword());
+            boolean match = password.equalsIgnoreCase(user.getPassword());
             logger.info(match ? "User Information Matched" : "User Information Unmatched");
             if (match) {
                 this.setUser(user);

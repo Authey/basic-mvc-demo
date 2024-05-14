@@ -63,13 +63,13 @@
     }
 
     function login() {
-        let username = $("#username").val();
-        let password = $("#password").val();
+        let username = $("#username").val()
+        let password = $("#password").val()
         $.ajax({
             type: "POST",
             url: "${root!}/user/login",
             async: false,
-            data: {"username": username, "password": password},
+            data: {"username": username, "password": hexMD5(password)},
             dataType: "json",
             success: function(resp) {
                 let response = eval(resp)
@@ -87,8 +87,8 @@
     }
 
     function enroll() {
-        let username = $("#username").val();
-        let password = $("#password").val();
+        let username = $("#username").val()
+        let password = $("#password").val()
         $.ajax({
             type: "POST",
             url: "${root!}/user/enroll",
@@ -136,7 +136,7 @@
     }
 
     function remove() {
-        let username = $("#username").val();
+        let username = $("#username").val()
         $.ajax({
             type: "POST",
             url: "${root!}/user/remove",
