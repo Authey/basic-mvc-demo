@@ -134,4 +134,20 @@ public class UserController extends BaseController {
         }
     }
 
+    @GetMapping(value = "/centre")
+    public ModelAndView centre() {
+        this.setAttr("root", this.getRootPath());
+        String model = constant.getProperty("view.model", "navigate");
+        this.setAttr("view", model);
+        User user = this.getUser();
+        if (user == null) {
+            logger.warn("Unauthorised Centre Access");
+            return new ModelAndView("user/centre");
+        }
+        logger.info(this.getUser().getUsername() + " Centre Accessing");
+        this.setAttr("alert", this.getPara("alert", null));
+        this.setAttr("tag", "centre");
+        return new ModelAndView("user/centre");
+    }
+
 }

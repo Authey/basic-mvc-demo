@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Centre</title>
+</head>
+<#if view ?? && view == 'navi'>
+    <#include "*/navbar.html" />
+<#elseif view == 'embed'>
+    <#include "*/resources.html" />
+</#if>
+<body class="container-fluid">
+    <#if user ??>
+        <div id="centre-alert"></div>
+        <div>Hello, ${user.username!}</div>
+        <input class="btn btn-info" type="button" onclick="alertMsg('centre', 'success', 'Click Successfully')" value="Alert"/>
+    </#if>
+</body>
+</html>
+
+<script type="text/javascript">
+    if ("${user!}" === "") {
+        postMsg("${root!}/user/index", "Please Login First")
+    } else {
+        alertMsg("centre", "success", "${alert!}")
+    }
+</script>

@@ -91,4 +91,11 @@ public class UserControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    public void centre() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/user/centre"))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
 }
