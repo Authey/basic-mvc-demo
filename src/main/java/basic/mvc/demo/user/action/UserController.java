@@ -35,10 +35,15 @@ public class UserController extends BaseController {
         this.setAttr("view", model);
         String type = this.getPara("type", "Login");
         User user = this.getUser();
-        if (user == null && !"Login".equals(type) && !"Enroll".equals(type)) {
+        if (!"Login".equals(type) && !"Enroll".equals(type) && !"Manage".equals(type) && !"Logout".equals(type)) { // -> user+ 4, user- 4
+            logger.warn("Unknown Request Type: " + type);
+            return new ModelAndView("status/404");
+        } else if (user == null && ("Manage".equals(type) || "Logout".equals(type))) { // -> user+ 4, user- 2
             logger.warn("Unauthorised Request Type: " + type);
             type = "Login";
-        } else if (user != null) {
+        } else if (user != null && ("Login".equals(type) || "Enroll".equals(type))) { // -> user+ 2, user- 2
+            return new ModelAndView("redirect:/");
+        } else if (user != null) { // -> user- 2
             this.setAttr("auth", user.getAuthLevel());
         }
         logger.info("User " + type + " Request");

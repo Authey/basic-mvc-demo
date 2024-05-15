@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>404 Not Found</title>
+</head>
+<#if view ?? && view == 'nav'>
+    <#include "*/navbar.html" />
+<#elseif view == 'embed'>
+    <#include "*/resources.html" />
+</#if>
+<body class="container-fluid">
+    This Page Means Your Accessing URL Does Not Exist
+    <input class="btn btn-info" type="button" onclick="toHome()" value="Home"/>
+</body>
+</html>
+
+<script type="text/javascript">
+    function toHome() {
+        window.open("${root!}/", "_self")
+    }
+</script>
