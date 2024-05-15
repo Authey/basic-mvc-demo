@@ -1,4 +1,4 @@
-package basic.mvc.demo.home;
+package basic.mvc.demo.status;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.util.NestedServletException;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -18,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = "classpath:spring-mvc.xml")
-public class HomeControllerTest {
+public class StatusControllerTest {
 
     private MockMvc mvc;
 
@@ -31,30 +32,30 @@ public class HomeControllerTest {
     }
 
     @Test
-    public void base() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/"))
-                .andExpect(status().isFound())
-                .andDo(print());
-    }
-
-    @Test
-    public void home() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/home"))
+    public void show0() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/status/404"))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
 
     @Test
-    public void index0() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/index"))
+    public void show1() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/status/405"))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
 
     @Test
-    public void index1() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/index"))
+    public void show2() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/status/500"))
                 .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test(expected = NestedServletException.class)
+    public void show3() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/status/444"))
+                .andExpect(status().isNotFound())
                 .andDo(print());
     }
 

@@ -1,9 +1,12 @@
 package basic.mvc.demo.user;
 
+import basic.mvc.demo.user.po.User;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -25,8 +28,18 @@ public class UserControllerTest {
 
     private MockMvc mvc;
 
+    private static MockHttpSession session;
+
     @Autowired
     private WebApplicationContext context;
+
+    @BeforeClass
+    public static void init() {
+        session = new MockHttpSession();
+        User user = new User();
+        user.setUsername("Test");
+        session.setAttribute("user", user);
+    }
 
     @Before
     public void before() {
@@ -52,7 +65,7 @@ public class UserControllerTest {
     @Test
     public void login() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/user/login")
-                        .param("username", "Username")
+                        .param("username", "Test")
                         .param("password", "Password"))
                 .andExpect(status().isOk())
                 .andDo(print());
@@ -68,7 +81,7 @@ public class UserControllerTest {
     @Test
     public void enroll() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/user/enroll")
-                        .param("username", "Username")
+                        .param("username", "Test")
                         .param("password", "Password"))
                 .andExpect(status().isOk())
                 .andDo(print());
@@ -86,21 +99,32 @@ public class UserControllerTest {
     @Test
     public void remove() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/user/remove")
-                        .param("username", "Username"))
+                        .param("username", "Test"))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
 
     @Test
     public void centre0() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/user/centre"))
+        mvc.perform(MockMvcRequestBuilders.get("/user/centre")
+                        .session(session))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
 
     @Test
     public void centre1() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/user/centre"))
+        mvc.perform(MockMvcRequestBuilders.post("/user/centre")
+                        .session(session))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    public void update() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/update")
+                        .param("username", "Testy")
+                        .session(session))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
