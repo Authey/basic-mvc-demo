@@ -12,8 +12,23 @@
 <div style="padding-left: 10px; padding-right: 10px">
     <#if user ??>
         <div id="centre-alert"></div>
-        Hello, ${user.username!}
-        <input class="btn btn-info" type="button" onclick="alertMsg('centre', 'success', 'Click Successfully')" value="Alert"/>
+        <div style="padding-left: 80px; padding-bottom: 20px">
+            Hello, ${user.username!}
+            <input class="btn btn-info" type="button" onclick="alertMsg('centre', 'success', 'Click Successfully')" value="Alert"/>
+        </div>
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="new-username" class="col-sm-2 control-label">New Username:</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="new-username" placeholder="username">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-4">
+                    <input class="btn btn-primary" type="button" onclick="update()" value="Update Username"/>
+                </div>
+            </div>
+        </form>
     </#if>
 </div>
 </html>
@@ -23,5 +38,32 @@
         postMsg("${root!}/user/index", "Please Login First")
     } else {
         alertMsg("centre", "success", "${alert!}")
+    }
+
+    function update() {
+        let username = $("#new-username").val()
+        if ("${user.username}" === username) {
+            alertMsg("centre", "warning", "Username Does Not Change")
+        } else {
+            $.ajax({
+                type: "POST",
+                url: "${root!}/user/update",
+                async: false,
+                data: {"username": username},
+                dataType: "json",
+                success: function(resp) {
+                    let response = eval(resp)
+                    if (response.state === 1) {
+                        if ("${view!}" === "nav") {
+                            postMsg("${root!}/user/centre", "Update Username Successfully")
+                        } else {
+                            window.parent.refresh()
+                        }
+                    } else {
+                        alertMsg("centre", "warning", response.msg)
+                    }
+                }
+            })
+        }
     }
 </script>

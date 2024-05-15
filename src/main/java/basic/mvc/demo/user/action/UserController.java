@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -30,6 +31,10 @@ public class UserController extends BaseController {
 
     @RequestMapping(value = "/index", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView index() {
+        this.setAttr("root", this.getRootPath());
+        String model = constant.getProperty("view.model", "nav");
+        this.setAttr("view", model);
+        this.setAttr("alert", this.getPara("alert", null));
         String type = this.getPara("type", "Login");
         User user = this.getUser();
         if (!"Login".equals(type) && !"Enroll".equals(type) && !"Manage".equals(type) && !"Logout".equals(type)) {
@@ -43,13 +48,8 @@ public class UserController extends BaseController {
         } else if (user != null) {
             this.setAttr("auth", user.getAuthLevel());
         }
-        this.setAttr("root", this.getRootPath());
-        String model = constant.getProperty("view.model", "nav");
-        this.setAttr("view", model);
         logger.info("User " + type + " Request");
         this.setAttr("type", type);
-        this.setAttr("alert", this.getPara("alert", null));
-        this.setAttr("tag", "user");
         return new ModelAndView("user/index");
     }
 
@@ -139,20 +139,39 @@ public class UserController extends BaseController {
         }
     }
 
-    @GetMapping(value = "/centre")
+    @RequestMapping(value = "/centre", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView centre() {
         this.setAttr("root", this.getRootPath());
         String model = constant.getProperty("view.model", "nav");
         this.setAttr("view", model);
+        this.setAttr("alert", this.getPara("alert", null));
         User user = this.getUser();
         if (user == null) {
             logger.warn("Unauthorised Centre Access");
             return new ModelAndView("user/centre");
         }
         logger.info(this.getUser().getUsername() + " Centre Accessing");
-        this.setAttr("alert", this.getPara("alert", null));
-        this.setAttr("tag", "centre");
         return new ModelAndView("user/centre");
+    }
+
+    @PostMapping(value = "/update")
+    public void update(@RequestParam String username) {
+        try {
+            String foreName = this.getUser().getUsername();
+            int row = userService.update("UPDATE SYS_USER SET USERNAME = ? WHERE USERNAME = ?", username, foreName);
+            this.getUser().setUsername(username);
+            logger.info("Succeeded to Update Username " + username);
+            this.ajaxDoneSuccess(Integer.toString(row));
+        } catch (DuplicateKeyException e) {
+            logger.error("Failed to Update Username: ", e);
+            this.ajaxDoneFailure("Duplicate Username");
+        } catch (UncategorizedSQLException e) {
+            logger.error("Failed to Update Username: ", e);
+            this.ajaxDoneFailure("Empty Username");
+        } catch (Exception e) {
+            logger.error("Failed to Update Username: ", e);
+            this.ajaxDoneFailure(null);
+        }
     }
 
 }

@@ -57,7 +57,11 @@
             data: {},
             dataType: "json",
             success: function() {
-                postMsg("${root!}/user/index", "Logout Successfully")
+                if ("${view!}" === "nav") {
+                    postMsg("${root!}/user/index", "Logout Successfully")
+                } else {
+                    window.parent.refresh()
+                }
             }
         })
     }
@@ -77,10 +81,10 @@
                     if ("${view!}" === "nav") {
                         postMsg("${root!}/index", "Login Successfully")
                     } else {
-                        window.open("${root!}/home", "_self")
+                        window.parent.refresh()
                     }
                 } else {
-                    alertMsg("${tag!}", "warning", response.msg)
+                    alertMsg("user", "warning", response.msg)
                 }
             }
         })
@@ -100,7 +104,7 @@
                 if (response.state === 1) {
                     postMsg("${root!}/user/index", "Enroll Successfully")
                 } else {
-                    alertMsg("${tag!}", "warning", response.msg)
+                    alertMsg("user", "warning", response.msg)
                 }
             }
         })
@@ -148,14 +152,14 @@
                 if (response.state === 1 && response.msg !== "0") {
                     reload()
                 } else {
-                    alertMsg("${tag!}", "warning", response.msg)
+                    alertMsg("user", "warning", response.msg)
                 }
             }
         })
     }
 
     function reload() {
-        alertMsg("${tag!}", "success", "Delete User Successfully")
+        alertMsg("user", "success", "Delete User Successfully")
         $user_grid.jqGrid('setGridParam', {
             search: true,
             postData: {},

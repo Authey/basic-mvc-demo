@@ -13,7 +13,7 @@ public class HomeController extends BaseController {
     public ModelAndView base() {
         logger.info("Base URL Request");
         String model = constant.getProperty("view.model", "nav");
-        return new ModelAndView("nav".equals(model) ? "redirect:/index" : this.getUser() != null ? "redirect:/home" : "redirect:/user/index");
+        return new ModelAndView("nav".equals(model) ? "redirect:/index" : "redirect:/home");
     }
 
     @GetMapping(value = "/home")
@@ -25,16 +25,15 @@ public class HomeController extends BaseController {
 
     @RequestMapping(value = "/index", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView index() {
+        this.setAttr("root", this.getRootPath());
+        String model = constant.getProperty("view.model", "nav");
+        this.setAttr("view", model);
+        this.setAttr("alert", this.getPara("alert", null));
         logger.info("Home Page Request");
         User user = this.getUser();
         if (user != null) {
             this.setAttr("user", user);
         }
-        this.setAttr("root", this.getRootPath());
-        String model = constant.getProperty("view.model", "nav");
-        this.setAttr("view", model);
-        this.setAttr("alert", this.getPara("alert", null));
-        this.setAttr("tag", "home");
         return new ModelAndView("home/index");
     }
 

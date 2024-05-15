@@ -17,6 +17,7 @@
         <mvc:interceptor>
             <mvc:mapping path="/**" />
             <mvc:exclude-mapping path="/" />
+            <mvc:exclude-mapping path="/home" />
             <mvc:exclude-mapping path="/index" />
             <mvc:exclude-mapping path="/user/**" />
             <mvc:exclude-mapping path="/status/**" />
