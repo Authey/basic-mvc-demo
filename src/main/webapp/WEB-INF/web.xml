@@ -28,5 +28,19 @@
         <error-code>404</error-code>
         <location>/status/404</location>
     </error-page>
+
+    <error-page>
+        <error-code>405</error-code>
+        <location>/status/405</location>
+    </error-page>
+
+    <error-page>
+        <error-code>500</error-code>
+        <location>/status/500</location>
+    </error-page>
+
+    <session-config>
+        <session-timeout>300</session-timeout>
+    </session-config>
     
 </web-app>

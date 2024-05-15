@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>404 Not Found</title>
+    <title>405 Method Not Allowed</title>
 </head>
 <#if view ?? && view == 'nav'>
     <#include "*/navbar.html" />
@@ -10,7 +10,7 @@
     <#include "*/resources.html" />
 </#if>
 <body class="container-fluid">
-    This Means Accessing URL Page Does Not Exist
+    This Means Request Method Is Incorrect
     <input class="btn btn-info" type="button" onclick="toHome()" value="Home"/>
 </body>
 </html>
