@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>${code!} Unhandled Status</title>
+</head>
+<#if view ?? && view == 'nav'>
+    <#include "*/navbar.html" />
+<#elseif view == 'embed'>
+    <#include "*/resources.html" />
+</#if>
+<div style="padding-left: 10px; padding-right: 10px">
+    This Means Current Response Status Is Unhandled
+    <input class="btn btn-info" type="button" onclick="toHome()" value="Home"/>
+</div>
+</html>
+
+<script type="text/javascript">
+    function toHome() {
+        window.open("${root!}/index", "_self")
+    }
+</script>

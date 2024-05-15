@@ -52,10 +52,10 @@ public class StatusControllerTest {
                 .andDo(print());
     }
 
-    @Test(expected = NestedServletException.class)
+    @Test
     public void show3() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/status/444"))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 
