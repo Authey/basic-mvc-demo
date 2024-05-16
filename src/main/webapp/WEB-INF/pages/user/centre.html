@@ -29,6 +29,31 @@
                 </div>
             </div>
         </form>
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="old-password" class="col-sm-2 control-label">Old Password:</label>
+                <div class="col-sm-4">
+                    <input type="password" class="form-control" id="old-password" placeholder="old password">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="new-password" class="col-sm-2 control-label">New Password:</label>
+                <div class="col-sm-4">
+                    <input type="password" class="form-control" id="new-password" placeholder="new password">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="confirm-password" class="col-sm-2 control-label">Confirm Password:</label>
+                <div class="col-sm-4">
+                    <input type="password" class="form-control" id="confirm-password" placeholder="confirm password">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-4">
+                    <input class="btn btn-primary" type="button" onclick="change()" value="Change Password"/>
+                </div>
+            </div>
+        </form>
     </#if>
 </div>
 </html>
@@ -42,28 +67,45 @@
 
     function update() {
         let username = $("#new-username").val()
-        if ("${user.username}" === username) {
-            alertMsg("centre", "warning", "Username Does Not Change")
-        } else {
-            $.ajax({
-                type: "POST",
-                url: "${root!}/user/update",
-                async: false,
-                data: {"username": username},
-                dataType: "json",
-                success: function(resp) {
-                    let response = eval(resp)
-                    if (response.state === 1) {
-                        if ("${view!}" === "nav") {
-                            postMsg("${root!}/user/centre", "Update Username Successfully")
-                        } else {
-                            window.parent.refresh()
-                        }
+        $.ajax({
+            type: "POST",
+            url: "${root!}/user/update",
+            async: false,
+            data: {"username": username},
+            dataType: "json",
+            success: function(resp) {
+                let response = eval(resp)
+                if (response.state === 1) {
+                    if ("${view!}" === "nav") {
+                        postMsg("${root!}/user/centre", "Update Username Successfully")
                     } else {
-                        alertMsg("centre", "warning", response.msg)
+                        window.parent.refresh()
                     }
+                } else {
+                    alertMsg("centre", "warning", response.msg)
                 }
-            })
-        }
+            }
+        })
+    }
+
+    function change() {
+        let old_password = $("#old-password").val()
+        let password = $("#new-password").val()
+        let confirm_password = $("#confirm-password").val()
+        $.ajax({
+            type: "POST",
+            url: "${root!}/user/change",
+            async: false,
+            data: {"old_password": hexMD5(old_password), "password": password, "confirm_password": hexMD5(confirm_password)},
+            dataType: "json",
+            success: function(resp) {
+                let response = eval(resp)
+                if (response.state === 1) {
+                    postMsg("${root!}/user/centre", "Change Password Successfully")
+                } else {
+                    alertMsg("centre", "warning", response.msg)
+                }
+            }
+        })
     }
 </script>

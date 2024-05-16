@@ -129,4 +129,15 @@ public class UserControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    public void change() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/change")
+                        .param("old_password", "Password")
+                        .param("password", "Passwordy")
+                        .param("confirm_password", "Passwordy")
+                        .session(session))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
 }

@@ -83,7 +83,7 @@ public class UserController extends BaseController {
     public void enroll(@RequestParam String username, @RequestParam String password) {
         try {
             if (password.length() <= 6) {
-                logger.error("Failed to Insert User Information");
+                logger.error("Failed to Insert User Information: Password Too Short");
                 this.ajaxDoneFailure("Password Is Too Short");
             } else {
                 List<Object> params = new ArrayList<>();
@@ -158,10 +158,15 @@ public class UserController extends BaseController {
     public void update(@RequestParam String username) {
         try {
             String foreName = this.getUser().getUsername();
-            int row = userService.update("UPDATE SYS_USER SET USERNAME = ? WHERE USERNAME = ?", username, foreName);
-            this.getUser().setUsername(username);
-            logger.info("Succeeded to Update Username " + username);
-            this.ajaxDoneSuccess(Integer.toString(row));
+            if (foreName.equals(username)) {
+                logger.error("Failed to Update Username: Username No Change");
+                this.ajaxDoneFailure("Username Does Not Change");
+            } else {
+                int row = userService.update("UPDATE SYS_USER SET USERNAME = ? WHERE USERNAME = ?", username, foreName);
+                this.getUser().setUsername(username);
+                logger.info("Succeeded to Update Username " + username);
+                this.ajaxDoneSuccess(Integer.toString(row));
+            }
         } catch (DuplicateKeyException e) {
             logger.error("Failed to Update Username: ", e);
             this.ajaxDoneFailure("Duplicate Username");
@@ -170,6 +175,37 @@ public class UserController extends BaseController {
             this.ajaxDoneFailure("Empty Username");
         } catch (Exception e) {
             logger.error("Failed to Update Username: ", e);
+            this.ajaxDoneFailure(null);
+        }
+    }
+
+    @PostMapping(value = "/change")
+    public void change(@RequestParam String old_password, @RequestParam String password, @RequestParam String confirm_password) {
+        try {
+            User user = this.getUser();
+            String username = user.getUsername();
+            String forePwd = user.getPassword();
+            String hashPwd = CryptoUtils.toHex(CryptoUtils.hash(password, "MD5")).toUpperCase();
+            if (password.length() <= 6) {
+                logger.error("Failed to Change Password: Password Too Short");
+                this.ajaxDoneFailure("Password Is Too Short");
+            } else if (!forePwd.equalsIgnoreCase(old_password)) {
+                logger.error("Failed to Change Password: Password Incorrect");
+                this.ajaxDoneFailure("Origin Password Is Incorrect");
+            } else if (forePwd.equalsIgnoreCase(hashPwd)) {
+                logger.error("Failed to Change Password: Password No Change");
+                this.ajaxDoneFailure("Password Does Not Change");
+            } else if (!hashPwd.equalsIgnoreCase(confirm_password)) {
+                logger.error("Failed to Change Password: Password Unmatched");
+                this.ajaxDoneFailure("Confirm Password Is Unmatched");
+            } else {
+                int row = userService.update("UPDATE SYS_USER SET PASSWORD = ? WHERE USERNAME = ?", hashPwd, username);
+                this.getUser().setPassword(hashPwd);
+                logger.info("Succeeded to Change Password " + hashPwd);
+                this.ajaxDoneSuccess(Integer.toString(row));
+            }
+        } catch (Exception e) {
+            logger.error("Failed to Change Password: ", e);
             this.ajaxDoneFailure(null);
         }
     }
