@@ -6,6 +6,7 @@ import basic.mvc.utility.BaseController;
 import basic.mvc.utility.CryptoUtils;
 import basic.mvc.utility.PageList;
 import basic.mvc.utility.Record;
+import basic.mvc.utility.exception.ParameterUnexpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
@@ -113,6 +114,9 @@ public class UserController extends BaseController {
             PageList<Record> userList = userService.findPage("SELECT ID, USERNAME, PASSWORD, AUTH_LEVEL FROM SYS_USER", page, rows);
             logger.info("User List: " + userList);
             this.renderJson(userList.toJsonGrid().toString());
+        } catch (ParameterUnexpectedException e) {
+            logger.error("Failed to Query User Information: ", e);
+            this.ajaxDoneFailure("Unexpected Parameters");
         } catch (Exception e) {
             logger.error("Failed to Query User Information: ", e);
         }
@@ -120,22 +124,27 @@ public class UserController extends BaseController {
 
     @PostMapping(value = "/remove")
     public void remove(@RequestParam String username) {
-        try {
-            String authLevel = userService.findObject("SELECT AUTH_LEVEL FROM SYS_USER WHERE USERNAME = ?", username).getAuthLevel();
-            if ("ADMIN".equals(authLevel)) {
-                logger.error("Failed to Delete Admin User " + username);
-                this.ajaxDoneFailure("Cannot Delete Admin User");
-            } else {
-                int row = userService.update("DELETE FROM SYS_USER WHERE USERNAME = ?", username);
-                logger.info("Succeeded to Delete User " + username);
-                this.ajaxDoneSuccess(Integer.toString(row));
+        if (!"ADMIN".equals(this.getUser().getAuthLevel())) {
+            logger.error("Failed to Delete User " + username);
+            this.ajaxDoneFailure("Unauthorised Deletion");
+        } else {
+            try {
+                String authLevel = userService.findObject("SELECT AUTH_LEVEL FROM SYS_USER WHERE USERNAME = ?", username).getAuthLevel();
+                if ("ADMIN".equals(authLevel)) {
+                    logger.error("Failed to Delete Admin User " + username);
+                    this.ajaxDoneFailure("Cannot Delete Admin User");
+                } else {
+                    int row = userService.update("DELETE FROM SYS_USER WHERE USERNAME = ?", username);
+                    logger.info("Succeeded to Delete User " + username);
+                    this.ajaxDoneSuccess(Integer.toString(row));
+                }
+            } catch (EmptyResultDataAccessException e) {
+                logger.error("Failed to Delete User Information: ", e);
+                this.ajaxDoneFailure("No Username Matched");
+            } catch (Exception e) {
+                logger.error("Failed to Delete User Information: ", e);
+                this.ajaxDoneFailure(null);
             }
-        } catch (EmptyResultDataAccessException e) {
-            logger.error("Failed to Delete User Information: ", e);
-            this.ajaxDoneFailure("No Username Matched");
-        } catch (Exception e) {
-            logger.error("Failed to Delete User Information: ", e);
-            this.ajaxDoneFailure(null);
         }
     }
 
