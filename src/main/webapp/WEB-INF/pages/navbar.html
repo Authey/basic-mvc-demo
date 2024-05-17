@@ -7,7 +7,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <#if user ??>
-                    <li <#if user.authLevel != "ADMIN"> class="disabled" </#if>><a href="<#if user.authLevel != "ADMIN"> javascript:void(0) <#else> ${root!}/user/index?type=Manage </#if>">Manage</a></li>
+                    <li <#if user.authLevel == "GUEST"> class="disabled" </#if>><a href="<#if user.authLevel == "GUEST"> javascript:void(0) <#else> ${root!}/user/index?type=Manage </#if>">Manage</a></li>
                 </#if>
                 <li><a href="${root!}/unknown/index">Non-Exist</a></li>
             </ul>

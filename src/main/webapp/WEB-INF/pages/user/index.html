@@ -34,7 +34,11 @@
                     <input class="btn btn-primary" type="button" onclick="enroll()" value="Enroll"/>
                 <#elseif type == 'Manage'>
                     <input class="btn btn-info" type="button" onclick="load()" value="Load User"/>
-                    <input class="btn btn-danger" type="button" onclick="remove()" value="Remove" <#if auth ?? && auth != 'ADMIN'> disabled </#if>/>
+                    <#if auth ?? && auth == 'SUPER'>
+                        <input class="btn btn-primary" type="button" onclick="alter('Promote')" value="Promote" />
+                        <input class="btn btn-primary" type="button" onclick="alter('Downgrade')" value="Downgrade" />
+                    </#if>
+                    <input class="btn btn-danger" type="button" onclick="remove()" value="Remove" <#if auth ?? && auth == 'GUEST'> disabled </#if>/>
                 </#if>
             </div>
         </div>
@@ -150,7 +154,7 @@
             success: function(resp) {
                 let response = eval(resp)
                 if (response.state === 1 && response.msg !== "0") {
-                    reload()
+                    reload("Delete " + username + " Successfully")
                 } else {
                     alertMsg("user", "warning", response.msg)
                 }
@@ -158,8 +162,27 @@
         })
     }
 
-    function reload() {
-        alertMsg("user", "success", "Delete User Successfully")
+    function alter(type) {
+        let username = $("#username").val()
+        $.ajax({
+            type: "POST",
+            url: "${root!}/user/alter",
+            async: false,
+            data: {"username": username, "type": type},
+            dataType: "json",
+            success: function(resp) {
+                let response = eval(resp)
+                if (response.state === 1 && response.msg !== "0") {
+                    reload(type + " " + username + " Successfully")
+                } else {
+                    alertMsg("user", "warning", response.msg)
+                }
+            }
+        })
+    }
+
+    function reload(msg) {
+        alertMsg("user", "success", msg)
         $user_grid.jqGrid('setGridParam', {
             search: true,
             postData: {},

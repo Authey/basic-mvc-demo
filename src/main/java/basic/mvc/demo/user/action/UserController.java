@@ -91,7 +91,7 @@ public class UserController extends BaseController {
                 params.add(UUID.randomUUID().toString().toUpperCase());
                 params.add(username);
                 params.add(CryptoUtils.hash(password, "MD5"));
-                params.add("NORMAL");
+                params.add("GUEST");
                 int row = userService.update("INSERT INTO SYS_USER (ID, USERNAME, PASSWORD, AUTH_LEVEL) VALUES (?, ?, ?, ?)", params.toArray());
                 logger.info("Succeeded to Insert User " + username);
                 this.ajaxDoneSuccess(Integer.toString(row));
@@ -124,25 +124,60 @@ public class UserController extends BaseController {
 
     @PostMapping(value = "/remove")
     public void remove(@RequestParam String username) {
-        if (!"ADMIN".equals(this.getUser().getAuthLevel())) {
+        if ("GUEST".equals(this.getUser().getAuthLevel())) {
             logger.error("Failed to Delete User " + username);
             this.ajaxDoneFailure("Unauthorised Deletion");
         } else {
             try {
                 String authLevel = userService.findObject("SELECT AUTH_LEVEL FROM SYS_USER WHERE USERNAME = ?", username).getAuthLevel();
-                if ("ADMIN".equals(authLevel)) {
-                    logger.error("Failed to Delete Admin User " + username);
-                    this.ajaxDoneFailure("Cannot Delete Admin User");
+                if (!"GUEST".equals(authLevel)) {
+                    logger.error("Failed to Delete User " + username);
+                    this.ajaxDoneFailure("Cannot Delete Admin Or Super User");
                 } else {
                     int row = userService.update("DELETE FROM SYS_USER WHERE USERNAME = ?", username);
                     logger.info("Succeeded to Delete User " + username);
                     this.ajaxDoneSuccess(Integer.toString(row));
                 }
             } catch (EmptyResultDataAccessException e) {
-                logger.error("Failed to Delete User Information: ", e);
+                logger.error("Failed to Delete User " + username +": ", e);
                 this.ajaxDoneFailure("No Username Matched");
             } catch (Exception e) {
-                logger.error("Failed to Delete User Information: ", e);
+                logger.error("Failed to Delete User " + username +": ", e);
+                this.ajaxDoneFailure(null);
+            }
+        }
+    }
+
+    @PostMapping(value = "/alter")
+    public void alter(@RequestParam String username, @RequestParam String type) {
+        if (!"SUPER".equals(this.getUser().getAuthLevel())) {
+            logger.error("Failed to " + type + " User " + username);
+            this.ajaxDoneFailure("Unauthorised Operation " + type);
+        } else if (!"Promote".equalsIgnoreCase(type) && !"Downgrade".equalsIgnoreCase(type)) {
+            logger.error("Failed to " + type + " User " + username);
+            this.ajaxDoneFailure("Unknown Operation " + type);
+        } else {
+            try {
+                String authLevel = userService.findObject("SELECT AUTH_LEVEL FROM SYS_USER WHERE USERNAME = ?", username).getAuthLevel();
+                if ("ADMIN".equals(authLevel) && "Promote".equalsIgnoreCase(type)) {
+                    logger.error("Failed to " + type + " User " + username);
+                    this.ajaxDoneFailure("Cannot Promote Admin User");
+                } else if ("GUEST".equals(authLevel) && "Downgrade".equalsIgnoreCase(type)) {
+                    logger.error("Failed to " + type + " User " + username);
+                    this.ajaxDoneFailure("Cannot Downgrade Guest User");
+                } else if ("SUPER".equals(authLevel)) {
+                    logger.error("Failed to " + type + " User " + username);
+                    this.ajaxDoneFailure("Cannot Modify Super User");
+                } else {
+                    int row = userService.update("UPDATE SYS_USER SET AUTH_LEVEL = ? WHERE USERNAME = ?", "Promote".equalsIgnoreCase(type) ? "ADMIN" : "GUEST", username);
+                    logger.info("Succeeded to " + type + " User " + username);
+                    this.ajaxDoneSuccess(Integer.toString(row));
+                }
+            } catch (EmptyResultDataAccessException e) {
+                logger.error("Failed to " + type + " User: ", e);
+                this.ajaxDoneFailure("No Username Matched");
+            } catch (Exception e) {
+                logger.error("Failed to " + type + " User: ", e);
                 this.ajaxDoneFailure(null);
             }
         }

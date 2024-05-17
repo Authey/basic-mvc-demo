@@ -53,19 +53,21 @@ public class UserControllerTest {
     public static void setup() {
         user.setUsername("UserOne");
         user.setPassword(password);
-        user.setAuthLevel("ADMIN");
+        user.setAuthLevel("SUPER");
         session.setAttribute("user", user);
         ApplicationContext context = new ClassPathXmlApplicationContext("spring-jdbc.xml");
         DataSource dataSource = (DataSource) context.getBean("oracleDataSource");
         jdbcTemplate.setDataSource(dataSource);
-        jdbcTemplate.update("INSERT INTO SYS_USER (ID, USERNAME, PASSWORD, AUTH_LEVEL) VALUES (?, ?, ?, ?)", UUID.randomUUID().toString(), "UserOne", password, "ADMIN");
-        jdbcTemplate.update("INSERT INTO SYS_USER (ID, USERNAME, PASSWORD, AUTH_LEVEL) VALUES (?, ?, ?, ?)", UUID.randomUUID().toString(), "UserTwo", password, "NORMAL");
+        jdbcTemplate.update("INSERT INTO SYS_USER (ID, USERNAME, PASSWORD, AUTH_LEVEL) VALUES (?, ?, ?, ?)", UUID.randomUUID().toString(), "UserOne", password, "SUPER");
+        jdbcTemplate.update("INSERT INTO SYS_USER (ID, USERNAME, PASSWORD, AUTH_LEVEL) VALUES (?, ?, ?, ?)", UUID.randomUUID().toString(), "UserTwo", password, "ADMIN");
+        jdbcTemplate.update("INSERT INTO SYS_USER (ID, USERNAME, PASSWORD, AUTH_LEVEL) VALUES (?, ?, ?, ?)", UUID.randomUUID().toString(), "UserThree", password, "GUEST");
     }
 
     @AfterClass
     public static void clean() {
         jdbcTemplate.update("DELETE FROM SYS_USER WHERE USERNAME = ?", "UserOne");
         jdbcTemplate.update("DELETE FROM SYS_USER WHERE USERNAME = ?", "UserTwo");
+        jdbcTemplate.update("DELETE FROM SYS_USER WHERE USERNAME = ?", "UserThree");
     }
 
     @Before
@@ -145,7 +147,7 @@ public class UserControllerTest {
                         .session(session))
                 .andExpect(status().isOk())
                 .andExpect(request().attribute("type", "Manage"))
-                .andExpect(request().attribute("auth", "ADMIN"))
+                .andExpect(request().attribute("auth", "SUPER"))
                 .andDo(print());
     }
 
@@ -299,25 +301,25 @@ public class UserControllerTest {
 
     @Test
     public void remove0() throws Exception {
-        user.setAuthLevel("NORMAL");
-        assertEquals("NORMAL", user.getAuthLevel());
+        user.setAuthLevel("GUEST");
+        assertEquals("GUEST", user.getAuthLevel());
         mvc.perform(MockMvcRequestBuilders.post("/user/remove")
-                        .param("username", "UserTwo")
+                        .param("username", "UserThree")
                         .session(session))
                 .andExpect(status().isOk())
                 .andExpect(content().string(new StringContains("Unauthorised Deletion")))
                 .andDo(print());
-        user.setAuthLevel("ADMIN");
-        assertEquals("ADMIN", user.getAuthLevel());
+        user.setAuthLevel("SUPER");
+        assertEquals("SUPER", user.getAuthLevel());
     }
 
     @Test
     public void remove1() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/user/remove")
-                        .param("username", "UserOne")
+                        .param("username", "UserTwo")
                         .session(session))
                 .andExpect(status().isOk())
-                .andExpect(content().string(new StringContains("Cannot Delete Admin User")))
+                .andExpect(content().string(new StringContains("Cannot Delete Admin Or Super User")))
                 .andDo(print());
     }
 
@@ -334,7 +336,125 @@ public class UserControllerTest {
     @Test
     public void remove3() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/user/remove")
+                        .param("username", "UserThree")
+                        .session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(new StringContains("1")))
+                .andDo(print());
+    }
+
+    @Test
+    public void alter0() throws Exception {
+        user.setAuthLevel("ADMIN");
+        assertEquals("ADMIN", user.getAuthLevel());
+        mvc.perform(MockMvcRequestBuilders.post("/user/alter")
+                        .param("username", "UserThree")
+                        .param("type", "Promote")
+                        .session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(new StringContains("Unauthorised Operation Promote")))
+                .andDo(print());
+        user.setAuthLevel("SUPER");
+        assertEquals("SUPER", user.getAuthLevel());
+    }
+
+    @Test
+    public void alter1() throws Exception {
+        user.setAuthLevel("ADMIN");
+        assertEquals("ADMIN", user.getAuthLevel());
+        mvc.perform(MockMvcRequestBuilders.post("/user/alter")
                         .param("username", "UserTwo")
+                        .param("type", "Downgrade")
+                        .session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(new StringContains("Unauthorised Operation Downgrade")))
+                .andDo(print());
+        user.setAuthLevel("SUPER");
+        assertEquals("SUPER", user.getAuthLevel());
+    }
+
+    @Test
+    public void alter2() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/alter")
+                        .param("username", "UserThree")
+                        .param("type", "Test")
+                        .session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(new StringContains("Unknown Operation Test")))
+                .andDo(print());
+    }
+
+    @Test
+    public void alter3() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/alter")
+                        .param("username", "UserTwo")
+                        .param("type", "Promote")
+                        .session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(new StringContains("Cannot Promote Admin User")))
+                .andDo(print());
+    }
+
+    @Test
+    public void alter4() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/alter")
+                        .param("username", "UserThree")
+                        .param("type", "Downgrade")
+                        .session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(new StringContains("Cannot Downgrade Guest User")))
+                .andDo(print());
+    }
+
+    @Test
+    public void alter5() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/alter")
+                        .param("username", "UserOne")
+                        .param("type", "Promote")
+                        .session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(new StringContains("Cannot Modify Super User")))
+                .andDo(print());
+    }
+
+    @Test
+    public void alter6() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/alter")
+                        .param("username", "UserOne")
+                        .param("type", "Downgrade")
+                        .session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(new StringContains("Cannot Modify Super User")))
+                .andDo(print());
+    }
+
+    @Test
+    public void alter7() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/alter")
+                        .param("username", "User")
+                        .param("type", "Promote")
+                        .session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(new StringContains("No Username Matched")))
+                .andDo(print());
+    }
+
+    @Test
+    public void alter8() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/alter")
+                        .param("username", "UserTwo")
+                        .param("type", "Downgrade")
+                        .session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(new StringContains("1")))
+                .andDo(print());
+    }
+
+    @Test
+    public void alter9() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/alter")
+                        .param("username", "UserThree")
+                        .param("type", "Promote")
                         .session(session))
                 .andExpect(status().isOk())
                 .andExpect(content().string(new StringContains("1")))

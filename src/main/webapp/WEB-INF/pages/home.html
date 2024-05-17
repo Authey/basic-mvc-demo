@@ -14,7 +14,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <#if user ??>
-                    <li <#if user.authLevel != "ADMIN"> class="disabled" </#if>><a href="javascript:" onclick="<#if user.authLevel != "ADMIN"> return false <#else> showPage('${root!}/user/index?type=Manage') </#if>">Manage</a></li>
+                    <li <#if user.authLevel == "GUEST"> class="disabled" </#if>><a href="javascript:" onclick="<#if user.authLevel == "GUEST"> return false <#else> showPage('${root!}/user/index?type=Manage') </#if>">Manage</a></li>
                 </#if>
                 <li><a href="javascript:" onclick="showPage('${root!}/unknown/index')">Non-Exist</a></li>
             </ul>
