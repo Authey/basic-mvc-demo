@@ -242,6 +242,16 @@ public class UserControllerTest {
     @Test
     public void enroll1() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/user/enroll")
+                        .param("username", "User")
+                        .param("password", "PasswordPasswordPassword"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(new StringContains("Password Is Too Long")))
+                .andDo(print());
+    }
+
+    @Test
+    public void enroll2() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/enroll")
                         .param("username", "UserOne")
                         .param("password", "Password"))
                 .andExpect(status().isOk())
@@ -250,7 +260,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void enroll2() throws Exception {
+    public void enroll3() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/user/enroll")
                         .param("username", "")
                         .param("password", "Password"))
@@ -260,7 +270,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void enroll3() throws Exception {
+    public void enroll4() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/user/enroll")
                         .param("username", "User")
                         .param("password", "Password"))
@@ -537,7 +547,7 @@ public class UserControllerTest {
         mvc.perform(MockMvcRequestBuilders.post("/user/change")
                         .param("old_password", password)
                         .param("password", "Pass")
-                        .param("confirm_password", "Pass")
+                        .param("confirm_password", CryptoUtils.toHex(CryptoUtils.hash("Pass", "MD5")))
                         .session(session))
                 .andExpect(status().isOk())
                 .andExpect(content().string(new StringContains("Password Is Too Short")))
@@ -546,6 +556,18 @@ public class UserControllerTest {
 
     @Test
     public void change1() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/change")
+                        .param("old_password", password)
+                        .param("password", "PasswordPasswordPassword")
+                        .param("confirm_password", CryptoUtils.toHex(CryptoUtils.hash("PasswordPasswordPassword", "MD5")))
+                        .session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(new StringContains("Password Is Too Long")))
+                .andDo(print());
+    }
+
+    @Test
+    public void change2() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/user/change")
                         .param("old_password", "Password")
                         .param("password", "password")
@@ -557,7 +579,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void change2() throws Exception {
+    public void change3() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/user/change")
                         .param("old_password", password)
                         .param("password", "Password")
@@ -569,7 +591,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void change3() throws Exception {
+    public void change4() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/user/change")
                         .param("old_password", password)
                         .param("password", "password")
@@ -581,7 +603,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void change4() throws Exception {
+    public void change5() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/user/change")
                         .param("old_password", password)
                         .param("password", "password")

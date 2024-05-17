@@ -86,6 +86,9 @@ public class UserController extends BaseController {
             if (password.length() <= 6) {
                 logger.error("Failed to Insert User Information: Password Too Short");
                 this.ajaxDoneFailure("Password Is Too Short");
+            } else if (password.length() > 20) {
+                logger.error("Failed to Insert User Information: Password Too Long");
+                this.ajaxDoneFailure("Password Is Too Long");
             } else {
                 List<Object> params = new ArrayList<>();
                 params.add(UUID.randomUUID().toString().toUpperCase());
@@ -125,13 +128,13 @@ public class UserController extends BaseController {
     @PostMapping(value = "/remove")
     public void remove(@RequestParam String username) {
         if ("GUEST".equals(this.getUser().getAuthLevel())) {
-            logger.error("Failed to Delete User " + username);
+            logger.error("Failed to Delete User " + username + ": Unauthorised Deletion");
             this.ajaxDoneFailure("Unauthorised Deletion");
         } else {
             try {
                 String authLevel = userService.findObject("SELECT AUTH_LEVEL FROM SYS_USER WHERE USERNAME = ?", username).getAuthLevel();
                 if (!"GUEST".equals(authLevel)) {
-                    logger.error("Failed to Delete User " + username);
+                    logger.error("Failed to Delete User " + username + ": Delete Admin Or Super Not Allowed");
                     this.ajaxDoneFailure("Cannot Delete Admin Or Super User");
                 } else {
                     int row = userService.update("DELETE FROM SYS_USER WHERE USERNAME = ?", username);
@@ -151,22 +154,22 @@ public class UserController extends BaseController {
     @PostMapping(value = "/alter")
     public void alter(@RequestParam String username, @RequestParam String type) {
         if (!"SUPER".equals(this.getUser().getAuthLevel())) {
-            logger.error("Failed to " + type + " User " + username);
+            logger.error("Failed to " + type + " User " + username + ": Unauthorised Operation");
             this.ajaxDoneFailure("Unauthorised Operation " + type);
         } else if (!"Promote".equalsIgnoreCase(type) && !"Downgrade".equalsIgnoreCase(type)) {
-            logger.error("Failed to " + type + " User " + username);
+            logger.error("Failed to " + type + " User " + username + ": Unknown Operation");
             this.ajaxDoneFailure("Unknown Operation " + type);
         } else {
             try {
                 String authLevel = userService.findObject("SELECT AUTH_LEVEL FROM SYS_USER WHERE USERNAME = ?", username).getAuthLevel();
                 if ("ADMIN".equals(authLevel) && "Promote".equalsIgnoreCase(type)) {
-                    logger.error("Failed to " + type + " User " + username);
+                    logger.error("Failed to " + type + " User " + username + ": Promote Admin Not Allowed");
                     this.ajaxDoneFailure("Cannot Promote Admin User");
                 } else if ("GUEST".equals(authLevel) && "Downgrade".equalsIgnoreCase(type)) {
-                    logger.error("Failed to " + type + " User " + username);
+                    logger.error("Failed to " + type + " User " + username + ": Downgrade Guest Not Allowed");
                     this.ajaxDoneFailure("Cannot Downgrade Guest User");
                 } else if ("SUPER".equals(authLevel)) {
-                    logger.error("Failed to " + type + " User " + username);
+                    logger.error("Failed to " + type + " User " + username + ": Modify Super Not Allowed");
                     this.ajaxDoneFailure("Cannot Modify Super User");
                 } else {
                     int row = userService.update("UPDATE SYS_USER SET AUTH_LEVEL = ? WHERE USERNAME = ?", "Promote".equalsIgnoreCase(type) ? "ADMIN" : "GUEST", username);
@@ -233,6 +236,9 @@ public class UserController extends BaseController {
             if (password.length() <= 6) {
                 logger.error("Failed to Change Password: Password Too Short");
                 this.ajaxDoneFailure("Password Is Too Short");
+            } else if (password.length() > 20) {
+                logger.error("Failed to Change Password: Password Too Long");
+                this.ajaxDoneFailure("Password Is Too Long");
             } else if (!forePwd.equalsIgnoreCase(old_password)) {
                 logger.error("Failed to Change Password: Password Incorrect");
                 this.ajaxDoneFailure("Origin Password Is Incorrect");
