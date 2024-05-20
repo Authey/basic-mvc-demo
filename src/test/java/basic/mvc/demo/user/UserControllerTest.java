@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.sql.DataSource;
-
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -316,7 +315,8 @@ public class UserControllerTest {
                         .param("rows", "100") // For Compatability When Database Has More Users
                         .param("username", "UserOne"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(new StringContains("\"records\":1")))
+                .andExpect(content().string(new StringContains("\"records\":1"))) // Comment This For Rigour When Database Has More Users
+                .andExpect(content().string(new StringContains("UserOne")))
                 .andDo(print())
                 .andReturn().getResponse().getContentAsString();
         assertFalse(res.contains("UserTwo"));
@@ -329,7 +329,7 @@ public class UserControllerTest {
                         .param("rows", "100") // For Compatability When Database Has More Users
                         .param("username", "UserT"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(new StringContains("\"records\":2")))
+                .andExpect(content().string(new StringContains("\"records\":2"))) // Comment This For Rigour When Database Has More Users
                 .andExpect(content().string(new StringContains("UserTwo")))
                 .andExpect(content().string(new StringContains("UserThree")))
                 .andDo(print())
