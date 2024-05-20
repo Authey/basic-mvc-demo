@@ -7,6 +7,7 @@ import basic.mvc.utility.CryptoUtils;
 import basic.mvc.utility.PageList;
 import basic.mvc.utility.Record;
 import basic.mvc.utility.exception.ParameterUnexpectedException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
@@ -112,7 +113,8 @@ public class UserController extends BaseController {
     @PostMapping(value = "/load")
     public void load(@RequestParam int page, @RequestParam int rows) {
         try {
-            PageList<Record> userList = userService.findPage("SELECT ID, USERNAME, PASSWORD, AUTH_LEVEL FROM SYS_USER", page, rows);
+            String username = this.getPara("username", "");
+            PageList<Record> userList = userService.findPage("SELECT ID, USERNAME, PASSWORD, AUTH_LEVEL FROM SYS_USER WHERE USERNAME LIKE ? ESCAPE '/'", page, rows, "%" + username + "%");
             logger.info("User List: " + userList);
             this.renderJson(userList.toJsonGrid().toString());
         } catch (ParameterUnexpectedException e) {

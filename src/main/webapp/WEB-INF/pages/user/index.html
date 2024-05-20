@@ -17,6 +17,12 @@
             <div class="col-sm-4">
                 <input type="text" class="form-control" id="username" placeholder="username">
             </div>
+            <#if type == 'Manage'>
+                <div class="col-sm-2">
+                    <input class="btn btn-info" type="button" onclick="filter('Search')" value="Search"/>
+                    <input class="btn btn-info" type="button" onclick="filter('Reset')" value="Reset"/>
+                </div>
+            </#if>
         </div>
         <#if type != 'Manage'>
             <div class="form-group">
@@ -49,7 +55,7 @@
 </html>
 
 <script type="text/javascript">
-    let $user_grid;
+    let $user_grid
 
     alertMsg("user", "success", "${alert!}")
 
@@ -141,6 +147,16 @@
             search : false,
             refresh : true
         })
+    }
+
+    function filter(type) {
+        let username = type === "Search" ? $("#username").val() : ""
+        $user_grid.jqGrid('setGridParam', {
+            search: true,
+            postData: {"username": username},
+            page: 1
+        }).trigger("reloadGrid")
+        if (type === "Reset") $("#username").val("")
     }
 
     function remove() {
