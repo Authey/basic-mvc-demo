@@ -2,6 +2,7 @@ package basic.mvc.demo.user;
 
 import basic.mvc.demo.user.po.User;
 import basic.mvc.utility.CryptoUtils;
+import com.alibaba.fastjson.JSONObject;
 import org.hamcrest.core.StringContains;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -24,6 +25,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.sql.DataSource;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -307,6 +310,34 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(new StringContains("Unexpected Parameters")))
                 .andDo(print());
+    }
+
+    @Test
+    public void load3() throws Exception {
+        String res = mvc.perform(MockMvcRequestBuilders.post("/user/load")
+                        .param("page", "1")
+                        .param("rows", "100") // For Compatability When Database Has More Users
+                        .param("username", "UserOne"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(new StringContains("\"records\":1")))
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        assertFalse(res.contains("UserTwo"));
+    }
+
+    @Test
+    public void load4() throws Exception {
+        String res = mvc.perform(MockMvcRequestBuilders.post("/user/load")
+                        .param("page", "1")
+                        .param("rows", "100") // For Compatability When Database Has More Users
+                        .param("username", "UserT"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(new StringContains("\"records\":2")))
+                .andExpect(content().string(new StringContains("UserTwo")))
+                .andExpect(content().string(new StringContains("UserThree")))
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        assertFalse(res.contains("UserOne"));
     }
 
     @Test
