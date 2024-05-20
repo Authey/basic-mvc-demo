@@ -7,8 +7,6 @@ import basic.mvc.utility.CryptoUtils;
 import basic.mvc.utility.PageList;
 import basic.mvc.utility.Record;
 import basic.mvc.utility.exception.ParameterUnexpectedException;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
@@ -116,16 +114,6 @@ public class UserController extends BaseController {
         try {
             PageList<Record> userList = userService.findPage("SELECT ID, USERNAME, PASSWORD, AUTH_LEVEL FROM SYS_USER", page, rows);
             logger.info("User List: " + userList);
-            List<Record> recList = userList.getList();
-            List<JSONObject> list = new ArrayList<>();
-            list.add(JSONObject.parseObject(recList.get(0).toString()));
-            list.add(JSONObject.parseObject(recList.get(1).toString()));
-            list.add(JSONObject.parseObject(recList.get(2).toString()));
-            logger.info("JSONObject List: " + list);
-            list.sort(Comparator.comparing(a -> a.getString("ID")));
-            JSONArray array = new JSONArray();
-            array.addAll(list);
-            logger.info("JSONArray: " + array);
             this.renderJson(userList.toJsonGrid().toString());
         } catch (ParameterUnexpectedException e) {
             logger.error("Failed to Query User Information: ", e);
