@@ -2,7 +2,6 @@ package basic.mvc.demo.user;
 
 import basic.mvc.demo.user.po.User;
 import basic.mvc.utility.CryptoUtils;
-import com.alibaba.fastjson.JSONObject;
 import org.hamcrest.core.StringContains;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -25,8 +24,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.sql.DataSource;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
