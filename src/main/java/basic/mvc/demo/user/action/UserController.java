@@ -55,7 +55,7 @@ public class UserController extends BaseController {
     @PostMapping(value = "/login")
     public void login(@RequestParam String username, @RequestParam String password) {
         try {
-            User user = userService.findObject("SELECT USERNAME, PASSWORD, AUTH_LEVEL FROM SYS_USER WHERE USERNAME = ?", username);
+            User user = userService.findObject("SELECT ID, USERNAME, PASSWORD, AUTH_LEVEL FROM SYS_USER WHERE USERNAME = ?", username);
             boolean match = password.equalsIgnoreCase(user.getPassword());
             logger.info(match ? "User Information Matched" : "User Information Unmatched");
             if (match) {
@@ -203,15 +203,22 @@ public class UserController extends BaseController {
     @PostMapping(value = "/update")
     public void update(@RequestParam String username) {
         try {
-            String foreName = this.getUser().getUsername();
+            User user = this.getUser();
+            String userId = user.getId();
+            String foreName = user.getUsername();
             if (foreName.equals(username)) {
                 logger.error("Failed to Update Username: Username No Change");
                 this.ajaxDoneFailure("Username Does Not Change");
             } else {
-                int row = userService.update("UPDATE SYS_USER SET USERNAME = ? WHERE USERNAME = ?", username, foreName);
-                this.getUser().setUsername(username);
-                logger.info("Succeeded to Update Username " + username);
-                this.ajaxDoneSuccess(Integer.toString(row));
+                int row = userService.update("UPDATE SYS_USER SET USERNAME = ? WHERE ID = ?", username, userId);
+                if (row == 1) {
+                    this.getUser().setUsername(username);
+                    logger.info("Succeeded to Update Username " + username);
+                    this.ajaxDoneSuccess(Integer.toString(row));
+                } else {
+                    logger.error("Failed to Update Username: Update Command Error");
+                    this.ajaxDoneFailure("Unexpected SQL Error");
+                }
             }
         } catch (DuplicateKeyException e) {
             logger.error("Failed to Update Username: ", e);
@@ -229,7 +236,7 @@ public class UserController extends BaseController {
     public void change(@RequestParam String old_password, @RequestParam String password, @RequestParam String confirm_password) {
         try {
             User user = this.getUser();
-            String username = user.getUsername();
+            String userId = user.getId();
             String forePwd = user.getPassword();
             String hashPwd = CryptoUtils.toHex(CryptoUtils.hash(password, "MD5")).toUpperCase();
             if (password.length() <= 6) {
@@ -248,10 +255,15 @@ public class UserController extends BaseController {
                 logger.error("Failed to Change Password: Password Unmatched");
                 this.ajaxDoneFailure("Confirm Password Is Unmatched");
             } else {
-                int row = userService.update("UPDATE SYS_USER SET PASSWORD = ? WHERE USERNAME = ?", hashPwd, username);
-                this.getUser().setPassword(hashPwd);
-                logger.info("Succeeded to Change Password " + hashPwd);
-                this.ajaxDoneSuccess(Integer.toString(row));
+                int row = userService.update("UPDATE SYS_USER SET PASSWORD = ? WHERE ID = ?", hashPwd, userId);
+                if (row == 1) {
+                    this.getUser().setPassword(hashPwd);
+                    logger.info("Succeeded to Change Password " + hashPwd);
+                    this.ajaxDoneSuccess(Integer.toString(row));
+                } else {
+                    logger.error("Failed to Change Password: Update Command Error");
+                    this.ajaxDoneFailure("Unexpected SQL Error");
+                }
             }
         } catch (Exception e) {
             logger.error("Failed to Change Password: ", e);
