@@ -50,6 +50,8 @@ public class UserControllerTest {
 
     @BeforeClass
     public static void setup() {
+        String userId = UUID.randomUUID().toString();
+        user.setId(userId);
         user.setUsername("UserOne");
         user.setPassword(password);
         user.setAuthLevel("SUPER");
@@ -57,7 +59,7 @@ public class UserControllerTest {
         ApplicationContext context = new ClassPathXmlApplicationContext("spring-jdbc.xml");
         DataSource dataSource = (DataSource) context.getBean("oracleDataSource");
         jdbcTemplate.setDataSource(dataSource);
-        jdbcTemplate.update("INSERT INTO SYS_USER (ID, USERNAME, PASSWORD, AUTH_LEVEL) VALUES (?, ?, ?, ?)", UUID.randomUUID().toString(), "UserOne", password, "SUPER");
+        jdbcTemplate.update("INSERT INTO SYS_USER (ID, USERNAME, PASSWORD, AUTH_LEVEL) VALUES (?, ?, ?, ?)", userId, "UserOne", password, "SUPER");
         jdbcTemplate.update("INSERT INTO SYS_USER (ID, USERNAME, PASSWORD, AUTH_LEVEL) VALUES (?, ?, ?, ?)", UUID.randomUUID().toString(), "UserTwo", password, "ADMIN");
         jdbcTemplate.update("INSERT INTO SYS_USER (ID, USERNAME, PASSWORD, AUTH_LEVEL) VALUES (?, ?, ?, ?)", UUID.randomUUID().toString(), "UserThree", password, "GUEST");
     }
