@@ -532,8 +532,8 @@ public class UserControllerTest {
     }
 
     @Test
-    public void update0() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/user/update")
+    public void change0() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/change")
                         .param("username", "UserOne")
                         .session(session))
                 .andExpect(status().isOk())
@@ -542,8 +542,8 @@ public class UserControllerTest {
     }
 
     @Test
-    public void update1() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/user/update")
+    public void change1() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/change")
                         .param("username", "UserTwo")
                         .session(session))
                 .andExpect(status().isOk())
@@ -552,8 +552,8 @@ public class UserControllerTest {
     }
 
     @Test
-    public void update2() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/user/update")
+    public void change2() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/change")
                         .param("username", "")
                         .session(session))
                 .andExpect(status().isOk())
@@ -562,8 +562,8 @@ public class UserControllerTest {
     }
 
     @Test
-    public void update3() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/user/update")
+    public void change3() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/change")
                         .param("username", "User")
                         .session(session))
                 .andExpect(status().isOk())
@@ -573,8 +573,8 @@ public class UserControllerTest {
     }
 
     @Test
-    public void change0() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/user/change")
+    public void update0() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/update")
                         .param("old_password", password)
                         .param("password", "Pass")
                         .param("confirm_password", CryptoUtils.toHex(CryptoUtils.hash("Pass", "MD5")))
@@ -585,8 +585,8 @@ public class UserControllerTest {
     }
 
     @Test
-    public void change1() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/user/change")
+    public void update1() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/update")
                         .param("old_password", password)
                         .param("password", "PasswordPasswordPassword")
                         .param("confirm_password", CryptoUtils.toHex(CryptoUtils.hash("PasswordPasswordPassword", "MD5")))
@@ -597,8 +597,8 @@ public class UserControllerTest {
     }
 
     @Test
-    public void change2() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/user/change")
+    public void update2() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/update")
                         .param("old_password", "Password")
                         .param("password", "password")
                         .param("confirm_password", CryptoUtils.toHex(CryptoUtils.hash("password", "MD5")))
@@ -609,8 +609,8 @@ public class UserControllerTest {
     }
 
     @Test
-    public void change3() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/user/change")
+    public void update3() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/update")
                         .param("old_password", password)
                         .param("password", "Password")
                         .param("confirm_password", password)
@@ -621,8 +621,8 @@ public class UserControllerTest {
     }
 
     @Test
-    public void change4() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/user/change")
+    public void update4() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/update")
                         .param("old_password", password)
                         .param("password", "password")
                         .param("confirm_password", password)
@@ -633,8 +633,8 @@ public class UserControllerTest {
     }
 
     @Test
-    public void change5() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/user/change")
+    public void update5() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/update")
                         .param("old_password", password)
                         .param("password", "password")
                         .param("confirm_password", CryptoUtils.toHex(CryptoUtils.hash("password", "MD5")))
