@@ -39,6 +39,11 @@ public abstract class BaseController {
         return (User) request.getSession().getAttribute("user");
     }
 
+    public void setSession(String key, Object value) {
+        request.getSession().setAttribute(key, value);
+    }
+
+
     public String getPara(String name) {
         try {
             String str = request.getParameter(name);

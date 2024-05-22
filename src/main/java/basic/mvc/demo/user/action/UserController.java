@@ -60,6 +60,7 @@ public class UserController extends BaseController {
             logger.info(match ? "User Information Matched" : "User Information Unmatched");
             if (match) {
                 this.setUser(user);
+                this.setSession("avatar", "static/img/avatar/default.jpg");
                 this.ajaxDoneSuccess(null);
             } else {
                 this.ajaxDoneFailure("Password Unmatched");
