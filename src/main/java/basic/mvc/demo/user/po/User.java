@@ -14,6 +14,8 @@ public class User implements Serializable {
 
     private String authLevel;
 
+    private String avatarType;
+
     public void setId(String id) {
         this.id = id;
     }
@@ -46,4 +48,11 @@ public class User implements Serializable {
         return authLevel;
     }
 
+    public void setAvatarType(String avatarType) {
+        this.avatarType = avatarType;
+    }
+
+    public String getAvatarType() {
+        return avatarType;
+    }
 }
