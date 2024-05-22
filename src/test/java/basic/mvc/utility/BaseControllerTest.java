@@ -72,6 +72,12 @@ public class BaseControllerTest extends BaseController {
         assertNull(this.getUser());
     }
 
+    @Test
+    public void setSession() {
+        this.setSession("test", "test");
+        assertEquals("test", request.getSession().getAttribute("test"));
+    }
+
     @Test(expected = NoSuchElementFoundException.class)
     public void getPara0() {
         String res = this.getPara("Key");
