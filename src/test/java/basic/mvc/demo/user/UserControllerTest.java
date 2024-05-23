@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.sql.DataSource;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -43,14 +45,17 @@ public class UserControllerTest {
 
     private static final JdbcTemplate jdbcTemplate = new JdbcTemplate();
 
+    private static final String userId = UUID.randomUUID().toString();
+
     private static final String password = CryptoUtils.toHex(CryptoUtils.hash("Password", "MD5")).toUpperCase();
+
+    private static final String classpath = "D:/Java/Projects/basic-mvc-demo/target/classes";
 
     @Autowired
     private WebApplicationContext context;
 
     @BeforeClass
     public static void setup() {
-        String userId = UUID.randomUUID().toString();
         user.setId(userId);
         user.setUsername("UserOne");
         user.setPassword(password);
@@ -528,6 +533,29 @@ public class UserControllerTest {
         mvc.perform(MockMvcRequestBuilders.post("/user/centre")
                         .session(session))
                 .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    public void upload0() throws Exception {
+        String content = CryptoUtils.base64Encode(Files.readAllBytes(Paths.get(classpath + "/assets/img/avatar/default.jpg")));
+        mvc.perform(MockMvcRequestBuilders.post("/user/upload")
+                        .param("content", content)
+                        .param("type", ".jpeg")
+                        .session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(new StringContains("Please Select JPG or PNG Image")))
+                .andDo(print());
+    }
+
+    @Test
+    public void upload1() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/upload")
+                        .param("content", "")
+                        .param("type", ".jpg")
+                        .session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().string(new StringContains("Avatar Image Is Empty")))
                 .andDo(print());
     }
 
