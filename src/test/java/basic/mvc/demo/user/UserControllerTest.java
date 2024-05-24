@@ -560,6 +560,11 @@ public class UserControllerTest {
     }
 
     @Test
+    public void upload2() {
+        // TODO
+    }
+
+    @Test
     public void change0() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/user/change")
                         .param("username", "UserOne")
