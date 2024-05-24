@@ -119,7 +119,7 @@ public class UserController extends BaseController {
     public void load(@RequestParam int page, @RequestParam int rows) {
         try {
             String username = this.getPara("username", "");
-            PageList<Record> userList = userService.findPage("SELECT ID, USERNAME, PASSWORD, AUTH_LEVEL FROM SYS_USER WHERE USERNAME LIKE ? ESCAPE '/'", page, rows, "%" + username + "%");
+            PageList<Record> userList = userService.findPage("SELECT ID, USERNAME, PASSWORD, AUTH_LEVEL FROM SYS_USER WHERE USERNAME LIKE ? ESCAPE '/' ORDER BY USERNAME", page, rows, "%" + username + "%");
             logger.info("User List: " + userList);
             this.renderJson(userList.toJsonGrid().toString());
         } catch (ParameterUnexpectedException e) {
