@@ -1,5 +1,5 @@
 function alertMsg(tag, status, message) {
-    $("#" + tag + "-alert").html(message !== "" ? '<div class="alert alert-' + status +'" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><b>' + message + '</b></div>' : '')
+    $("#" + tag + "-alert").html(message !== "" ? '<div class="alert alert-' + status +'" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><span class="sr-only">' + status + '</span><b>' + message + '</b></div>' : '')
 }
 
 function postMsg(url, message) {
