@@ -31,6 +31,12 @@ public abstract class BaseController {
         return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
     }
 
+    public void init() {
+        this.setAttr("root", this.getRootPath());
+        this.setAttr("view", constant.getProperty("view.model", "nav"));
+        this.setAttr("alert", this.getPara("alert", null));
+    }
+
     public void setUser(User user) {
         request.getSession().setAttribute("user", user);
     }

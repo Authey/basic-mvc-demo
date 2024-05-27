@@ -11,6 +11,8 @@ import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.Properties;
+
 import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
@@ -24,6 +26,7 @@ public class BaseControllerTest extends BaseController {
     public void before() {
         super.request = request;
         super.response = response;
+        super.constant = new Properties();
         request.setParameter("Key0", "Value");
         request.setParameter("Key1", "");
         request.setParameter("Key2", "     ");
@@ -44,6 +47,29 @@ public class BaseControllerTest extends BaseController {
         String context = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
         String root = this.getRootPath();
         assertEquals(context, root);
+    }
+
+    @Test
+    public void init0() {
+        assertNull(request.getAttribute("root"));
+        assertNull(request.getAttribute("view"));
+        assertNull(request.getAttribute("alert"));
+        this.init();
+        assertNotNull(request.getAttribute("root"));
+        assertNotNull(request.getAttribute("view"));
+        assertNull(request.getAttribute("alert"));
+    }
+
+    @Test
+    public void init1() {
+        assertNull(request.getAttribute("root"));
+        assertNull(request.getAttribute("view"));
+        assertNull(request.getAttribute("alert"));
+        request.setParameter("alert", "Alert");
+        this.init();
+        assertEquals(this.getRootPath(), request.getAttribute("root"));
+        assertEquals("nav", request.getAttribute("view"));
+        assertEquals("Alert", request.getAttribute("alert"));
     }
 
     @Test

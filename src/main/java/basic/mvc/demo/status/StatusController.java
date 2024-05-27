@@ -18,9 +18,7 @@ public class StatusController extends BaseController {
 
     @GetMapping(value = "/{code}")
     public ModelAndView show(@PathVariable("code") String code) {
-        this.setAttr("root", this.getRootPath());
-        String model = constant.getProperty("view.model", "nav");
-        this.setAttr("view", model);
+        this.init();
         this.setAttr("code", code);
         return new ModelAndView(codes.contains(code) ? "status/" + code : "status/default");
     }

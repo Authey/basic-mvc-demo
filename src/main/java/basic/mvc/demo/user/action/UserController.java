@@ -34,10 +34,7 @@ public class UserController extends BaseController {
 
     @RequestMapping(value = "/index", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView index() {
-        this.setAttr("root", this.getRootPath());
-        String model = constant.getProperty("view.model", "nav");
-        this.setAttr("view", model);
-        this.setAttr("alert", this.getPara("alert", null));
+        this.init();
         String type = this.getPara("type", "Login");
         User user = this.getUser();
         if (!"Login".equals(type) && !"Enroll".equals(type) && !"Manage".equals(type) && !"Logout".equals(type)) {
@@ -193,10 +190,7 @@ public class UserController extends BaseController {
 
     @RequestMapping(value = "/centre", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView centre() {
-        this.setAttr("root", this.getRootPath());
-        String model = constant.getProperty("view.model", "nav");
-        this.setAttr("view", model);
-        this.setAttr("alert", this.getPara("alert", null));
+        this.init();
         User user = this.getUser();
         if (user == null) {
             logger.warn("Unauthorised Centre Access");
