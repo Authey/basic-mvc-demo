@@ -48,7 +48,7 @@ public class UserController extends BaseController {
             type = "Login";
         } else if (user != null && ("Login".equals(type) || "Enroll".equals(type))) { // Url Modified in Navbar/Embedded View Redirect to Index/Base Request
             return new ModelAndView("redirect:/");
-        } else if (user != null) {
+        } else if (user != null && "Manage".equals(type)) {
             this.setAttr("auth", user.getAuthLevel());
         }
         logger.info("User " + type + " Request");

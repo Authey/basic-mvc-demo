@@ -17,6 +17,21 @@
                     <li <#if user.authLevel == "GUEST"> class="disabled" </#if>><a href="javascript:" onclick="<#if user.authLevel == "GUEST"> return false <#else> showPage('${root!}/user/index?type=Manage') </#if>">Manage</a></li>
                 </#if>
                 <li><a href="javascript:" onclick="showPage('${root!}/unknown/index')">Non-Exist</a></li>
+                <#if user ?? && user.authLevel == 'SUPER'>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Example<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="javascript:" onclick="">Data Import</a></li>
+                            <li><a href="javascript:" onclick="">Paginate Merge</a></li>
+                            <li><a href="javascript:" onclick="">Table Paging</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="javascript:" onclick="">Clob Concat</a></li>
+                            <li><a href="javascript:" onclick="">Clob Deduplicate</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="javascript:" onclick="">List Sort</a></li>
+                        </ul>
+                    </li>
+                </#if>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <#if user ??>
