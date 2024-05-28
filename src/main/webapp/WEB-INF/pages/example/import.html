@@ -11,6 +11,76 @@
 </#if>
 <#include "*/init.html" />
 <div style="padding-left: 10px; padding-right: 10px">
-
+    <#if user ?? && user.authLevel == 'SUPER'>
+        <div id="data-import-alert"></div>
+        <form class="form-horizontal" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="excel-data" class="col-sm-2 control-label">Excel Data:</label>
+                <div class="col-sm-2">
+                    <input type="file" id="excel-data" placeholder="excel data" />
+                    <input type="hidden" id="excel-content" />
+                    <input type="hidden" id="excel-type" />
+                </div>
+                <div class="col-sm-4">
+                    <input class="btn btn-primary" type="button" onclick="upload()" value="Upload Excel"/>
+                    <input class="btn btn-primary" type="button" onclick="download()" value="Download Template"/>
+                </div>
+            </div>
+        </form>
+    </#if>
 </div>
 </html>
+
+<script type="text/javascript">
+    if ("${user!}" === "") {
+        postMsg("${root!}/user/index", "Please Login First")
+    } else {
+        alertMsg("data-import", "success", "${alert!}")
+    }
+
+    document.getElementById('excel-data').addEventListener('change', function(e) {
+        let excel_path = $("#excel-data").val()
+        let excel_type = excel_path.substring(excel_path.lastIndexOf(".")).toLowerCase();
+        let reader = new FileReader()
+        reader.onload = function() {
+            if (excel_type !== '.xls' && excel_type !== '.xlsx') {
+                alertMsg("data-import", "warning", "Please Select XLS or XLSX File")
+            } else {
+                $("#excel-content").val(reader.result.split(",")[1])
+            }
+        }
+        reader.readAsDataURL(e.target.files[0])
+        $("#excel-type").val(excel_type)
+    })
+
+    function upload() {
+        $.ajax({
+            type: "POST",
+            url: "${root!}/data-import/upload",
+            async: false,
+            data: {"content": $("#excel-content").val(), "type": $("#excel-type").val()},
+            datatype: "json",
+            success: function(resp) {
+                let response = eval(resp)
+                if (response.state === 1) {
+                    alertMsg("data-import", "success", "Upload Excel Data Successfully")
+                    // reload()
+                } else {
+                    alertMsg("data-import", "warning", response.msg)
+                }
+            }
+        })
+    }
+
+    function download() {
+        window.location.href = "${root!}/data-import/download"
+    }
+
+    // function reload() {
+    //     $user_grid.jqGrid('setGridParam', {
+    //         search: true,
+    //         postData: {},
+    //         page: 1
+    //     }).trigger("reloadGrid")
+    // }
+</script>
