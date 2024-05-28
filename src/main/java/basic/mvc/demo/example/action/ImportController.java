@@ -76,6 +76,11 @@ public class ImportController extends BaseController {
         }
     }
 
+    @PostMapping(value = "/fill")
+    public void fill() {
+        // TODO
+    }
+
     @GetMapping(value = "/download")
     public void download() {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("assets/template/data_import_template.xlsx");

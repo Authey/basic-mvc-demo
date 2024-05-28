@@ -29,6 +29,7 @@
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-4">
                     <input class="btn btn-primary" type="button" onclick="upload()" value="Upload Excel"/>
+                    <input class="btn btn-primary" type="button" onclick="fill()" value="Random Fill"/>
                     <input class="btn btn-primary" type="button" onclick="download()" value="Download Template"/>
                 </div>
             </div>
@@ -117,6 +118,24 @@
                 let response = eval(resp)
                 if (response.state === 1) {
                     alertMsg("data-import", "success", "Upload Data Successfully")
+                    reload()
+                } else {
+                    alertMsg("data-import", "warning", response.msg)
+                }
+            }
+        })
+    }
+
+    function fill() {
+        $.ajax({
+            type: "POST",
+            url: "${root!}/data-import/fill",
+            async: false,
+            datatype: "json",
+            success: function(resp) {
+                let response = eval(resp)
+                if (response.state === 1) {
+                    alertMsg("data-import", "success", "Data Is Randomly And Successfully Filled")
                     reload()
                 } else {
                     alertMsg("data-import", "warning", response.msg)
