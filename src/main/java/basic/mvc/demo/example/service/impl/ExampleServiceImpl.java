@@ -20,4 +20,8 @@ public class ExampleServiceImpl implements ExampleService {
         return exampleDao.findPage(sql, page, size, param);
     }
 
+    public int update(String sql, Object... param) {
+        return exampleDao.update(sql, param);
+    }
+
 }

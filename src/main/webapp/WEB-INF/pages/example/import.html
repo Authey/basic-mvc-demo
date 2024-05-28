@@ -23,7 +23,7 @@
                 </div>
                 <div class="col-sm-4">
                     <input class="btn btn-info" type="button" onclick="load()" value="Load"/>
-                    <input class="btn btn-danger" type="button" onclick="clear()" value="Clear"/>
+                    <input class="btn btn-danger" type="button" onclick="all_clear()" value="Clear"/>
                 </div>
             </div>
             <div class="form-group">
@@ -65,12 +65,13 @@
             url: "${root!}/data-import/load",
             datatype: "json",
             mtype: "POST",
-            colNames: ['ID', 'USERNAME', 'PASSWORD', 'AUTH LEVEL'],
+            colNames: ['ID', 'NAME', 'TYPE', 'FLAG', 'DESCRIPTION'],
             colModel: [
-                {name: 'ID', index: 'ID', hidden: false, align: 'center', width: 30},
-                {name: 'USERNAME', index: 'USERNAME', hidden: false, align: 'center', width: 30},
-                {name: 'PASSWORD', index: 'PASSWORD', hidden: true, align: 'center', width: 30},
-                {name: 'AUTH_LEVEL', index: 'AUTH_LEVEL', hidden: false, align: 'center', width: 30}
+                {name: 'ID', index: 'ID', hidden: false, align: 'center', width: 20},
+                {name: 'NAME', index: 'NAME', hidden: false, align: 'center', width: 10},
+                {name: 'TYPE', index: 'TYPE', hidden: false, align: 'center', width: 10},
+                {name: 'FLAG', index: 'FLAG', hidden: false, align: 'center', width: 5},
+                {name: 'DESCRIPTION', index: 'DESCRIPTION', hidden: false, align: 'center', width: 50}
             ],
             rowNum: 10,
             pager: "#example-pager",
@@ -89,7 +90,7 @@
         })
     }
 
-    function clear() {
+    function all_clear() {
         $.ajax({
             type: "POST",
             url: "${root!}/data-import/clear",
@@ -98,7 +99,7 @@
             success: function(resp) {
                 let response = eval(resp)
                 if (response.state === 1) {
-                    alertMsg("data-import", "success", "Clear Data Successfully")
+                    alertMsg("data-import", "success", "Succeeded to Clear " + response.msg + " Data")
                     reload()
                 } else {
                     alertMsg("data-import", "warning", response.msg)
@@ -134,8 +135,8 @@
             datatype: "json",
             success: function(resp) {
                 let response = eval(resp)
-                if (response.state === 1) {
-                    alertMsg("data-import", "success", "Data Is Randomly And Successfully Filled")
+                if (response.state === 1 && response.msg === "1") {
+                    alertMsg("data-import", "success", "Data Filled Successfully")
                     reload()
                 } else {
                     alertMsg("data-import", "warning", response.msg)

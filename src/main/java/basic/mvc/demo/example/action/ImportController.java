@@ -3,10 +3,12 @@ package basic.mvc.demo.example.action;
 import basic.mvc.demo.example.service.ExampleService;
 import basic.mvc.demo.user.po.User;
 import basic.mvc.utility.BaseController;
+import basic.mvc.utility.CryptoUtils;
 import basic.mvc.utility.PageList;
 import basic.mvc.utility.Record;
 import basic.mvc.utility.exception.NoSuchElementFoundException;
 import basic.mvc.utility.exception.ParameterUnexpectedException;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/data-import")
@@ -31,7 +36,7 @@ public class ImportController extends BaseController {
         this.exampleService = exampleService;
     }
 
-    @RequestMapping(value = "/index", method = {RequestMethod.GET, RequestMethod.POST})
+    @GetMapping(value = "/index")
     public ModelAndView index() {
         this.init();
         logger.info("Data Import Demo");
@@ -40,9 +45,8 @@ public class ImportController extends BaseController {
 
     @PostMapping(value = "/load")
     public void load(@RequestParam int page, @RequestParam int rows) {
-        // TODO
         try {
-            PageList<Record> exampleList = exampleService.findPage("SELECT ID, USERNAME, PASSWORD, AUTH_LEVEL FROM SYS_USER ORDER BY USERNAME", page, rows);
+            PageList<Record> exampleList = exampleService.findPage("SELECT ID, NAME, TYPE, FLAG, DESCRIPTION FROM EXAMPLE ORDER BY NAME", page, rows);
             logger.info("Example List: " + exampleList);
             this.renderJson(exampleList.toJsonGrid().toString());
         } catch (ParameterUnexpectedException e) {
@@ -55,7 +59,19 @@ public class ImportController extends BaseController {
 
     @PostMapping(value = "/clear")
     public void clear() {
-        // TODO
+        if (!"SUPER".equals(this.getUser().getAuthLevel())) {
+            logger.error("Failed to Failed to Clear Data: Unauthorised Clearance");
+            this.ajaxDoneFailure("Unauthorised Clearance");
+        } else {
+            try {
+                int row = exampleService.update("DELETE FROM EXAMPLE");
+                logger.info("Succeeded to Clear Data");
+                this.ajaxDoneSuccess(Integer.toString(row));
+            } catch (Exception e) {
+                logger.error("Failed to Clear Data: ", e);
+                this.ajaxDoneFailure(null);
+            }
+        }
     }
 
     @PostMapping(value = "/upload")
@@ -78,7 +94,26 @@ public class ImportController extends BaseController {
 
     @PostMapping(value = "/fill")
     public void fill() {
-        // TODO
+        if (!"SUPER".equals(this.getUser().getAuthLevel())) {
+            logger.error("Failed to Failed to Fill Data: Unauthorised Fill");
+            this.ajaxDoneFailure("Unauthorised Fill");
+        } else {
+            try {
+                List<Object> params = new ArrayList<>();
+                String id = UUID.randomUUID().toString().toUpperCase();
+                params.add(id);
+                params.add(RandomStringUtils.randomAlphabetic(10).toUpperCase());
+                params.add("Random");
+                params.add("0");
+                params.add(id + ":" + RandomStringUtils.randomAlphabetic(100));
+                int row = exampleService.update("INSERT INTO EXAMPLE (ID, NAME, TYPE, FLAG, DESCRIPTION) VALUES (?, ?, ?, ?, ?)", params.toArray());
+                logger.info("Succeeded to Fill Data");
+                this.ajaxDoneSuccess(Integer.toString(row));
+            } catch (Exception e) {
+                logger.error("Failed to Fill Data: ", e);
+                this.ajaxDoneFailure(null);
+            }
+        }
     }
 
     @GetMapping(value = "/download")

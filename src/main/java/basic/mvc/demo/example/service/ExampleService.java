@@ -7,4 +7,6 @@ public interface ExampleService {
 
     PageList<Record> findPage(String sql, int page, int size, Object... param);
 
+    int update(String sql, Object... param);
+
 }
