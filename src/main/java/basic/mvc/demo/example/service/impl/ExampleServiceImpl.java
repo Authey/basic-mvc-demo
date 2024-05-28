@@ -2,7 +2,6 @@ package basic.mvc.demo.example.service.impl;
 
 import basic.mvc.demo.example.dao.ExampleDao;
 import basic.mvc.demo.example.service.ExampleService;
-import basic.mvc.demo.user.dao.UserDao;
 import basic.mvc.utility.PageList;
 import basic.mvc.utility.Record;
 import org.springframework.stereotype.Service;

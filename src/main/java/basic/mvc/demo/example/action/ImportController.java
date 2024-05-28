@@ -40,8 +40,9 @@ public class ImportController extends BaseController {
 
     @PostMapping(value = "/load")
     public void load(@RequestParam int page, @RequestParam int rows) {
+        // TODO
         try {
-            PageList<Record> exampleList = exampleService.findPage("SELECT ID, USERNAME, PASSWORD, AUTH_LEVEL FROM SYS_USER WHERE USERNAME LIKE ? ESCAPE '/' ORDER BY USERNAME", page, rows);
+            PageList<Record> exampleList = exampleService.findPage("SELECT ID, USERNAME, PASSWORD, AUTH_LEVEL FROM SYS_USER ORDER BY USERNAME", page, rows);
             logger.info("Example List: " + exampleList);
             this.renderJson(exampleList.toJsonGrid().toString());
         } catch (ParameterUnexpectedException e) {
@@ -50,6 +51,11 @@ public class ImportController extends BaseController {
         } catch (Exception e) {
             logger.error("Failed to Query Example Information: ", e);
         }
+    }
+
+    @PostMapping(value = "/clear")
+    public void clear() {
+        // TODO
     }
 
     @PostMapping(value = "/upload")
