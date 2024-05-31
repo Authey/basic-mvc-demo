@@ -219,6 +219,7 @@ public class UserController extends BaseController {
                     if(!fr) {
                         logger.error("Failed to Upload Avatar: Save Avatar Image Failed");
                         this.ajaxDoneFailure("Failed to Save Avatar Image");
+                        return;
                     }
                 }
                 File avatarImgBackup = new File(classpath.replace("webapp/WEB-INF/classes", "resources") + "assets/img/avatar/" + userId + type);
@@ -227,6 +228,7 @@ public class UserController extends BaseController {
                     if(!fr) {
                         logger.error("Failed to Upload Avatar: Save Avatar Image Failed");
                         this.ajaxDoneFailure("Failed to Save Avatar Image");
+                        return;
                     }
                 }
                 FileOutputStream fos = new FileOutputStream(avatarImg);

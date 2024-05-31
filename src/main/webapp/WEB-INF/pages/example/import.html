@@ -16,18 +16,18 @@
         <form class="form-horizontal" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="excel-data" class="col-sm-2 control-label">Excel Data:</label>
-                <div class="col-sm-2">
+                <div class="col-sm-3">
                     <input type="file" id="excel-data" placeholder="excel data" />
                     <input type="hidden" id="excel-content" />
                     <input type="hidden" id="excel-type" />
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-2">
                     <input class="btn btn-info" type="button" onclick="load()" value="Load"/>
                     <input class="btn btn-danger" type="button" onclick="all_clear()" value="Clear"/>
                 </div>
             </div>
             <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-4">
+                <div class="col-sm-offset-2 col-sm-5">
                     <input class="btn btn-primary" type="button" onclick="upload()" value="Upload Excel"/>
                     <input class="btn btn-primary" type="button" onclick="fill()" value="Random Fill"/>
                     <input class="btn btn-primary" type="button" onclick="download()" value="Download Template"/>
@@ -53,6 +53,7 @@
             if (excel_type !== '.xls' && excel_type !== '.xlsx') {
                 alertMsg("data-import", "warning", "Please Select XLS or XLSX File")
             } else {
+                $("#data-import-alert").html('') // Remove Potential History Alert Information
                 $("#excel-content").val(reader.result.split(",")[1])
             }
         }
@@ -109,22 +110,26 @@
     }
 
     function upload() {
-        $.ajax({
-            type: "POST",
-            url: "${root!}/data-import/upload",
-            async: false,
-            data: {"content": $("#excel-content").val(), "type": $("#excel-type").val()},
-            datatype: "json",
-            success: function(resp) {
-                let response = eval(resp)
-                if (response.state === 1) {
-                    alertMsg("data-import", "success", "Upload Data Successfully")
-                    reload()
-                } else {
-                    alertMsg("data-import", "warning", response.msg)
+        if($("#excel-content").val() === "") {
+            alertMsg("data-import", "warning", "Please Select Excel File First")
+        } else {
+            $.ajax({
+                type: "POST",
+                url: "${root!}/data-import/upload",
+                async: false,
+                data: {"content": $("#excel-content").val(), "type": $("#excel-type").val()},
+                datatype: "json",
+                success: function(resp) {
+                    let response = eval(resp)
+                    if (response.state === 1) {
+                        alertMsg("data-import", "success", "Succeeded to Upload " + response.msg + " Data")
+                        reload()
+                    } else {
+                        alertMsg("data-import", "warning", response.msg)
+                    }
                 }
-            }
-        })
+            })
+        }
     }
 
     function fill() {
@@ -136,7 +141,7 @@
             success: function(resp) {
                 let response = eval(resp)
                 if (response.state === 1 && response.msg === "1") {
-                    alertMsg("data-import", "success", "Data Filled Successfully")
+                    alertMsg("data-import", "success", "Succeeded to Insert One Data Randomly")
                     reload()
                 } else {
                     alertMsg("data-import", "warning", response.msg)
