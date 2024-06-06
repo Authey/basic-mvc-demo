@@ -25,10 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/data-import")
@@ -179,6 +176,11 @@ public class ImportController extends BaseController {
                                     v.append(", ?");
                                     columnList.add(idx);
                                     break;
+                                case "Order":
+                                    insert.append(", SORT_ORDER");
+                                    v.append(", ?");
+                                    columnList.add(idx);
+                                    break;
                                 case "Description":
                                     insert.append(", DESCRIPTION");
                                     v.append(", #");
@@ -191,7 +193,7 @@ public class ImportController extends BaseController {
                         insert.append(") VALUES (?").append(v).append(")");
                         logger.info("Sheet Table " + (i+1) + " - Insert SQL Command: " + insert);
                         List<Object> param = new ArrayList<>();
-                        param.add(UUID.randomUUID().toString());
+                        param.add(UUID.randomUUID().toString().toUpperCase());
                         startRow += 1;
                         // Mark If One Data Handling Is Started
                         boolean start = false;
@@ -302,7 +304,8 @@ public class ImportController extends BaseController {
                 params.add("Random");
                 params.add("0");
                 params.add(id + ":" + RandomStringUtils.randomAlphabetic(100));
-                int row = exampleService.update("INSERT INTO EXAMPLE (ID, NAME, TYPE, FLAG, DESCRIPTION) VALUES (?, ?, ?, ?, ?)", params.toArray());
+                params.add(new Random().nextInt(20));
+                int row = exampleService.update("INSERT INTO EXAMPLE (ID, NAME, TYPE, FLAG, DESCRIPTION, SORT_ORDER) VALUES (?, ?, ?, ?, ?, ?)", params.toArray());
                 logger.info("Succeeded to Fill Data");
                 this.ajaxDoneSuccess(Integer.toString(row));
             } catch (Exception e) {

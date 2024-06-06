@@ -34,14 +34,14 @@
                 </div>
             </div>
         </form>
-        <table id="example-info" class="table table-hover table-bordered"></table>
-        <div id="example-pager"></div>
+        <table id="example-import-info" class="table table-hover table-bordered"></table>
+        <div id="example-import-pager"></div>
     </#if>
 </div>
 </html>
 
 <script type="text/javascript">
-    let $example_grid
+    let $example_import_grid
 
     alertMsg("data-import", "success", "${alert!}")
 
@@ -62,7 +62,7 @@
     })
 
     function load() {
-        $example_grid = jQuery("#example-info").jqGrid({
+        $example_import_grid = jQuery("#example-import-info").jqGrid({
             url: "${root!}/data-import/load",
             datatype: "json",
             mtype: "POST",
@@ -82,7 +82,7 @@
             viewrecords: true
         })
 
-        jQuery("#example-info").jqGrid('navGrid', "#example-pager", {
+        jQuery("#example-import-info").jqGrid('navGrid', "#example-pager", {
             add: false,
             edit: false,
             del : false,
@@ -155,7 +155,7 @@
     }
 
     function reload() {
-        $example_grid.jqGrid('setGridParam', {
+        $example_import_grid.jqGrid('setGridParam', {
             search: true,
             postData: {},
             page: 1
