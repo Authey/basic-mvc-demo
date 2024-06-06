@@ -11,6 +11,67 @@
 </#if>
 <#include "*/init.html" />
 <div style="padding-left: 10px; padding-right: 10px">
-
+    <#if user ?? && user.authLevel == 'SUPER'>
+        <div id="list-sort-alert"></div>
+        <form class="form-horizontal" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="order-switch" class="col-sm-2 control-label">Sorting Mode:</label>
+                <div class="col-sm-2">
+                    <input type="radio" name="order-switch" id="enable" value="1" />
+                    <label for="enable">Enable</label>
+                    <input type="radio" name="order-switch" id="disable" value="0" checked />
+                    <label for="disable">Disable</label>
+                </div>
+                <div class="col-sm-2">
+                    <input class="btn btn-info" type="button" onclick="load()" value="Load"/>
+                    <input class="btn btn-primary" type="button" onclick="sort()" value="Sort"/>
+                </div>
+            </div>
+        </form>
+        <table id="example-sort-info" class="table table-hover table-bordered"></table>
+        <div id="example-sort-pager"></div>
+    </#if>
 </div>
 </html>
+
+<script type="text/javascript">
+    let $example_sort_grid
+
+    function load() {
+        $example_sort_grid = jQuery("#example-sort-info").jqGrid({
+            url: "${root!}/list-sort/load",
+            datatype: "json",
+            mtype: "POST",
+            colNames: ['ID', 'NAME', 'TYPE', 'FLAG', 'ORDER'],
+            colModel: [
+                {name: 'ID', index: 'ID', hidden: false, align: 'center', width: 20},
+                {name: 'NAME', index: 'NAME', hidden: false, align: 'center', width: 20},
+                {name: 'TYPE', index: 'TYPE', hidden: false, align: 'center', width: 10},
+                {name: 'FLAG', index: 'FLAG', hidden: false, align: 'center', width: 10},
+                {name: 'SORT_ORDER', index: 'SORT_ORDER', hidden: false, align: 'center', width: 10}
+            ],
+            rowNum: 10,
+            pager: "#example-sort-pager",
+            rownumbers: true,
+            autoheight: true,
+            autowidth: true,
+            viewrecords: true
+        })
+
+        jQuery("#example-sort-info").jqGrid('navGrid', "#example-sort-pager", {
+            add: false,
+            edit: false,
+            del : false,
+            search : false,
+            refresh : true
+        })
+    }
+
+    function sort() {
+        $example_sort_grid.jqGrid('setGridParam', {
+            search: true,
+            postData: {"mode": $("input[name=order-switch]:checked").val()},
+            page: 1
+        }).trigger("reloadGrid")
+    }
+</script>
