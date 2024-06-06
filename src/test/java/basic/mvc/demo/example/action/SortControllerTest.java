@@ -13,7 +13,7 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = "classpath:spring-mvc.xml")
-public class ImportControllerTest {
+public class SortControllerTest {
 
     private MockMvc mvc;
 
