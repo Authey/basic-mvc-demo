@@ -67,7 +67,7 @@ public class SortController extends BaseController {
                 params.add(RandomStringUtils.randomAlphabetic(10).toUpperCase());
                 params.add("Random");
                 params.add("0");
-                params.add(id + ":" + RandomStringUtils.randomAlphabetic(100));
+                params.add(id + ":" + RandomStringUtils.randomAlphabetic(40));
                 params.add(new Random().nextInt(20));
                 int row = exampleService.update("INSERT INTO EXAMPLE (ID, NAME, TYPE, FLAG, DESCRIPTION, SORT_ORDER) VALUES (?, ?, ?, ?, ?, ?)", params.toArray());
                 logger.info("Succeeded to Fill Data");
