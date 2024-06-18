@@ -11,6 +11,116 @@
 </#if>
 <#include "*/init.html" />
 <div style="padding-left: 10px; padding-right: 10px">
-
+    <#if user ?? && user.authLevel == 'SUPER'>
+        <div id="paginate-merge-alert"></div>
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="merge-switch" class="col-sm-2 control-label">Merging Mode:</label>
+                <div class="col-sm-2" style="padding-top: 5px">
+                    <input type="radio" name="merge-switch" id="enable" value="1"/>
+                    <label for="enable">Enable</label>
+                    <input type="radio" name="merge-switch" id="disable" value="0" checked/>
+                    <label for="disable">Disable</label>
+                </div>
+                <div class="col-sm-2">
+                    <input class="btn btn-info" type="button" onclick="load()" value="Load"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-4">
+                    <input class="btn btn-primary" type="button" onclick="merge()" value="Merge Paginate"/>
+                    <input class="btn btn-primary" type="button" onclick="fill()" value="Random Fill"/>
+                    <input class="btn btn-danger" type="button" onclick="clear_random()" value="Clear Random"/>
+                </div>
+            </div>
+        </form>
+        <table id="example-merge-info" class="table table-hover table-bordered"></table>
+        <div id="example-merge-pager"></div>
+    </#if>
 </div>
 </html>
+
+<script type="text/javascript">
+    let $example_merge_grid
+
+    function load() {
+        $example_merge_grid = jQuery("#example-merge-info").jqGrid({
+            url: "${root!}/paginate-merge/load",
+            datatype: "json",
+            mtype: "POST",
+            colNames: ['ID', 'NAME', 'TYPE', 'DESCRIPTION'],
+            colModel: [
+                {name: 'ID', index: 'ID', hidden: false, align: 'center', width: 25},
+                {name: 'NAME', index: 'NAME', hidden: false, align: 'center', width: 20},
+                {name: 'TYPE', index: 'TYPE', hidden: false, align: 'center', width: 15},
+                {name: 'DESCRIPTION', index: 'DESCRIPTION', hidden: false, align: 'center', width: 40}
+            ],
+            rowNum: 5,
+            pager: "#example-merge-pager",
+            rownumbers: true,
+            autoheight: true,
+            autowidth: true,
+            viewrecords: true
+        })
+
+        jQuery("#example-merge-info").jqGrid('navGrid', "#example-merge-pager", {
+            add: false,
+            edit: false,
+            del : false,
+            search : false,
+            refresh : true
+        })
+    }
+
+    function merge() {
+        $example_merge_grid.jqGrid('setGridParam', {
+            search: true,
+            postData: {"mode": $("input[name=merge-switch]:checked").val()},
+            page: 1
+        }).trigger("reloadGrid")
+    }
+
+    function fill() {
+        $.ajax({
+            type: "POST",
+            url: "${root!}/paginate-merge/fill",
+            async: false,
+            datatype: "json",
+            success: function(resp) {
+                let response = eval(resp)
+                if (response.state === 1 && response.msg === "1") {
+                    alertMsg("paginate-merge", "success", "Succeeded to Insert One Data Randomly")
+                    reload()
+                } else {
+                    alertMsg("paginate-merge", "warning", response.msg)
+                }
+            }
+        })
+    }
+
+    function clear_random() {
+        $.ajax({
+            type: "POST",
+            url: "${root!}/paginate-merge/clear",
+            async: false,
+            dataType: "json",
+            success: function(resp) {
+                let response = eval(resp)
+                if (response.state === 1) {
+                    alertMsg("paginate-merge", "success", "Succeeded to Clear " + response.msg + " Data")
+                    reload()
+                } else {
+                    alertMsg("paginate-merge", "warning", response.msg)
+                }
+            }
+        })
+    }
+
+    function reload() {
+        $example_merge_grid.jqGrid('setGridParam', {
+            search: true,
+            postData: {},
+            page: 1
+        }).trigger("reloadGrid")
+    }
+</script>

@@ -30,6 +30,7 @@
                 <div class="col-sm-offset-2 col-sm-5">
                     <input class="btn btn-primary" type="button" onclick="upload()" value="Upload Excel"/>
                     <input class="btn btn-primary" type="button" onclick="fill()" value="Random Fill"/>
+                    <input class="btn btn-danger" type="button" onclick="clear_random()" value="Clear Random"/>
                     <input class="btn btn-primary" type="button" onclick="download()" value="Download Template"/>
                 </div>
             </div>
@@ -94,7 +95,7 @@
     function all_clear() {
         $.ajax({
             type: "POST",
-            url: "${root!}/data-import/clear",
+            url: "${root!}/data-import/clear-all",
             async: false,
             dataType: "json",
             success: function(resp) {
@@ -142,6 +143,24 @@
                 let response = eval(resp)
                 if (response.state === 1 && response.msg === "1") {
                     alertMsg("data-import", "success", "Succeeded to Insert One Data Randomly")
+                    reload()
+                } else {
+                    alertMsg("data-import", "warning", response.msg)
+                }
+            }
+        })
+    }
+
+    function clear_random() {
+        $.ajax({
+            type: "POST",
+            url: "${root!}/data-import/clear",
+            async: false,
+            dataType: "json",
+            success: function(resp) {
+                let response = eval(resp)
+                if (response.state === 1) {
+                    alertMsg("data-import", "success", "Succeeded to Clear " + response.msg + " Data")
                     reload()
                 } else {
                     alertMsg("data-import", "warning", response.msg)

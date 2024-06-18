@@ -59,15 +59,15 @@ public class ImportController extends BaseController {
         }
     }
 
-    @PostMapping(value = "/clear")
-    public void clear() {
+    @PostMapping(value = "/clear-all")
+    public void clear_all() {
         if (!"SUPER".equals(this.getUser().getAuthLevel())) {
             logger.error("Failed to Failed to Clear Data: Unauthorised Clearance");
             this.ajaxDoneFailure("Unauthorised Clearance");
         } else {
             try {
                 int row = exampleService.update("DELETE FROM EXAMPLE");
-                logger.info("Succeeded to Clear Data");
+                logger.info("Succeeded to Clear All Data");
                 this.ajaxDoneSuccess(Integer.toString(row));
             } catch (Exception e) {
                 logger.error("Failed to Clear Data: ", e);
@@ -310,6 +310,23 @@ public class ImportController extends BaseController {
                 this.ajaxDoneSuccess(Integer.toString(row));
             } catch (Exception e) {
                 logger.error("Failed to Fill Data: ", e);
+                this.ajaxDoneFailure(null);
+            }
+        }
+    }
+
+    @PostMapping(value = "/clear")
+    public void clear() {
+        if (!"SUPER".equals(this.getUser().getAuthLevel())) {
+            logger.error("Failed to Failed to Clear Data: Unauthorised Clearance");
+            this.ajaxDoneFailure("Unauthorised Clearance");
+        } else {
+            try {
+                int row = exampleService.update("DELETE FROM EXAMPLE WHERE TYPE = ?", "Random");
+                logger.info("Succeeded to Clear Data");
+                this.ajaxDoneSuccess(Integer.toString(row));
+            } catch (Exception e) {
+                logger.error("Failed to Clear Data: ", e);
                 this.ajaxDoneFailure(null);
             }
         }
