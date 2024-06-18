@@ -11,6 +11,191 @@
 </#if>
 <#include "*/init.html" />
 <div style="padding-left: 10px; padding-right: 10px">
-
+    <#if user ?? && user.authLevel == 'SUPER'>
+        <div id="table-paging-alert"></div>
+        <form class="form-horizontal">
+            <div class="form-group">
+                <div class="col-sm-offset-1 col-sm-4">
+                    <input class="btn btn-primary" type="button" onclick="fill()" value="Random Fill"/>
+                    <input class="btn btn-danger" type="button" onclick="clear_random()" value="Clear Random"/>
+                    <input class="btn btn-primary" type="button" onclick="send()" value="Select Data"/>
+                </div>
+            </div>
+        </form>
+        <#if exampleList ??>
+            <table class="table table-bordered" id="paging-table">
+                <tbody>
+                    <tr>
+                        <td><input type="checkbox" name="paging-select" style="display: none"></td>
+                        <td class="text-center col-xs-2 active" style="width: 35%"><strong>ID</strong></td>
+                        <td class="text-center col-xs-2 active" style="width: 10%"><strong>NAME</strong></td>
+                        <td class="text-center col-xs-3 active" style="width: 10%"><strong>TYPE</strong></td>
+                        <td class="text-center col-xs-4 active" style="width: 50%"><strong>DESCRIPTION</strong></td>
+                    </tr>
+                    <#list exampleList as example>
+                        <tr>
+                            <td><input type="checkbox" name="paging-select" value="${example.ID!}"></td>
+                            <td class="text-center col-xs-2 active" style="width: 35%"><strong>${example.ID!}</strong></td>
+                            <td class="text-center col-xs-2 active" style="width: 10%"><strong>${example.NAME!}</strong></td>
+                            <td class="text-center col-xs-3 active" style="width: 10%"><strong>${example.TYPE!}</strong></td>
+                            <td class="text-center col-xs-4 active" style="width: 50%"><strong>${example.DESCRIPTION!}</strong></td>
+                        </tr>
+                    </#list>
+                </tbody>
+            </table>
+            <div>
+                <a onclick="lastPage()" style="cursor: pointer"> 上一页 </a>
+                <span id="cur_page"></span>
+                <span> / </span>
+                <span id="tot_page"></span>
+                <a onclick="nextPage()" style="cursor: pointer"> 下一页 </a>
+            </div>
+        </#if>
+    </#if>
 </div>
 </html>
+
+<script type="text/javascript">
+    var records = []
+    var page_size = 5
+    var current_page = 1
+    $("#cur_page").html(current_page)
+    var cur_table = document.getElementById("paging-table")
+    var all_tr = cur_table.getElementsByTagName("tr")
+    var total_page = Math.ceil((all_tr.length - 1) / page_size)
+    $("#tot_page").html(total_page)
+    for (let i = 1; i < all_tr.length; i++) {
+        let td = all_tr[i].getElementsByTagName("td")[2];
+        if (td) {
+            if(page_size > records.length) {
+                all_tr[i].style.display = "";
+            } else {
+                all_tr[i].style.display = "none";
+            }
+            records.push(all_tr[i].getElementsByTagName("td")[1].innerHTML);
+        }
+    }
+
+    function reload() {
+        window.open("${root!}/table-paging/index", "_self")
+    }
+
+    function fill() {
+        $.ajax({
+            type: "POST",
+            url: "${root!}/table-paging/fill",
+            async: false,
+            datatype: "json",
+            success: function(resp) {
+                let response = eval(resp)
+                if (response.state === 1 && response.msg === "1") {
+                    reload()
+                } else {
+                    alertMsg("table-paging", "warning", response.msg)
+                }
+            }
+        })
+    }
+
+    function clear_random() {
+        $.ajax({
+            type: "POST",
+            url: "${root!}/table-paging/clear",
+            async: false,
+            dataType: "json",
+            success: function(resp) {
+                let response = eval(resp)
+                if (response.state === 1) {
+                    reload()
+                } else {
+                    alertMsg("table-paging", "warning", response.msg)
+                }
+            }
+        })
+    }
+
+    function send() {
+        let id_arr = [];
+        $("input[name='paging-select']:checked").each(function(i){
+            id_arr.push($(this).val());
+        })
+        if (id_arr.length === 0) {
+            alertMsg("table-paging", "warning", "Select At Least One Data")
+        } else {
+            $.ajax({
+                type: "POST",
+                url: "${root!}/table-paging/select",
+                async: false,
+                data: {"id_arr": id_arr},
+                dataType: "json",
+                success: function(resp) {
+                    let response = eval(resp)
+                    if (response.state === 1) {
+                        alertMsg("table-paging", "success", response.msg)
+                    } else {
+                        alertMsg("table-paging", "warning", response.msg)
+                    }
+                }
+            })
+        }
+        $("input[name='paging-select']:checked").each(function(i){
+            $(this).prop('checked', false)
+        })
+    }
+
+    function lastPage() {
+        if(current_page > 1) {
+            let upper = (current_page - 1) * page_size - 1
+            let lower = (current_page - 2) * page_size
+            let table = document.getElementById("paging-table");
+            let tr = table.getElementsByTagName("tr");
+            let pointer = 0
+            // 循环表格每一行，查找匹配项
+            for (let i = 1; i < tr.length; i++) {
+                let td = tr[i].getElementsByTagName("td")[1];
+                if (td) {
+                    if (td.innerHTML === records[pointer]) {
+                        if(lower <= pointer && pointer <= upper) {
+                            tr[i].style.display = "";
+                        } else {
+                            tr[i].style.display = "none";
+                        }
+                        pointer += 1
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+            current_page -= 1
+            $("#cur_page").html(current_page)
+        }
+    }
+
+    function nextPage() {
+        if(current_page < total_page) {
+            let upper = (current_page + 1) * page_size - 1
+            let lower = current_page * page_size
+            let table = document.getElementById("paging-table");
+            let tr = table.getElementsByTagName("tr");
+            let pointer = 0
+            // 循环表格每一行，查找匹配项
+            for (let i = 1; i < tr.length; i++) {
+                let td = tr[i].getElementsByTagName("td")[1];
+                if (td) {
+                    if (td.innerHTML === records[pointer]) {
+                        if(lower <= pointer && pointer <= upper) {
+                            tr[i].style.display = "";
+                        } else {
+                            tr[i].style.display = "none";
+                        }
+                        pointer += 1
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+            current_page += 1
+            $("#cur_page").html(current_page)
+        }
+    }
+</script>
