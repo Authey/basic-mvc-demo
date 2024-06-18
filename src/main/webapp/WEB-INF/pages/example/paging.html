@@ -83,7 +83,7 @@
     function fill() {
         $.ajax({
             type: "POST",
-            url: "${root!}/table-paging/fill",
+            url: "${root!}/example-base/fill",
             async: false,
             datatype: "json",
             success: function(resp) {
@@ -100,7 +100,7 @@
     function clear_random() {
         $.ajax({
             type: "POST",
-            url: "${root!}/table-paging/clear",
+            url: "${root!}/example-base/clear",
             async: false,
             dataType: "json",
             success: function(resp) {

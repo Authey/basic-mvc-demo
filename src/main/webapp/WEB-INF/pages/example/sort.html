@@ -84,7 +84,7 @@
     function fill() {
         $.ajax({
             type: "POST",
-            url: "${root!}/list-sort/fill",
+            url: "${root!}/example-base/fill",
             async: false,
             datatype: "json",
             success: function(resp) {
@@ -102,7 +102,7 @@
     function clear_random() {
         $.ajax({
             type: "POST",
-            url: "${root!}/list-sort/clear",
+            url: "${root!}/example-base/clear",
             async: false,
             dataType: "json",
             success: function(resp) {

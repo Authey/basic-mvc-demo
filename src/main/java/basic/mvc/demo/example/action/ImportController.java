@@ -290,48 +290,6 @@ public class ImportController extends BaseController {
         }
     }
 
-    @PostMapping(value = "/fill")
-    public void fill() {
-        if (!"SUPER".equals(this.getUser().getAuthLevel())) {
-            logger.error("Failed to Failed to Fill Data: Unauthorised Fill");
-            this.ajaxDoneFailure("Unauthorised Fill");
-        } else {
-            try {
-                List<Object> params = new ArrayList<>();
-                String id = UUID.randomUUID().toString().toUpperCase();
-                params.add(id);
-                params.add(RandomStringUtils.randomAlphabetic(10).toUpperCase());
-                params.add("Random");
-                params.add("0");
-                params.add(id + ":" + RandomStringUtils.randomAlphabetic(100));
-                params.add(new Random().nextInt(20));
-                int row = exampleService.update("INSERT INTO EXAMPLE (ID, NAME, TYPE, FLAG, DESCRIPTION, SORT_ORDER) VALUES (?, ?, ?, ?, ?, ?)", params.toArray());
-                logger.info("Succeeded to Fill Data");
-                this.ajaxDoneSuccess(Integer.toString(row));
-            } catch (Exception e) {
-                logger.error("Failed to Fill Data: ", e);
-                this.ajaxDoneFailure(null);
-            }
-        }
-    }
-
-    @PostMapping(value = "/clear")
-    public void clear() {
-        if (!"SUPER".equals(this.getUser().getAuthLevel())) {
-            logger.error("Failed to Failed to Clear Data: Unauthorised Clearance");
-            this.ajaxDoneFailure("Unauthorised Clearance");
-        } else {
-            try {
-                int row = exampleService.update("DELETE FROM EXAMPLE WHERE TYPE = ?", "Random");
-                logger.info("Succeeded to Clear Data");
-                this.ajaxDoneSuccess(Integer.toString(row));
-            } catch (Exception e) {
-                logger.error("Failed to Clear Data: ", e);
-                this.ajaxDoneFailure(null);
-            }
-        }
-    }
-
     @GetMapping(value = "/download")
     public void download() {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("assets/template/data_import_template.xlsx");

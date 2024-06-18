@@ -23,7 +23,7 @@
                 </div>
                 <div class="col-sm-2">
                     <input class="btn btn-info" type="button" onclick="load()" value="Load"/>
-                    <input class="btn btn-danger" type="button" onclick="all_clear()" value="Clear"/>
+                    <input class="btn btn-danger" type="button" onclick="clear_all()" value="Clear"/>
                 </div>
             </div>
             <div class="form-group">
@@ -92,7 +92,7 @@
         })
     }
 
-    function all_clear() {
+    function clear_all() {
         $.ajax({
             type: "POST",
             url: "${root!}/data-import/clear-all",
@@ -136,7 +136,7 @@
     function fill() {
         $.ajax({
             type: "POST",
-            url: "${root!}/data-import/fill",
+            url: "${root!}/example-base/fill",
             async: false,
             datatype: "json",
             success: function(resp) {
@@ -154,7 +154,7 @@
     function clear_random() {
         $.ajax({
             type: "POST",
-            url: "${root!}/data-import/clear",
+            url: "${root!}/example-base/clear",
             async: false,
             dataType: "json",
             success: function(resp) {
